@@ -13,7 +13,7 @@
       <div class="form-box">
         <div >
         <label for="name">Phone Number:</label>
-        <input class="textbox" name="phone" type="tel" placeholder="999999999" v-model="phone" data-rule="required|phone">
+        <input class="textbox" name="phone" type="number" min="900000000" max="999999999" placeholder="999999999" v-model="phone" data-rule="required|phone">
       </div>
       <div>
         <label for="name">Password:</label>
@@ -29,11 +29,11 @@
       </div>
       <div>
         <label for="name">Confirmation Code:</label>
-        <input class="textbox" name="conf_code" type="password" placeholder="9999" v-model="conf_code" data-rule="required">
+        <input class="textbox" name="conf_code" type="number" max="9999" placeholder="9999" v-model="conf_code" data-rule="required">
       </div>
-       <div>
-         <label for="name">Upload photo:</label>
-        <input class="textbox" name="photo" type="img" placeholder="Upload picture (to do)" v-model="photo">
+      <div>
+        <label for="name">Upload photo:</label>
+          <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input">
       </div>
       </div>
       <div class="buttonstyle">
@@ -76,7 +76,25 @@ export default {
       if (!this.canCreateCard) {
         this.errors.push('Fill all the camps')
       }
+
+      if (String(this.phone).length !== 9) {
+        this.errors.push('Phone Should have 9 numbers')
+        return
+      }
+      if (String(this.conf_code).length !== 4) {
+        this.errors.push('Confirmation code Should have 4 numbers')
+        return
+      }
       alert('CLICK')
+    },
+    uploadImage (e) {
+      const image = e.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(image)
+      reader.onload = e => {
+        this.previewImage = e.target.result
+        // console.log(this.previewImage)
+      }
     }
   },
   computed: {
