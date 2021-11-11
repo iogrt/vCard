@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\Vcard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\VCardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('vcards/{vcard}', [VCardController::class, 'getVCard']);
+Route::post('vcards', [VCardController::class, 'store']);
 
 //mock examples
 Route::get('/users',fn() => User::all()->toArray());

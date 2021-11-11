@@ -8,7 +8,5 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function create(User $user){
-       //verificar aqui se phone number e etc ja foram utilizados
-    }
+    //
 }

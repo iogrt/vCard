@@ -13,23 +13,23 @@
       <div class="form-box">
         <div >
         <label for="name">Phone Number:</label>
-        <input class="textbox" name="phone" type="number" min="900000000" max="999999999" placeholder="999999999" v-model="phone" data-rule="required|phone">
+        <input class="textbox" name="phone" type="number" min="900000000" max="999999999" placeholder="999999999" v-model="formData.phone" data-rule="required|phone">
       </div>
       <div>
         <label for="name">Password:</label>
-        <input class="textbox" name="passw-ord" type="password" placeholder="Password" v-model="password" data-rule="required">
+        <input class="textbox" name="passw-ord" type="password" placeholder="Password" v-model="formData.password" data-rule="required">
       </div>
       <div>
         <label for="name">Name:</label>
-        <input class="textbox" name="name" type="text" placeholder="Name" v-model="name" data-rule="required">
+        <input class="textbox" name="name" type="text" placeholder="Name" v-model="formData.name" data-rule="required">
       </div>
       <div>
         <label for="name">Email:</label>
-        <input class="textbox" name="email" type="email" placeholder="email@email.com" v-model="email" data-rule="required">
+        <input class="textbox" name="email" type="email" placeholder="email@email.com" v-model="formData.email" data-rule="required">
       </div>
       <div>
         <label for="name">Confirmation Code:</label>
-        <input class="textbox" name="conf_code" type="number" max="9999" placeholder="9999" v-model="conf_code" data-rule="required">
+        <input class="textbox" name="conf_code" type="number" max="9999" placeholder="9999" v-model="formData.conf_code" data-rule="required">
       </div>
       <div>
         <label for="name">Upload photo:</label>
@@ -45,29 +45,43 @@
 </template>
 
 <script>
+import axios from 'axios'
+const baseUrl = 'http://vcardlaravel.test/api/'
 export default {
   data () {
     return {
-      phone: null,
-      password: null,
-      name: null,
-      email: null,
-      conf_code: null,
-      photo: null,
+      formData: {
+        phone: null,
+        password: null,
+        name: null,
+        email: null,
+        conf_code: null,
+        photo: null
+      },
       errors: []
     }
   },
   methods: {
     resetValues () {
-      this.phone = null
-      this.password = null
-      this.name = null
-      this.email = null
-      this.conf_code = null
-      this.photo = null
+      this.formData.phone = null
+      this.formData.password = null
+      this.formData.name = null
+      this.formData.email = null
+      this.formData.conf_code = null
+      this.formData.photo = null
     },
     async createCard (event) {
       event.preventDefault()
+      const url = baseUrl + 'vcards'
+      axios.post(url, this.formData)
+        .then(response => {
+          console.log(url)
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+
       this.errors = []
 
       if (this.errors.length) {
@@ -77,11 +91,11 @@ export default {
         this.errors.push('Fill all the camps')
       }
 
-      if (String(this.phone).length !== 9) {
+      if (String(this.formData.phone).length !== 9) {
         this.errors.push('Phone Should have 9 numbers')
         return
       }
-      if (String(this.conf_code).length !== 4) {
+      if (String(this.formData.conf_code).length !== 4) {
         this.errors.push('Confirmation code Should have 4 numbers')
         return
       }
@@ -99,7 +113,7 @@ export default {
   },
   computed: {
     canCreateCard () {
-      return this.phone && this.password && this.name && this.email && this.conf_code
+      return this.formData.phone && this.formData.password && this.formData.name && this.formData.email && this.formData.conf_code
     }
   },
   mounted () {
