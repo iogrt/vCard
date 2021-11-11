@@ -15,55 +15,43 @@ class VCardController extends Controller
         //return Vcard::all();
         //return Vcard::find($id);//sem usar o resource
         //return VCardResource::collection($id);//usando resources, pois nao devolve o dado diretamente
-        return new VCardResource($vcard);
+        return new VCardResource($vcard);//se for um user deletado nao funciona.....
     }
 
-    //public function store(StoreVCardRequest $request){
-    public function store(Request $request){
-        return $request->all(); 
-       /* $vcard = Vcard::withTrashed()->where('phone_number',$request->phone_number)->whereNotNull('deleted_at')->first();
-
+    public function store(StoreVCardRequest $request){
+    //public function store(Request $request){  
         $find = Vcard::where('phone_number',$request->phone_number)->first();
-
         if($find){
-            return response()->json(['message'=>'This phone was used before in a account deleted!' ], 422);
+            return response()->json(['message'=>'This phone is already in use!' ], 422);
         }
 
-        if(!is_null($vcard)){
-            return response()->json(['message'=>'This phone is already in use!' ], 422);
-        }*/
+        $finDel = Vcard::withTrashed()->where('phone_number',$request->phone_number)->whereNotNull('deleted_at')->first();
+        if(!is_null($finDel)){
+            return response()->json(['message'=>'This phone was used before in a account deleted!!' ], 422);
+        }
 
-       /* $user = new User();
-        $user->fill($request->validated());
-        $user->password = bcrypt($user->password);
-        $user->save();
-        return new UserResource($user);
+        //$validated = $request->validated();
 
-        $now = Carbon::now();//data corrente
+        $newCard = new Vcard;
 
-        
-        return new VCardResource($newTask);*/
+        /*$newCard->phone_number = $validated['phone_number'];
+        $newCard->name = $validated['name'];
+        $newCard->email = $validated['email'];
+        $newCard->blocked = 0;
+        $newCard->password = bcrypt($validated['password']);
+        $newCard->confirmation_code = bcrypt($validated['confirmation_code']);*/
 
-        /*
-        $now = Carbon::now();//data corrente
-        return $request;*/
-        /*$validated_data = $request->validated();
-        
-        $newVCard = new Vcard;
-        dd($newVCard);*/
-        
-        //$newVCard->fill($request->validated());
-        /*$newVCard->phone_number = $validated_data['phone_number'];
-        $newVCard->name = $validated_data['name'];
-        $newVCard->email = $validated_data['email'];
-        $newVCard->confirmation_code = $validated_data['confirmation_code'];
-        $newVCard->password = bcrypt($newVCard->password);*/
-        //$newVCard->created_at = $now;//atualizr o campo
-        /*if ($request->hasFile('photo_url')) {
-            $path = $request->photo_url->store('public/fotos');
-            $newVCard->photo_url = basename($path);
-        }*/
-       /* $newVCard->save();
-        return new UserResource($newVCard);*/
+        $newCard->phone_number = $request->phone_number;
+        $newCard->name = $request->name;
+        $newCard->email = $request->email;
+        $newCard->blocked = 0;
+        $newCard->password = bcrypt($newCard->password);
+        $newCard->confirmation_code = bcrypt($request->confirmation_code);
+
+        //return $request->all();
+        $newCard->save();
+        //return response()->json($request, 201);
+        //return $newCard->phone_number = $validated['phone_number'];
+        return new VCardResource($newCard);
     }
 }

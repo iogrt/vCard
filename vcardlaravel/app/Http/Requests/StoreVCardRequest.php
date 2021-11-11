@@ -25,16 +25,16 @@ class StoreVCardRequest extends FormRequest
     public function rules()
     {
         return [
-            'phone_number' => 'required|digits:9',//campo unique em falta
-            'name' => 'required',//regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/
-            'email' => 'required|email',
-            'password' => 'required',
-            'photo_url' => 'nullable|image|max:8192',
-            'confirmation_code' => 'required|digits:4'
+            // 'phone_number' => 'required',//campo unique em falta
+            // 'name' => 'required',//regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/
+            // 'email' => 'required',
+            // 'password' => 'required',
+            // 'photo_url' => 'nullable|image|max:8192',
+            // 'confirmation_code' => 'required'
         ];
     }
 
-    /*public function messages() {
+    public function messages() {
         return [
             'phone_number.required' => 'phone number is mandatory',
             'phone_number.digits' => 'phone number should have 9 numbers',
@@ -43,5 +43,5 @@ class StoreVCardRequest extends FormRequest
             'email.required' => 'email is required',
             'confirmation_code.required' => 'confirmation code is mandatory'
         ];
-    }*/
+    }
 }

@@ -21,7 +21,8 @@ class VCardResource extends JsonResource
             'email' => $this->email,
             'password' => $this->email,
             'photo_url' => $this->photo_url ? $this->photo_url : '',//pq aceita nulo
-            'confirmation_code' => $this->confirmation_code
+            'confirmation_code' => $this->confirmation_code,
+            //'blocked' => $this->blocked 
         ];
     }
 }

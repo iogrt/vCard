@@ -56,9 +56,11 @@ export default {
         name: null,
         email: null,
         conf_code: null,
-        photo: null
+        photo: null,
+        blocked: 0
       },
-      errors: []
+      errors: [],
+      msgErrors: []
     }
   },
   methods: {
@@ -73,13 +75,21 @@ export default {
     async createCard (event) {
       event.preventDefault()
       const url = baseUrl + 'vcards'
+      // const url = 'http://localhost:8080/card/create'
       axios.post(url, this.formData)
         .then(response => {
           console.log(url)
           console.log(response)
         })
-        .catch(error => {
-          console.log(error)
+        .catch(errorResponse => {
+          if (errorResponse.response.status === 422) {
+            // this.msgErrors = errorResponse.response.data.errors
+            console.log(errorResponse)
+            console.log(errorResponse.response.status)
+            // msgErrors is an object with all error messages
+            // Example of first error message for "age" field:
+            // let msgErrorPhone = msgErrors.phone ? msgErrors.phone[0] || '' : ''
+          }
         })
 
       this.errors = []

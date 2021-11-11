@@ -28,6 +28,7 @@ Route::get('vcards/{vcard}', [VCardController::class, 'getVCard']);
 Route::post('vcards', [VCardController::class, 'store']);
 
 //mock examples
+/*
 Route::get('/users',fn() => User::all()->toArray());
 Route::get('/categories',fn() => Category::all()->toArray());
 Route::get('/default_categories',fn() => DefaultCategory::all()->toArray());
@@ -41,5 +42,5 @@ Route::get('/vcards/{vcard}/categories',fn($vcard) => Vcard::find($vcard)->categ
 Route::get('/transactions/{transaction}/pairTransaction',fn($transaction) => Transaction::find($transaction)->pairTransaction);
 Route::get('/transactions/{transaction}/pairVcard',fn($transaction) => Transaction::find($transaction)->pairVcard);
 Route::get('/transactions/{transaction}/category',fn($transaction) => Transaction::find($transaction)->category);
-Route::get('/transactions/{transaction}/paymentType',fn($transaction) => Transaction::find($transaction)->paymentType);
+Route::get('/transactions/{transaction}/paymentType',fn($transaction) => Transaction::find($transaction)->paymentType);*/
 
