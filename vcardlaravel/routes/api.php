@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\DefaultCategory;
@@ -40,3 +41,7 @@ Route::get('/transactions/{transaction}/pairVcard',fn($transaction) => Transacti
 Route::get('/transactions/{transaction}/category',fn($transaction) => Transaction::find($transaction)->category);
 Route::get('/transactions/{transaction}/paymentType',fn($transaction) => Transaction::find($transaction)->paymentType);
 
+
+Route::prefix('admin/')->group(function() {
+    Route::post('login', [AuthController::class,'login']);
+});
