@@ -33,7 +33,7 @@
       </div>
       <div>
         <label for="name">Upload photo:</label>
-          <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input">
+          <input type="file" accept="image/*" name="photo_url" @change="uploadImage($event)" id="file-input">
       </div>
       </div>
       <div class="buttonstyle">
@@ -55,7 +55,7 @@ export default {
         name: null,
         email: null,
         confirmation_code: null,
-        photo: null,
+        photo_url: null,
         blocked: 0
       },
       errors: [],
@@ -69,11 +69,44 @@ export default {
       this.formData.name = null
       this.formData.email = null
       this.formData.confirmation_code = null
-      this.formData.photo = null
+      this.formData.photo_url = null
     },
     async createCard (event) {
       event.preventDefault()
       const url = '/vcards'
+
+      this.errors = []
+
+      /* eslint-disable */
+      const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+      /* eslint-enable */
+
+      if (this.errors.length) {
+        return
+      }
+      if (!this.canCreateCard) {
+        this.errors.push('Fill all the camps')
+      }
+      if (String(this.formData.phone_number).length !== 9) {
+        this.errors.push('Phone Should have 9 numbers')
+        return
+      }
+      if (String(this.formData.password).length < 6) {
+        this.errors.push('Password Should have more that 6 caracteres')
+        return
+      }
+      if (String(this.formData.name).length < 3 || !String(this.formData.name).trim()) {
+        this.errors.push('Name Should have more that 3 caracteres')
+        return
+      }
+      if (!emailRegex.test(this.formData.email)) {
+        this.errors.push('email invalido')
+        return
+      }
+      if (String(this.formData.confirmation_code).length !== 4) {
+        this.errors.push('Confirmation code Should have 4 numbers')
+        return
+      }
 
       this.$axios.post(url, this.formData)
         .then(response => {
@@ -83,42 +116,25 @@ export default {
         .catch(errorResponse => {
           if (errorResponse.response.status === 422) {
             // this.msgErrors = errorResponse.response.data.errors
+            this.errors.push(errorResponse.response.data.message)
+            console.log(errorResponse.response.data.message)
             console.log(errorResponse)
+            console.log(errorResponse.message)
             console.log(errorResponse.response.status)
-            // msgErrors is an object with all error messages
-            // Example of first error message for "age" field:
-            // let msgErrorPhone = msgErrors.phone ? msgErrors.phone[0] || '' : ''
           }
         })
-
-      this.errors = []
-
-      if (this.errors.length) {
-        return
-      }
-      if (!this.canCreateCard) {
-        this.errors.push('Fill all the camps')
-      }
-
-      if (String(this.formData.phone_number).length !== 9) {
-        this.errors.push('Phone Should have 9 numbers')
-        return
-      }
-      if (String(this.formData.confirmation_code).length !== 4) {
-        this.errors.push('Confirmation code Should have 4 numbers')
-        return
-      }
-      alert('CLICK')
-    },
-    uploadImage (e) {
+    }
+    /* uploadImage (e) {
+      const formData = new FormData()
+      formData.append('photo_url', this.formData.photo_url)
       const image = e.target.files[0]
       const reader = new FileReader()
       reader.readAsDataURL(image)
       reader.onload = e => {
-        this.previewImage = e.target.result
-        // console.log(this.previewImage)
+        this.formData.photo_url = e.target.result
+        console.log(this.formData.photo_url)
       }
-    }
+    } */
   },
   computed: {
     canCreateCard () {

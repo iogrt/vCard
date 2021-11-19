@@ -26,7 +26,7 @@ class StoreVCardRequest extends FormRequest
     {
         return [
              'phone_number' => 'required',//campo unique em falta
-             'name' => 'required',//regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/
+             'name' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
              'email' => 'required',
              'password' => 'required',
              'photo_url' => 'nullable|image|max:8192',
