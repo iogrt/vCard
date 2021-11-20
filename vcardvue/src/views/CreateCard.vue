@@ -33,7 +33,7 @@
       </div>
       <div>
         <label for="name">Upload photo:</label>
-          <input type="file" accept="image/*" name="photo_url" @change="uploadImage($event)" id="file-input">
+          <input type="file" accept="image/*" name="photo_url" @change="processImg($event)" id="file-input">
       </div>
       </div>
       <div class="buttonstyle">
@@ -81,6 +81,13 @@ export default {
       const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
       /* eslint-enable */
 
+      const formDataA = new FormData()
+      formDataA.append('phone_number', this.formData.phone_number)
+      formDataA.append('password', this.formData.password)
+      formDataA.append('name', this.formData.name)
+      formDataA.append('email', this.formData.email)
+      formDataA.append('confirmation_code', this.formData.confirmation_code)
+
       if (this.errors.length) {
         return
       }
@@ -107,11 +114,17 @@ export default {
         this.errors.push('Confirmation code Should have 4 numbers')
         return
       }
+      if (this.formData.photo_url !== null) {
+        formDataA.append('photo_url', this.formData.photo_url)
+        console.log('foto carregada')
+        console.log(this.formData.photo_url)
+      }
 
-      this.$axios.post(url, this.formData)
+      this.$axios.post(url, formDataA)
         .then(response => {
           console.log(url)
           console.log(response)
+          console.log(this.formData.photo_url)
         })
         .catch(errorResponse => {
           if (errorResponse.response.status === 422) {
@@ -123,6 +136,11 @@ export default {
             console.log(errorResponse.response.status)
           }
         })
+    },
+    processImg (event) {
+      // console.log(event)
+      console.log(event.target.files[0])
+      this.formData.photo_url = event.target.files[0]
     }
     /* uploadImage (e) {
       const formData = new FormData()
