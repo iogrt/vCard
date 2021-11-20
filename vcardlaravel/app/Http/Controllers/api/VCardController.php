@@ -31,18 +31,19 @@ class VCardController extends Controller
         }
 
         $now = Carbon::now();//data corrente
-        //$validated = $request->validated();
 
         $newCard = new Vcard;
 
-        /*$newCard->phone_number = $validated['phone_number'];
+        /*$validated = $request->validated();
+
+        $newCard->phone_number = $validated['phone_number'];
         $newCard->name = $validated['name'];
         $newCard->email = $validated['email'];
         $newCard->blocked = 0;
         $newCard->password = bcrypt($validated['password']);
         $newCard->confirmation_code = bcrypt($validated['confirmation_code']);
-        $newCard->created_at = $now;*/
-        /*if ($validated->hasFile('photo_url')) {
+        $newCard->created_at = $now;
+        if ($validated->hasFile('photo_url')) {
             $path = $validated->photo_url->store('public/fotos');
             $newCard->photo_url = basename($path);
         }*/

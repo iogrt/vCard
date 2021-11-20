@@ -116,15 +116,15 @@ export default {
       }
       if (this.formData.photo_url !== null) {
         formDataA.append('photo_url', this.formData.photo_url)
-        console.log('foto carregada')
-        console.log(this.formData.photo_url)
+        console.log('photo uploaded')
       }
 
       this.$axios.post(url, formDataA)
         .then(response => {
           console.log(url)
           console.log(response)
-          console.log(this.formData.photo_url)
+          alert('Successfully created') // mudar depois para notificacao
+          this.resetValues()
         })
         .catch(errorResponse => {
           if (errorResponse.response.status === 422) {
@@ -138,21 +138,9 @@ export default {
         })
     },
     processImg (event) {
-      // console.log(event)
       console.log(event.target.files[0])
       this.formData.photo_url = event.target.files[0]
     }
-    /* uploadImage (e) {
-      const formData = new FormData()
-      formData.append('photo_url', this.formData.photo_url)
-      const image = e.target.files[0]
-      const reader = new FileReader()
-      reader.readAsDataURL(image)
-      reader.onload = e => {
-        this.formData.photo_url = e.target.result
-        console.log(this.formData.photo_url)
-      }
-    } */
   },
   computed: {
     canCreateCard () {
