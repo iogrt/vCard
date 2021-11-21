@@ -43,5 +43,8 @@ Route::get('/transactions/{transaction}/paymentType',fn($transaction) => Transac
 
 
 Route::prefix('admin/')->group(function() {
-    Route::post('login', [AuthController::class,'login']);
+    Route::post('login', [AuthController::class,'login'])->name('login');
 });
+
+// protected test, needs login
+Route::middleware('auth:api')->get('/locked/users',fn() => User::all()->toArray());
