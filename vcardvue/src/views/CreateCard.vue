@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <h3>Create a vCard</h3>
-    <form class="createcard--form">
+    <form class="createcard--form" enctype='multipart/form-data'>
       <div>
         <div v-if="errors.length">
           <b>Please correct the following error(s):</b>
@@ -128,12 +128,14 @@ export default {
         })
         .catch(errorResponse => {
           if (errorResponse.response.status === 422) {
-            // this.msgErrors = errorResponse.response.data.errors
-            this.errors.push(errorResponse.response.data.message)
-            console.log(errorResponse.response.data.message)
+            // console.log(errorResponse.response.data.message)
             console.log(errorResponse)
             console.log(errorResponse.message)
             console.log(errorResponse.response.status)
+            Object.values(errorResponse.response.data.errors).map(error => {
+              this.errors.push(error[0])
+              console.log(error[0])
+            })
           }
         })
     },
