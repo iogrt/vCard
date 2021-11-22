@@ -9,6 +9,7 @@ use App\Models\Vcard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\VCardController;
+use App\Http\Controllers\api\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('vcards/{vcard}', [VCardController::class, 'getVCard']);
 Route::post('vcards', [VCardController::class, 'store']);
 
+Route::post('/transactions/vcard',[TransactionController::class,'store_vcard_transaction']);
+
 //mock examples
 /*
 Route::get('/users',fn() => User::all()->toArray());
@@ -41,10 +44,12 @@ Route::get('/payment_types',fn() => PaymentType::all()->toArray());
 Route::get('/vcards/{vcard}/transactions',fn($vcard) => Vcard::find($vcard)->transactions->toArray());
 Route::get('/vcards/{vcard}/categories',fn($vcard) => Vcard::find($vcard)->categories->toArray());
 
+*/
+Route::get('/transactions/{transaction}/vcard',fn($transaction) => Transaction::find($transaction)->vCard);
+/*
 Route::get('/transactions/{transaction}/pairTransaction',fn($transaction) => Transaction::find($transaction)->pairTransaction);
 Route::get('/transactions/{transaction}/pairVcard',fn($transaction) => Transaction::find($transaction)->pairVcard);
 Route::get('/transactions/{transaction}/category',fn($transaction) => Transaction::find($transaction)->category);
-
 Route::get('/transactions/{transaction}/paymentType',fn($transaction) => Transaction::find($transaction)->paymentType);
 Route::get('/transactions/{transaction}/paymentType',fn($transaction) => Transaction::find($transaction)->paymentType);
- */
+*/

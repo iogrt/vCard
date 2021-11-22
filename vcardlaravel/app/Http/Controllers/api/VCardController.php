@@ -19,7 +19,7 @@ class VCardController extends Controller
     }
 
     //public function store(StoreVCardRequest $request){
-    public function store(Request $request){  
+    public function store(StoreVCardRequest $request){
         $find = Vcard::where('phone_number',$request->phone_number)->first();
         if($find){
             return response()->json(['message'=>'This phone is already in use!' ], 422);

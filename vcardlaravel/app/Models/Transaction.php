@@ -18,6 +18,7 @@ class Transaction extends Model
         'old_balance',
         'new_balance',
         'payment_reference',
+        'payment_type',
         'description',
         'custom_options',
         'custom_data',
@@ -43,8 +44,8 @@ class Transaction extends Model
         return $this->belongsTo(Category::class,'category_id');
     }
 
-    public function vcard(){
-        return $this->belongsTo(Vcard::class);
+    public function vCard(){
+        return $this->belongsTo(Vcard::class,'vcard','phone_number');
     }
 
     public function pairVcard(){
