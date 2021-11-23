@@ -131,9 +131,12 @@ export default {
             // this.msgErrors = errorResponse.response.data.errors
             this.errors.push(errorResponse.response.data.message)
             console.log(errorResponse.response.data.message)
-            console.log(errorResponse)
-            console.log(errorResponse.message)
             console.log(errorResponse.response.status)
+
+            Object.values(errorResponse.response.data.errors).map(error => {
+              this.errors.push(error[0])
+              console.log(error[0])
+            })
           }
         })
     },

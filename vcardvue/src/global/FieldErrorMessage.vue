@@ -9,18 +9,18 @@
 
 <script>
 export default {
-  name: "FieldErrorMessage",
+  name: 'FieldErrorMessage',
   props: {
     errors: {
       type: Object,
-      default: null,
+      default: null
     },
     fieldName: {
       type: String,
-      default: "",
-    },
-  },
-};
+      default: ''
+    }
+  }
+}
 </script>
 
 <style scoped>
