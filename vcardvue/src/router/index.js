@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import DebitTransactionCreate from '../views/DebitTransactionCreate.vue'
+import DebitTransactionCreate from '../views/DebitTransactionCreate'
+import AdminHome from '../views/AdminHome'
+import About from '../views/About.vue'
 
 const routes = [
   {
@@ -14,7 +16,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => About
   },
   {
     path: '/card/create',
@@ -22,9 +24,16 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/CreateCard.vue')
+    component: () => import('../views/CreateCard.vue')
   },
-
+  {
+    path: '/admin/login',
+    name: 'AdminLogin',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "adminLogin" */ '../views/AdminLogin.vue')
+  },
   {
     path: '/card/transaction/debit',
     name: 'DebitTransactionCreate',
@@ -32,6 +41,17 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => DebitTransactionCreate
+  },
+  {
+    path: '/admin/',
+    name: 'AdminHome',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => AdminHome,
+    meta: {
+      adminOnly: true
+    }
   }
 ]
 

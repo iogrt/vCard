@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\DefaultCategory;
@@ -44,12 +45,16 @@ Route::get('/payment_types',fn() => PaymentType::all()->toArray());
 Route::get('/vcards/{vcard}/transactions',fn($vcard) => Vcard::find($vcard)->transactions->toArray());
 Route::get('/vcards/{vcard}/categories',fn($vcard) => Vcard::find($vcard)->categories->toArray());
 
-*/
-Route::get('/transactions/{transaction}/vcard',fn($transaction) => Transaction::find($transaction)->vCard);
-/*
 Route::get('/transactions/{transaction}/pairTransaction',fn($transaction) => Transaction::find($transaction)->pairTransaction);
 Route::get('/transactions/{transaction}/pairVcard',fn($transaction) => Transaction::find($transaction)->pairVcard);
 Route::get('/transactions/{transaction}/category',fn($transaction) => Transaction::find($transaction)->category);
 Route::get('/transactions/{transaction}/paymentType',fn($transaction) => Transaction::find($transaction)->paymentType);
 Route::get('/transactions/{transaction}/paymentType',fn($transaction) => Transaction::find($transaction)->paymentType);
 */
+
+Route::prefix('admin/')->group(function() {
+    Route::post('login', [AuthController::class,'login'])->name('login');
+});
+
+// protected test, needs login
+Route::middleware('auth:api')->get('/locked/users',fn() => User::all()->toArray());
