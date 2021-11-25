@@ -19,10 +19,9 @@ class VCardController extends Controller
     }
 
     public function store(StoreVCardRequest $request){
-    //public function store(Request $request){  
         $find = Vcard::where('phone_number',$request->phone_number)->first();
         if($find){
-            return response()->json(['message'=>'This phone is already in use!' ], 422);
+            return response()->json(['message'=>'This phone cant be used!' ], 422);
         }
 
         $finDel = Vcard::withTrashed()->where('phone_number',$request->phone_number)->whereNotNull('deleted_at')->first();
