@@ -92,26 +92,28 @@
         class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse"
       >
         <div class="position-sticky pt-3">
-          <ul class="nav flex-column">
+          <ul class="nav flex-column"
+          >
             <li class="nav-item">
-              <a
-                class="nav-link active"
-                aria-current="page"
-                href="#"
+              <router-link
+                class="nav-link"
+                :class="{active: $route.name === 'Dashboard'}"
+                :to="{ name: 'Dashboard'}"
               >
                 <i class="bi bi-house"></i>
                 About
-              </a>
+              </router-link>
             </li>
 
-            <li class="nav-item d-flex justify-content-between align-items-center pe-3">
-              <a
-                class="nav-link w-100 me-3"
-
+            <li class="nav-item">
+              <router-link
+                class="nav-link"
+                :class="{active: $route.name === 'CardCreate'}"
+                :to="{name: 'CardCreate'}"
               >
                 <i class="bi bi-list-check"></i>
                 Create Vcard
-              </a>
+              </router-link>
             </li>
 
             <li class="nav-item">
@@ -220,7 +222,7 @@
       </nav>
 
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <dashboard></dashboard>
+        <router-view></router-view>
       </main>
     </div>
   </div>
@@ -228,13 +230,8 @@
 
 <script>
 // REMOVE THESE IMPORTS WHEN VUE-ROUTER IS CONFIGURED
-import Dashboard from './components/Dashboard.vue'
-
 export default {
-  name: 'RootComponent',
-  components: {
-    Dashboard
-  }
+  name: 'RootComponent'
 }
 </script>
 
@@ -254,5 +251,14 @@ export default {
 
 .dropdown-item {
   font-size: 0.875rem;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+#sidebarMenu {
+  overflow-y: auto;
 }
 </style>
