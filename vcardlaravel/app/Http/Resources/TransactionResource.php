@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Category;
+use App\Models\PaymentType;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionResource extends JsonResource
@@ -15,15 +17,16 @@ class TransactionResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'vcard_owner' => new UserResource($this->vCard),
-            'vcard_dest' => new UserResource($this->pairVcard),
+            'vcard_owner' => new VCardResource($this->vCard),
             'balance' => $this->balance,
             'type' => $this->type == 'C' ? "Credit" : "Debit",
             'datetime' => $this->datetime,
+            'date' => $this->date,
             'description' => $this->description,
-            'category_name' => $this->category,
+            'category_name' => $this->category?->name,
             'reference' => $this->payment_reference,
-            'payment_type' => $this->payment_type
+            'payment_type' => new PaymentTypeResource($this->paymentType),
+            'payment_reference' => $this->payment_reference
         ];
     }
 }

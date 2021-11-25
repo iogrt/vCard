@@ -2,10 +2,10 @@
 
 namespace App\Rules;
 
-use App\Models\Category;
+use App\Models\PaymentType;
 use Illuminate\Contracts\Validation\Rule;
 
-class CategoryRule implements Rule
+class ReferenceRule implements Rule
 {
     /**
      * Create a new rule instance.
@@ -26,14 +26,21 @@ class CategoryRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if($value == null){
+        if($value == null || !request()->has('payment_type')){
+            return false;
+        }
+
+        $type = request()->get('payment_type');
+        $payment_type = PaymentType::find($type);
+
+        //é um hack, mas as regras de validaçao estão contidas em regex
+        $reg = json_decode($payment_type->validation_rules);
+
+        if($reg == '' || !$reg){
             return true;
         }
 
-        return count( Category::where('vcard',request()->vcard)
-                    ->where('name','like',$value)
-                    ->where('type','like',request()->type)->get()) > 0;
-
+        return preg_match($reg,$value) == 1;
     }
 
     /**
@@ -43,6 +50,6 @@ class CategoryRule implements Rule
      */
     public function message()
     {
-        return 'No valid category under vcard with the same transaction type';
+        return 'Invalid payment reference';
     }
 }

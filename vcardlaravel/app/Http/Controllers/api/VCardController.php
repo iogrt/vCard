@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TransactionResource;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\Vcard;
 use App\Http\Resources\VCardResource;
@@ -16,6 +18,11 @@ class VCardController extends Controller
         //return Vcard::find($id);//sem usar o resource
         //return VCardResource::collection($id);//usando resources, pois nao devolve o dado diretamente
         return new VCardResource($vcard);//se for um user deletado nao funciona.....
+    }
+
+    public function getVcardTransactions(Vcard $vcard){
+
+        return TransactionResource::collection($vcard->transactions);
     }
 
     //public function store(StoreVCardRequest $request){

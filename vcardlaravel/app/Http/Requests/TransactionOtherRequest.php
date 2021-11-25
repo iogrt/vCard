@@ -3,16 +3,12 @@
 namespace App\Http\Requests;
 
 use App\Rules\CategoryRule;
+use App\Rules\ReferenceRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class TransactionRequest extends FormRequest
+class TransactionOtherRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
@@ -25,12 +21,13 @@ class TransactionRequest extends FormRequest
      */
     public function rules()
     {
+        //todo payment types controller
         return [
             'vcard' => 'required|digits:9',
-            'payment_reference' => 'required|digits:9',
             'value' => 'required|gt:0',
-            //'payment_type' => 'exists:payment_types,name', always VCARD here
-            'type' => 'required|in:D',
+            'payment_type' => ['required','exists:payment_types,code',Rule::notIn(['VCARD'])],
+            'payment_reference' => [new ReferenceRule],
+            'type' => 'in:C,D',
             'category' => [new CategoryRule],
             'description' => 'nullable|max:8192',
         ];
@@ -39,11 +36,11 @@ class TransactionRequest extends FormRequest
     public function messages(){
         return [
             'vcard.required' => 'Vcard transaction needs a vcard owner',
-            'payment_reference.required' => 'Vcard transaction needs a destination vcard',
             'value.required' => 'Vcard transaction needs a value!',
             'value.min' => 'Value of transaction needs a value superior to zero!',
-            //'payment_type.exists' => 'Invalid payment type. Must be one of the following: :values',
-            'type.in' => 'Type must be debit for vcard',
+            'payment_type.required' => 'Payment type must exist',
+            'type.required' => 'Payment type must be either credit or debit',
+            'payment_type.exists' => 'Invalid payment type. Must be one of the following: :values',
             'category.exists' => 'Invalid category. Select already existing or create a new one',
             'description.max' => 'Exceeded maximum valid description size',
         ];

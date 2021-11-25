@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\AuthController;
 use App\Models\User;
 use App\Models\Category;
@@ -30,8 +31,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //mock examples
 Route::get('vcards/{vcard}', [VCardController::class, 'getVCard']);
 Route::post('vcards', [VCardController::class, 'store']);
+Route::get('vcards/{vcard}/transactions', [VCardController::class, 'getVcardTransactions']);
 
 Route::post('/transactions/vcard',[TransactionController::class,'store_vcard_transaction']);
+Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
+Route::post('/transactions/others',[TransactionController::class,'store_transaction_other']);
+
+//admin prefix
+Route::get('/transactions/',[TransactionController::class,'show_all_transactions']);
+
+Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
 
 //mock examples
 /*
@@ -40,11 +49,11 @@ Route::get('/categories',fn() => Category::all()->toArray());
 Route::get('/default_categories',fn() => DefaultCategory::all()->toArray());
 Route::get('/transactions',fn() => Transaction::all()->toArray());
 Route::get('/vcards',fn() => Vcard::all()->toArray());
-Route::get('/payment_types',fn() => PaymentType::all()->toArray());
 
 Route::get('/vcards/{vcard}/transactions',fn($vcard) => Vcard::find($vcard)->transactions->toArray());
+*/
 Route::get('/vcards/{vcard}/categories',fn($vcard) => Vcard::find($vcard)->categories->toArray());
-
+/*
 Route::get('/transactions/{transaction}/pairTransaction',fn($transaction) => Transaction::find($transaction)->pairTransaction);
 Route::get('/transactions/{transaction}/pairVcard',fn($transaction) => Transaction::find($transaction)->pairVcard);
 Route::get('/transactions/{transaction}/category',fn($transaction) => Transaction::find($transaction)->category);
