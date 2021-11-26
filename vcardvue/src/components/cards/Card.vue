@@ -1,47 +1,53 @@
 <template>
-  <div class="about">
-    <h3>Create a vCard</h3>
-    <form class="createcard--form" enctype='multipart/form-data'>
-      <div>
+  <form class="row g-3 needs-validation" novalidate @submit.prevent="createCard" enctype='multipart/form-data'>
+    <h3 class="mt-5 mb-3">Create Vcard</h3>
+    <hr>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Phone Number:</label>
+        <input class="textbox form-control" name="phone" type="number" min="900000000" max="999999999" placeholder="999999999" v-model="formData.phone_number" data-rule="required|phone">
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Password:</label>
+        <input class="textbox  form-control" name="passw-ord" type="password" placeholder="Password" v-model="formData.password" data-rule="required">
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Name:</label>
+        <input class="textbox  form-control" name="name" type="text" placeholder="Name" v-model="formData.name" data-rule="required">
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Email:</label>
+        <input class="textbox  form-control" name="email" type="email" placeholder="email@email.com" v-model="formData.email" data-rule="required">
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Confirmation Code:</label>
+        <input class="textbox  form-control" name="conf_code" type="number" max="9999" placeholder="9999" v-model="formData.confirmation_code" data-rule="required">
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Upload photo: </label>
+          <input type="file" accept="image/*" name="photo_url" @change="processImg($event)" id="file-input">
+    </div>
+
+    <div>
         <div v-if="errors.length">
           <b>Please correct the following error(s):</b>
           <ul>
             <li v-for="error in errors" :key=error>{{ error }}</li>
           </ul>
         </div>
-      </div>
-      <div class="form-box">
-        <div >
-        <label for="name">Phone Number:</label>
-        <input class="textbox" name="phone" type="number" min="900000000" max="999999999" placeholder="999999999" v-model="formData.phone_number" data-rule="required|phone">
-      </div>
-      <div>
-        <label for="name">Password:</label>
-        <input class="textbox" name="passw-ord" type="password" placeholder="Password" v-model="formData.password" data-rule="required">
-      </div>
-      <div>
-        <label for="name">Name:</label>
-        <input class="textbox" name="name" type="text" placeholder="Name" v-model="formData.name" data-rule="required">
-      </div>
-      <div>
-        <label for="name">Email:</label>
-        <input class="textbox" name="email" type="email" placeholder="email@email.com" v-model="formData.email" data-rule="required">
-      </div>
-      <div>
-        <label for="name">Confirmation Code:</label>
-        <input class="textbox" name="conf_code" type="number" max="9999" placeholder="9999" v-model="formData.confirmation_code" data-rule="required">
-      </div>
-      <div>
-        <label for="name">Upload photo:</label>
-          <input type="file" accept="image/*" name="photo_url" @change="processImg($event)" id="file-input">
-      </div>
-      </div>
-      <div class="buttonstyle">
-        <button type="submit" class="btn btn-success" :class="[{'disable':!canCreateCard}]" @click.prevent="createCard($event)" >Creat Card</button>
-        <button type="reset" class="btn btn-danger" @click="resetValues">Reset</button>
-      </div>
-    </form>
-  </div>
+    </div>
+
+    <div class="mb-3 d-flex justify-content-end">
+      <button type="button" class="btn btn-primary px-4" :class="[{'disable':!canCreateCard}]" @click.prevent="createCard($event)"> Creat Card </button>
+      <button type="reset" class="btn btn-danger  px-4" @click="resetValues">Reset</button>
+      <button type="button" class="btn btn-light px-4" @click="cancel" > Cancel </button>
+    </div>
+  </form>
 </template>
 
 <script>
@@ -132,16 +138,21 @@ export default {
             console.log(errorResponse)
             console.log(errorResponse.message)
             console.log(errorResponse.response.status)
-            Object.values(errorResponse.response.data.errors).map(error => {
-              this.errors.push(error[0])
-              console.log(error[0])
-            })
+            console.log(errorResponse.response.data.message)
+            this.errors.push(errorResponse.response.data.message)
+          }
+          if (errorResponse.response.status === 500) {
+            console.log(errorResponse)
+            this.errors.push('Sorry, we cant create')
           }
         })
     },
     processImg (event) {
       console.log(event.target.files[0])
       this.formData.photo_url = event.target.files[0]
+    },
+    cancel () {
+      this.$emit('cancel', this.createCard)
     }
   },
   computed: {
