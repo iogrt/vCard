@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\PaymentTypeController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthUserController;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\DefaultCategory;
@@ -28,11 +28,8 @@ use App\Http\Controllers\api\TransactionController;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 //mock examples
+Route::get('/authUsers',[AuthUserController::class, 'getAllUsers']);
 Route::get('vcards/{vcard}', [VCardController::class, 'getVCard']);
 Route::post('vcards', [VCardController::class, 'store']);
 Route::get('vcards/{vcard}/transactions', [VCardController::class, 'getVcardTransactions']);
