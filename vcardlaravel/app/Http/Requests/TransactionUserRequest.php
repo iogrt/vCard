@@ -4,11 +4,10 @@ namespace App\Http\Requests;
 
 use App\Rules\CategoryRule;
 use App\Rules\DebitRule;
-use App\Rules\TransactionTypeRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
-class TransactionRequest extends FormRequest
+class TransactionUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,11 +27,9 @@ class TransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            'vcard' => 'required|digits:9',
-            'payment_reference' => 'required|digits:9',
-            'value' => ['required','gt:0'],
+            'payment_reference' => ['required','digits:9','not_in:' . Auth::user()->username],
+            'value' => ['required','gt:0',new DebitRule],
             'payment_type' => 'required|exists:payment_types,code',
-            'type' => ['required','in:C,D',new TransactionTypeRule],
             'category' => [new CategoryRule],
             'description' => 'nullable|max:8192',
         ];
@@ -40,15 +37,14 @@ class TransactionRequest extends FormRequest
 
     public function messages(){
         return [
-            'vcard.required' => 'Vcard transaction needs a vcard owner',
             'payment_reference.required' => 'Vcard transaction needs a destination vcard',
+            'payment_reference.not_in' => 'Destinatary must not be the same as the sender',
             'value.required' => 'Vcard transaction needs a value!',
             'value.min' => 'Value of transaction needs a value superior to zero!',
             'payment_type.required' => 'Payment Type required for transaction',
             'payment_type.exists' => 'Invalid payment type. Must be one of the following: :values',
-            'type.in' => 'Type must be debit for vcard',
             'category.exists' => 'Invalid category. Select already existing or create a new one',
-            'description.max' => 'Exceeded maximum valid description size',
+            'description.max' => 'Exceeded maximum valid description size'
         ];
     }
 }

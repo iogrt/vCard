@@ -11,7 +11,7 @@ class Category extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['type','name'];
+    protected $fillable = ['type','name','vcard'];
 
     public function vcard(){
         return $this->belongsTo(Vcard::class,'vcard','phone_number');

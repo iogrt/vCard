@@ -2,12 +2,11 @@
 
 namespace App\Rules;
 
-use App\Models\Category;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
 
-class CategoryRule implements Rule
+class TransactionTypeRule implements Rule
 {
+
     /**
      * Create a new rule instance.
      *
@@ -15,7 +14,6 @@ class CategoryRule implements Rule
      */
     public function __construct()
     {
-        //
     }
 
     /**
@@ -27,15 +25,11 @@ class CategoryRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if($value == null || $value == ''){
-            return true;
+        if($value == 'C' && request()->payment_type == 'VCARD'){
+            return false;
         }
 
-        return count( Category::where('vcard',Auth::user()->username)
-                    ->where('name','like',$value)
-                    ->where('type','like','D')
-                    ->whereNull('deleted_at')->get()) > 0;
-
+        return true;
     }
 
     /**
@@ -45,6 +39,6 @@ class CategoryRule implements Rule
      */
     public function message()
     {
-        return 'No valid category under vcard with the same transaction type';
+        return 'Only debit transactions allowed for Vcard';
     }
 }

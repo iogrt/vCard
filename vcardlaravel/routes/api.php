@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\PaymentTypeController;
-use App\Http\Controllers\AuthUserController;
+use App\Http\Controllers\api\CategoryController;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\DefaultCategory;
@@ -25,23 +25,39 @@ use App\Http\Controllers\api\TransactionController;
 |
 */
 
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
+Route::post('login', [AuthController::class, 'login'])->name('login');
 
-//mock examples
-Route::get('/authUsers',[AuthUserController::class, 'getAllUsers']);
-Route::get('vcards/{vcard}', [VCardController::class, 'getVCard']);
 Route::post('vcards', [VCardController::class, 'store']);
-Route::get('vcards/{vcard}/transactions', [VCardController::class, 'getVcardTransactions']);
 
-Route::post('/transactions/vcard',[TransactionController::class,'store_vcard_transaction']);
-Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
-Route::post('/transactions/others',[TransactionController::class,'store_transaction_other']);
+Route::middleware(['auth:api'])->group(function(){
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('users/me', [AuthController::class, 'myself']);
+    Route::get('vcards/{vcard}/transactions', [VCardController::class, 'getVcardTransactions']);
+
+    Route::middleware(['isUnblockedUser'])->group(function() {
+        Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
+        Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
+        Route::delete('/vcards/categories/', [VCardController::class, 'removeCategory']);
+        Route::post('/transactions/',[TransactionController::class,'userTransaction']);
+
+        Route::delete('/vcards', [VCardController::class, 'deleteVcard']);
+    });
+
+    Route::middleware(['isAdmin'])->prefix('admin')->group(function() {
+        Route::get('/categories/default',[CategoryController::class,'listDefaultCategories']);
+        Route::post('/categories/default',[CategoryController::class,'createDefaultCategory']);
+        Route::delete('/categories/default/{category}',[CategoryController::class, 'deleteDefaultCategory']);
+        Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
+        Route::get('/transactions/',[TransactionController::class,'show_all_transactions']);
+        Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
+        Route::post('/transactions/',[TransactionController::class,'adminTransaction']);
+    });
+});
+
+
 
 //admin prefix
-Route::get('/transactions/',[TransactionController::class,'show_all_transactions']);
 
-Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
 
 //mock examples
 /*

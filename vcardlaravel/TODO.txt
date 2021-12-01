@@ -1,0 +1,9 @@
+login com a store e best practices
+gerir categorias backend
+atribuir middleware correto às rotas da api (no fim de ter o backend todo testado)
+criar projeto de websockets
+
+
+
+
+...talvez as estatisticas

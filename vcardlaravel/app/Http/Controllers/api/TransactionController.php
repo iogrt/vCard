@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\TransactionOtherRequest;
+use App\Http\Requests\TransactionAdminRequest;
 use App\Http\Requests\TransactionRequest;
+use App\Http\Requests\TransactionUserRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Category;
 use App\Models\PaymentType;
 use App\Models\Transaction;
 use App\Models\Vcard;
+use App\Rules\CategoryRule;
+use App\Rules\DebitRule;
+use App\Rules\TransactionTypeRule;
 use Carbon\Carbon;
+use Dotenv\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
 {
@@ -23,6 +30,28 @@ class TransactionController extends Controller
             ->paginate(20);
 
         return TransactionResource::collection($transactions);
+    }
+
+    public function userTransaction(TransactionUserRequest $request){
+
+        $request->request->add(['vcard' => Auth::user()->username]);
+        $request->request->add(['type' => 'D']);
+
+        return $this->createTransaction(new TransactionRequest($request->request->all()));
+    }
+
+    public function adminTransaction(TransactionAdminRequest $request){
+
+        return $this->createTransaction($request);
+    }
+
+    public function createTransaction(TransactionRequest $request){
+        switch($request->payment_type){
+            case 'VCARD':
+                return $this->store_vcard_transaction($request);
+            default:
+                return $this->store_transaction_other($request);
+        }
     }
 
     public function store_vcard_transaction(TransactionRequest $request){
@@ -61,7 +90,7 @@ class TransactionController extends Controller
             //type is always debit here
 
             $newTransaction->value = $balance;
-            $newTransaction->old_balance = $vcard_owner->balance;
+            $newTransaction->old_balance = (int)$vcard_owner->balance;
             $vcard_owner->balance = $vcard_owner->balance - $balance;
 
             $newTransaction->new_balance = $vcard_owner->balance;
@@ -100,7 +129,7 @@ class TransactionController extends Controller
         }
     }
 
-    public function store_transaction_other(TransactionOtherRequest $request){
+    public function store_transaction_other(TransactionRequest $request){
         try {
             DB::beginTransaction();
 
@@ -133,17 +162,17 @@ class TransactionController extends Controller
 
             $newTransaction->type = $request->type;
             $newTransaction->value = $balance;
-            $newTransaction->old_balance = $vcard_owner->balance;
+            $newTransaction->old_balance = (int)$vcard_owner->balance;
 
             switch($request->type){
                 case 'C':
-                    $vcard_owner->balance = $vcard_owner->balance + $balance;
+                    $vcard_owner->balance = (int)$vcard_owner->balance + $balance;
                     break;
                 case 'D':
-                    $vcard_owner->balance = $vcard_owner->balance - $balance;
+                    $vcard_owner->balance = (int)$vcard_owner->balance - $balance;
             }
 
-            $newTransaction->new_balance = $vcard_owner->balance;
+            $newTransaction->new_balance = (int)$vcard_owner->balance;
             $newTransaction->vcard = $vcard_owner->phone_number;
             $newTransaction->pair_transaction = null;
 

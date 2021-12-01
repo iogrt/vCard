@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -24,18 +25,21 @@ class AuthController extends Controller
 
             $request = Request::create($url, 'POST');
             $response = Route::dispatch($request);
-            dd($response);
 
             $errorCode = $response->getStatusCode();
 
             if ($errorCode == '200') {
-                return json_decode((string) $response->getBody(), true);
+                return json_decode((string) $response->content(), true);
             } else {
                 return response()->json(
                 ['msg' => 'User credentials are invalid'],
                 $errorCode
                 );
             }
+    }
+
+    public function myself(){
+            return Auth::user()->username;
     }
 
     public function logout(Request $request) {
