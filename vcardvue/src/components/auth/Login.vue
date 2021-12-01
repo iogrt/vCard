@@ -71,13 +71,28 @@ export default {
   ],
   methods: {
     login () {
-      this.$store.dispatch('login', this.credentials)
+      /* const url = '/login'
+      this.$store.dispatch(url, this.credentials)
         .then(() => {
           this.$toast.success('User ' + this.$store.state.user.name + ' has entered the application.')
           this.$emit('login')
           this.$router.push({ name: 'Home' })
         })
         .catch(() => {
+          this.credentials.password = ''
+          this.$toast.error('User credentials are invalid!')
+        }) */
+      const url = '/login'
+      this.$axios.post(url, this.credentials)
+        .then((response) => {
+          this.$toast.success('User ' + this.credentials.username + ' has entered the application.')
+          this.$axios.defaults.headers.common.Authorization = 'Bearer ' + response.data.access_token
+          this.$emit('login')
+          this.$router.back()
+        })
+        .catch((errorResponse) => {
+          console.log(errorResponse)
+          delete this.$axios.defaults.headers.common.Authorization
           this.credentials.password = ''
           this.$toast.error('User credentials are invalid!')
         })

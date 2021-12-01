@@ -6,7 +6,8 @@ import axios from 'axios'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Toaster from '@meforma/vue-toaster'
-import FieldErrorMessage from './global/FieldErrorMessage'
+import FieldErrorMessage from './components/global/FieldErrorMessage'
+import ConfirmationDialog from './components/global/ConfirmationDialog'
 
 const toastOptions = {
   position: 'top',

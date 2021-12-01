@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
+//use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 use App\Http\Requests\TransactionOtherRequest;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\TransactionResource;
