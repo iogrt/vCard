@@ -71,13 +71,15 @@ export default {
   ],
   methods: {
     login () {
+      console.log(this.credentials)
       this.$store.dispatch('login', this.credentials)
         .then(() => {
           this.$toast.success('User ' + this.$store.state.user.name + ' has entered the application.')
           this.$emit('login')
           this.$router.push({ name: 'Home' })
         })
-        .catch(() => {
+        .catch(err => {
+          console.log(err)
           this.credentials.password = ''
           this.$toast.error('User credentials are invalid!')
         })

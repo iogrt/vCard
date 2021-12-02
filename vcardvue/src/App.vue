@@ -36,12 +36,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <a
+            <router-link
               class="nav-link"
-              href="#"
+              :class="{active: $route.name === 'Login'}"
+              :to="{ name: 'Login'}"
             ><i class="bi bi-box-arrow-in-right"></i>
               Login
-            </a>
+            </router-link>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -53,11 +54,11 @@
               aria-expanded="false"
             >
               <img
-                src="./assets/img/avatar-exemplo-1.jpg"
+                :src="photoUrl"
                 class="rounded-circle z-depth-0 avatar-img"
                 alt="avatar image"
               >
-              <span class="avatar-text">User Name</span>
+              <span class="avatar-text">{{ userName }}</span>
             </a>
             <ul
               class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
@@ -76,7 +77,7 @@
               </li>
               <li><a
                   class="dropdown-item"
-                  href="#"
+                  @click.prevent="logout"
                 ><i class="bi bi-arrow-right"></i>Logout</a></li>
             </ul>
           </li>
@@ -170,13 +171,14 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a
+                <router-link
                   class="nav-link"
-                  href="#"
+                  :class="{active: $route.name === 'Login'}"
+                  :to="{ name: 'Login'}"
                 >
                   <i class="bi bi-box-arrow-in-right"></i>
                   Login
-                </a>
+                </router-link>
               </li>
               <li class="nav-item dropdown">
                 <a
@@ -188,11 +190,11 @@
                   aria-expanded="false"
                 >
                   <img
-                    src="./assets/img/avatar-exemplo-1.jpg"
+                    :src="photoUrl"
                     class="rounded-circle z-depth-0 avatar-img"
                     alt="avatar image"
                   >
-                  <span class="avatar-text">User Name</span>
+                  <span class="avatar-text">{{ userName }}</span>
                 </a>
                 <ul
                   class="dropdown-menu"
@@ -211,7 +213,7 @@
                   </li>
                   <li><a
                       class="dropdown-item"
-                      href="#"
+                      @click.prevent="logout"
                     ><i class="bi bi-arrow-right"></i>Logout</a></li>
                 </ul>
               </li>
@@ -231,7 +233,44 @@
 <script>
 // REMOVE THESE IMPORTS WHEN VUE-ROUTER IS CONFIGURED
 export default {
-  name: 'RootComponent'
+  name: 'RootComponent',
+  methods: {
+    /* refresh () {
+      this.$store.dispatch('refresh')
+    },
+    logout () {
+      // this.$store.dispatch('logout')
+      this.$axios.post('logout')
+        .then(() => {
+          this.$toast.success('User has logged out of the application.')
+          // this.$router.push({ name: 'Home' })
+          delete this.$axios.defaults.headers.common.Authorization
+        })
+        .catch(() => {
+          this.$toast.error('There was a problem logging out of the application!')
+        })
+    } */
+  }
+  /* ,
+  computed: {
+    user () {
+      return this.$store.state.user
+    },
+    userId () {
+      return this.$store.state.user ? this.$store.state.user.id : -1
+    },
+    userName () {
+      return this.$store.state.user ? this.$store.state.user.name : ''
+    },
+    userPhotoUrl () {
+      const urlPhoto = this.$store.state.user
+        ? this.$store.state.user.photo_url
+        : null
+      return urlPhoto
+        ? this.$serverUrl + '/storage/fotos/' + urlPhoto
+        : 'img/avatar-none.png'
+    }
+  } */
 }
 </script>
 

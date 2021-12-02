@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import DebitTransactionCreate from '../views/DebitTransactionCreate'
 import About from '../views/About.vue'
@@ -9,9 +9,12 @@ import Login from '../components/auth/Login.vue'
 import ChangePassword from '../components/auth/ChangePassword.vue'
 import Users from '../components/users/Users.vue'
 import User from '../components/users/User.vue'
-import Report from '../components/Report.vue'
+
+// import Report from '../components/Report.vue'
 
 import Card from '../components/cards/Card.vue'
+
+import store from '../store'
 
 const routes = [
   {
@@ -49,11 +52,12 @@ const routes = [
     name: 'Dashboard',
     component: Dashboard
   },
-  {
+  /*  {
     path: '/reports',
     name: 'Reports',
     component: Report
   },
+*/
   {
     path: '/users',
     name: 'Users',
@@ -74,12 +78,38 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => DebitTransactionCreate
-  },
+  }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if ((to.name === 'Login') || (to.name === 'Home')) {
+    next()
+    return
+  }
+  if (!store.state.user) {
+    next({ name: 'Login' })
+    return
+  }
+  if (to.name === 'Reports') {
+    if (store.state.user.user_type !== 'A') {
+      next(false)
+      return
+    }
+  }
+  if (to.name === 'User') {
+    if ((store.state.user.user_type === 'A') || (store.state.user.id === to.params.id)) {
+      next()
+      return
+    }
+    next(false)
+    return
+  }
+  next()
 })
 
 export default router

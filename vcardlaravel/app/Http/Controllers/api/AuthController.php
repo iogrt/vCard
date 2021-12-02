@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Http\Resources\AuthUserResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class AuthController extends Controller
                 'scope'    => '',
             ]);
 
-            $url = config('app.passport_url') . '/oauth/token';
+            $url = env('PASSPORT_SERVER_URL') . '/oauth/token';
 
             $request = Request::create($url, 'POST');
             $response = Route::dispatch($request);
@@ -39,7 +40,7 @@ class AuthController extends Controller
     }
 
     public function myself(){
-            return Auth::user()->username;
+            return new AuthUserResource(Auth::user());
     }
 
     public function logout(Request $request) {
