@@ -62,6 +62,7 @@ class Initial extends Migration
             $table->decimal('max_debit', 9, 2)->default(5000);
 
             // custom options
+            $table->string('description')->default("");
             $table->json('custom_options')->nullable();
             // custom data
             $table->json('custom_data')->nullable();
