@@ -129,7 +129,7 @@ export default {
         .then(response => {
           console.log(url)
           console.log(response)
-          alert('Successfully created') // mudar depois para notificacao
+          this.$toast.success('Successfully created')
           this.resetValues()
         })
         .catch(errorResponse => {

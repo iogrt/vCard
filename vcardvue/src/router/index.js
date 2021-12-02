@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '../views/Home.vue'
+// import Home from '../views/Home.vue'
 import DebitTransactionCreate from '../views/DebitTransactionCreate'
 import About from '../views/About.vue'
 
@@ -17,11 +17,6 @@ import Card from '../components/cards/Card.vue'
 import store from '../store'
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
   {
     path: '/about',
     name: 'About',
@@ -87,7 +82,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if ((to.name === 'Login') || (to.name === 'Home') || (to.name === 'CardCreate')) {
+  if ((to.name === 'Login') || (to.name === 'Dashboard') || (to.name === 'CardCreate')) {
     next()
     return
   }

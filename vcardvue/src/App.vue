@@ -239,11 +239,11 @@ export default {
       this.$store.dispatch('refresh')
     },
     logout () {
-      // this.$store.dispatch('logout')
-      this.$axios.post('logout')
+      this.$store.dispatch('logout')
+      // this.$axios.post('logout')
         .then(() => {
           this.$toast.success('User has logged out of the application.')
-          // this.$router.push({ name: 'Home' })
+          this.$router.push({ name: 'Dashboard' })
           delete this.$axios.defaults.headers.common.Authorization
         })
         .catch(() => {
@@ -262,7 +262,7 @@ export default {
       return this.$store.state.user ? this.$store.state.user.name : ''
     },
     userPhotoUrl () {
-      console.log(this.$store.state.user)
+      // console.log(this.$store.state.user)
       const urlPhoto = this.$store.state.user
         ? this.$store.state.user.photo_url
         : null

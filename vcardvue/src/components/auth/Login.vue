@@ -76,7 +76,7 @@ export default {
         .then(() => {
           this.$toast.success('User ' + this.$store.state.user.name + ' has entered the application.')
           this.$emit('login')
-          this.$router.push({ name: 'Home' })
+          this.$router.push({ name: 'Dashboard' })
         })
         .catch(err => {
           console.log(err)
