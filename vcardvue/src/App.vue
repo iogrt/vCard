@@ -54,7 +54,7 @@
               aria-expanded="false"
             >
               <img
-                :src="photoUrl"
+                :src="userPhotoUrl"
                 class="rounded-circle z-depth-0 avatar-img"
                 alt="avatar image"
               >
@@ -190,7 +190,7 @@
                   aria-expanded="false"
                 >
                   <img
-                    :src="photoUrl"
+                    :src="userPhotoUrl"
                     class="rounded-circle z-depth-0 avatar-img"
                     alt="avatar image"
                   >
@@ -235,7 +235,7 @@
 export default {
   name: 'RootComponent',
   methods: {
-    /* refresh () {
+    refresh () {
       this.$store.dispatch('refresh')
     },
     logout () {
@@ -249,9 +249,8 @@ export default {
         .catch(() => {
           this.$toast.error('There was a problem logging out of the application!')
         })
-    } */
-  }
-  /* ,
+    }
+  },
   computed: {
     user () {
       return this.$store.state.user
@@ -263,14 +262,18 @@ export default {
       return this.$store.state.user ? this.$store.state.user.name : ''
     },
     userPhotoUrl () {
+      console.log(this.$store.state.user)
       const urlPhoto = this.$store.state.user
         ? this.$store.state.user.photo_url
         : null
-      return urlPhoto
+
+      const ret = urlPhoto
         ? this.$serverUrl + '/storage/fotos/' + urlPhoto
         : 'img/avatar-none.png'
+
+      return ret
     }
-  } */
+  }
 }
 </script>
 
