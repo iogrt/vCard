@@ -13,6 +13,7 @@ import User from '../components/users/User.vue'
 // import Report from '../components/Report.vue'
 
 import Card from '../components/cards/Card.vue'
+import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
 
@@ -30,13 +31,13 @@ const routes = [
     name: 'CardCreate',
     component: Card
   },
-
-  // ver depois
   {
     path: '/login',
     name: 'Login',
     component: Login
   },
+
+  // ver depois
   {
     path: '/password',
     name: 'ChangePassword',
@@ -46,6 +47,11 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard
+  },
+  {
+    path: '/transactions',
+    name: 'Transactions',
+    component: Transaction
   },
   /*  {
     path: '/reports',

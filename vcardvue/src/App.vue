@@ -118,13 +118,14 @@
             </li>
 
             <li class="nav-item">
-              <a
+              <router-link
                 class="nav-link"
-                href="#"
+                :class="{active: $route.name === 'Transactions'}"
+                :to="{name: 'Transactions'}"
               >
                 <i class="bi bi-list-stars"></i>
                 Transactions
-              </a>
+              </router-link>
             </li>
 
             <li class="nav-item">
@@ -273,6 +274,9 @@ export default {
 
       return ret
     }
+  },
+  created () {
+    console.log('created', this.$store.state)
   }
 }
 </script>
