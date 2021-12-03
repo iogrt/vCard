@@ -13,7 +13,7 @@ import User from '../components/users/User.vue'
 // import Report from '../components/Report.vue'
 
 import Card from '../components/cards/Card.vue'
-import Transaction from '../components/transactions/Transaction.vue'
+import Transactions from '../components/transactions/Transactions.vue'
 
 import store from '../store'
 
@@ -51,7 +51,7 @@ const routes = [
   {
     path: '/transactions',
     name: 'Transactions',
-    component: Transaction
+    component: Transactions
   },
   /*  {
     path: '/reports',

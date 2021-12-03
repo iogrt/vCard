@@ -25,6 +25,7 @@ class TransactionController extends Controller
 {
 
     public function show_all_transactions(){
+        return 'ola';
         $transactions = Transaction::query()
             ->orderBy('datetime')
             ->paginate(20);

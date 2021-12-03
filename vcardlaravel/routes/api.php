@@ -37,8 +37,8 @@ Route::middleware(['auth:api'])->group(function(){
     Route::middleware(['isUnblockedUser'])->group(function() {
         Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
         Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
-        Route::delete('/vcards/categories/', [VCardController::class, 'removeCategory']);
-        Route::post('/transactions/',[TransactionController::class,'userTransaction']);
+        Route::delete('/vcards/categories', [VCardController::class, 'removeCategory']);
+        Route::post('/transactions',[TransactionController::class,'userTransaction']);
 
         Route::delete('/vcards', [VCardController::class, 'deleteVcard']);
     });
@@ -48,9 +48,9 @@ Route::middleware(['auth:api'])->group(function(){
         Route::post('/categories/default',[CategoryController::class,'createDefaultCategory']);
         Route::delete('/categories/default/{category}',[CategoryController::class, 'deleteDefaultCategory']);
         Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
-        Route::get('/transactions/',[TransactionController::class,'show_all_transactions']);
+        Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
         Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
-        Route::post('/transactions/',[TransactionController::class,'adminTransaction']);
+        Route::post('/transactions',[TransactionController::class,'adminTransaction']);
     });
 });
 
