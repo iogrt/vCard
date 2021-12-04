@@ -1,4 +1,5 @@
 <template>
+<div>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
     <div class="container-fluid">
       <a
@@ -229,6 +230,7 @@
       </main>
     </div>
   </div>
+</div>
 </template>
 
 <script>

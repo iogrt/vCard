@@ -18,8 +18,8 @@
         v-model="filterByType"
       >
         <option :value="null"></option>
-        <option value="C">Crédito</option>
-        <option value="D">Débito</option>
+        <option value="C">Credit</option>
+        <option value="D">Debit</option>
       </select>
     </div>
     <div class="mx-2 mt-2">
@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     filteredTransactions () {
-      return []
+      return this.transactions
     }
   },
   methods: {
@@ -68,7 +68,8 @@ export default {
   created () {
     this.$axios.get('admin/transactions')
       .then(response => {
-        console.log(response)
+        console.log(response.data.data)
+        this.transactions = response.data.data
       })
       .catch(errorResponse => {
         console.log(errorResponse)

@@ -16,10 +16,12 @@
         :key="transaction.id"
       >
         <td v-if="showId">{{ transaction.id }}</td>
-        <td>{{ transaction.vcard }}</td>
+        <td v-if="transaction.vcard_owner">{{ transaction.vcard_owner.phone_number }}</td>
+        <td v-else>{{ 'N/A' }}</td>
         <td>{{ transaction.date }}</td>
         <td v-if="showType">{{ transaction.type }}</td>
-        <td v-if="showValue">{{ transaction.value }}</td>
+        <td v-if="transaction.type === 'Debit' && showValue" class="red">{{- transaction.value }}</td>
+        <td v-else class="green">{{ transaction.value }}</td>
         <td
           class="text-end"
           v-if="showEditButton || showDeleteButton"
@@ -67,7 +69,7 @@ export default {
     },
     showValue: {
       type: Boolean,
-      default: false
+      default: true
     },
     showEditButton: {
       type: Boolean,
@@ -85,6 +87,8 @@ export default {
     },
     deleteClick () {
     }
+  },
+  created () {
   }
 }
 </script>
@@ -93,5 +97,11 @@ export default {
 button {
   margin-left: 3px;
   margin-right: 3px;
+}
+.red {
+  color: red;
+}
+.green {
+  color: green;
 }
 </style>
