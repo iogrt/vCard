@@ -11,7 +11,7 @@
         <label
           for="inputUsername"
           class="form-label"
-        >Username</label>
+        >Username or Phone</label>
         <input
           type="text"
           class="form-control"
@@ -74,9 +74,10 @@ export default {
       console.log(this.credentials)
       this.$store.dispatch('login', this.credentials)
         .then(() => {
+          console.log('login', this.$store.state)
           this.$toast.success('User ' + this.$store.state.user.name + ' has entered the application.')
           this.$emit('login')
-          this.$router.push({ name: 'Home' })
+          this.$router.push({ name: 'Dashboard' })
         })
         .catch(err => {
           console.log(err)

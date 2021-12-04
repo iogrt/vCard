@@ -1,4 +1,5 @@
 <template>
+<div>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
     <div class="container-fluid">
       <a
@@ -118,13 +119,14 @@
             </li>
 
             <li class="nav-item">
-              <a
+              <router-link
                 class="nav-link"
-                href="#"
+                :class="{active: $route.name === 'Transactions'}"
+                :to="{name: 'Transactions'}"
               >
                 <i class="bi bi-list-stars"></i>
                 Transactions
-              </a>
+              </router-link>
             </li>
 
             <li class="nav-item">
@@ -228,6 +230,7 @@
       </main>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -239,11 +242,11 @@ export default {
       this.$store.dispatch('refresh')
     },
     logout () {
-      // this.$store.dispatch('logout')
-      this.$axios.post('logout')
+      this.$store.dispatch('logout')
+      // this.$axios.post('logout')
         .then(() => {
           this.$toast.success('User has logged out of the application.')
-          // this.$router.push({ name: 'Home' })
+          this.$router.push({ name: 'Dashboard' })
           delete this.$axios.defaults.headers.common.Authorization
         })
         .catch(() => {
@@ -262,7 +265,7 @@ export default {
       return this.$store.state.user ? this.$store.state.user.name : ''
     },
     userPhotoUrl () {
-      console.log(this.$store.state.user)
+      // console.log(this.$store.state.user)
       const urlPhoto = this.$store.state.user
         ? this.$store.state.user.photo_url
         : null
@@ -273,6 +276,9 @@ export default {
 
       return ret
     }
+  },
+  created () {
+    console.log('created', this.$store.state)
   }
 }
 </script>

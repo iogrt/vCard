@@ -17,6 +17,8 @@ class TransactionResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
+            'value' => $this->value,
             'vcard_owner' => new VCardResource($this->vCard),
             'type' => $this->type == 'C' ? "Credit" : "Debit",
             'datetime' => $this->datetime,
@@ -24,7 +26,7 @@ class TransactionResource extends JsonResource
             'old_balance' => $this->old_balance,
             'new_balance' => $this->new_balance,
             'description' => $this->description,
-            'category_name' => $this->category?->name,
+            'category_name' => $this->category?  $this->category : '',//pq aceita nulo
             'reference' => $this->payment_reference,
             'payment_type' => new PaymentTypeResource($this->paymentType),
             'payment_reference' => $this->payment_reference

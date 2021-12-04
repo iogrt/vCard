@@ -1,8 +1,15 @@
 import { createStore } from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
 import axios from 'axios'
 
 export default createStore({
+  plugins: [createPersistedState({
+    storage: window.sessionStorage,
+    paths: [
+      'user'
+    ]
+  })],
   state: {
     user: null
   },
@@ -55,10 +62,27 @@ export default createStore({
         throw error
       }
     },
+    /* async loadTransactions (context) {
+      try {
+        const response = await axios.get('transactions')
+        context.commit('setTransactions', response.data.data)
+        return response.data.data
+      } catch (error) {
+        context.commit('resetTransactions', null)
+        throw error
+      }
+    }, */
+    /* transactionsFilter: (state) => (type) => {
+      return type.transaction.filter(p =>
+        (!type || type === p.type)
+      )
+    }, */
     async refresh (context) {
       const userPromise = context.dispatch('loadLoggedInUser')
+      // const transactionsPromise = context.dispatch('loadTransactions')
 
       await userPromise
+      // await transactionsPromise
     }
   }
 })

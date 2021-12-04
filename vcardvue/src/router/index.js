@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '../views/Home.vue'
+// import Home from '../views/Home.vue'
 import DebitTransactionCreate from '../views/DebitTransactionCreate'
 import About from '../views/About.vue'
 
@@ -13,15 +13,12 @@ import User from '../components/users/User.vue'
 // import Report from '../components/Report.vue'
 
 import Card from '../components/cards/Card.vue'
+import Transactions from '../components/transactions/Transactions.vue'
+// import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
   {
     path: '/about',
     name: 'About',
@@ -35,13 +32,13 @@ const routes = [
     name: 'CardCreate',
     component: Card
   },
-
-  // ver depois
   {
     path: '/login',
     name: 'Login',
     component: Login
   },
+
+  // ver depois
   {
     path: '/password',
     name: 'ChangePassword',
@@ -52,6 +49,17 @@ const routes = [
     name: 'Dashboard',
     component: Dashboard
   },
+  {
+    path: '/transactions',
+    name: 'Transactions',
+    component: Transactions
+  },
+  /*  {
+    path: '/transactions/:id',
+    name: 'Transaction',
+    component: Transaction,
+    props: route => ({ id: parseInt(route.params.id) })
+  }, */
   /*  {
     path: '/reports',
     name: 'Reports',
@@ -87,7 +95,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if ((to.name === 'Login') || (to.name === 'Home') || (to.name === 'CardCreate')) {
+  if ((to.name === 'Login') || (to.name === 'Dashboard') || (to.name === 'CardCreate')) {
     next()
     return
   }
