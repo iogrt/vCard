@@ -1,4 +1,5 @@
 <template>
+<div>
   <table class="table">
     <thead>
       <tr>
@@ -6,6 +7,7 @@
         <th>Vcard</th>
         <th v-if="showDates">Date</th>
         <th v-if="showType">Type</th>
+        <th>Payment Type</th>
         <th v-if="showValue">Value</th>
         <th v-if="showEditButton || showDeleteButton"></th>
       </tr>
@@ -17,9 +19,10 @@
       >
         <td v-if="showId">{{ transaction.id }}</td>
         <td v-if="transaction.vcard_owner">{{ transaction.vcard_owner.phone_number }}</td>
-        <td v-else>{{ 'N/A' }}</td>
+        <td v-else>{{ 'Admin' }}</td>
         <td>{{ transaction.date }}</td>
         <td v-if="showType">{{ transaction.type }}</td>
+        <td>{{ transaction.payment_type.code }}</td>
         <td v-if="transaction.type === 'Debit' && showValue" class="red">{{- transaction.value }}</td>
         <td v-else class="green">{{ transaction.value }}</td>
         <td
@@ -43,13 +46,31 @@
           </div>
         </td>
       </tr>
+      <tr  v-if="editingTask">
+        <div>
+            <h2>Teste detail</h2>
+            <div class="form-group">
+                <label for="inputEditiginTask">editigin teste</label>
+            </div>
+            <div class="form-group">
+                <a class="btn btn-danger">Save</a>
+                <a class="btn btn-primary">Cancel</a>
+            </div>
+        </div>
+      </tr>
     </tbody>
   </table>
+</div>
 </template>
 
 <script>
 export default {
   name: 'TransactionTable',
+  data () {
+    return {
+      editingTask: false
+    }
+  },
   props: {
     transactions: {
       type: Array,
@@ -81,9 +102,12 @@ export default {
     }
   },
   emits: [
+    'edit'
   ],
   methods: {
     editClick () {
+      // this.$emit('edit', transaction)
+      this.editingTask = true
     },
     deleteClick () {
     }
