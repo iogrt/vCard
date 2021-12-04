@@ -38,6 +38,8 @@ export default createStore({
         delete axios.defaults.headers.common.Authorization
         sessionStorage.removeItem('token')
         context.commit('resetUser', null)
+
+        await context.dispatch('refresh')
       }
     },
     async loadLoggedInUser (context) {
