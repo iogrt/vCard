@@ -17,6 +17,7 @@ import Transactions from '../components/transactions/Transactions.vue'
 // import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
+import CategoriesManage from '../components/categories/CategoriesManage'
 
 const routes = [
   {
@@ -70,6 +71,12 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: Users
+  },
+
+  {
+    path: '/categories',
+    name: 'CategoriesManage',
+    component: CategoriesManage
   },
   {
     path: '/users/:id',

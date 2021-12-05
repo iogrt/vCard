@@ -2,8 +2,9 @@
   <div
     v-if='errors ? errors[fieldName] : false'
     class='validation-error'
-  >
-    {{ errors[fieldName][0] || '' }}
+    >
+
+    {{ errors[fieldName].join('\n') || '' }}
   </div>
 </template>
 

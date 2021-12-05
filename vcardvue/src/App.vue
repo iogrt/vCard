@@ -109,6 +109,17 @@
 
             <li class="nav-item">
               <router-link
+                  class="nav-link"
+                  :class="{active: $route.name === 'CategoriesManage'}"
+                  :to="{ name: 'CategoriesManage'}"
+              >
+                <i class="bi bi-pentagon"></i>
+                Categories
+              </router-link>
+            </li>
+
+            <li class="nav-item">
+              <router-link
                 class="nav-link"
                 :class="{active: $route.name === 'CardCreate'}"
                 :to="{name: 'CardCreate'}"

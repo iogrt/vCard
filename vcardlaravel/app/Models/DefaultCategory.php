@@ -11,6 +11,7 @@ class DefaultCategory extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $primaryKey = 'id';
     protected $table = 'default_categories';
     protected $fillable = ['type','name'];
 }

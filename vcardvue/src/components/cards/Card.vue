@@ -6,40 +6,51 @@
     <div class="mb-3">
       <label for="name" class="form-label">Phone Number:</label>
         <input class="textbox form-control" name="phone" type="number" min="900000000" max="999999999" placeholder="999999999" v-model="formData.phone_number" data-rule="required|phone">
+    <FieldErrorMessage
+        :errors="errors"
+        fieldName="phone_number">
+    </FieldErrorMessage>
     </div>
 
     <div class="mb-3">
       <label for="name" class="form-label">Password:</label>
-        <input class="textbox  form-control" name="passw-ord" type="password" placeholder="Password" v-model="formData.password" data-rule="required">
+        <input class="textbox  form-control" name="password" type="password" placeholder="Password" v-model="formData.password" data-rule="required">
+    <FieldErrorMessage
+      :errors="errors"
+      fieldName="password">
+    </FieldErrorMessage>
     </div>
 
     <div class="mb-3">
       <label for="name" class="form-label">Name:</label>
         <input class="textbox  form-control" name="name" type="text" placeholder="Name" v-model="formData.name" data-rule="required">
+    <FieldErrorMessage
+      :errors="errors"
+      fieldName="name">
+    </FieldErrorMessage>
     </div>
 
     <div class="mb-3">
       <label for="name" class="form-label">Email:</label>
         <input class="textbox  form-control" name="email" type="email" placeholder="email@email.com" v-model="formData.email" data-rule="required">
+    <FieldErrorMessage
+      :errors="errors"
+      fieldName="email">
+    </FieldErrorMessage>
     </div>
 
     <div class="mb-3">
       <label for="name" class="form-label">Confirmation Code:</label>
         <input class="textbox  form-control" name="conf_code" type="number" max="9999" placeholder="9999" v-model="formData.confirmation_code" data-rule="required">
+    <FieldErrorMessage
+      :errors="errors"
+      fieldName="confirmation_code">
+    </FieldErrorMessage>
     </div>
 
     <div class="mb-3">
       <label for="name" class="form-label">Upload photo: </label>
           <input type="file" accept="image/*" name="photo_url" @change="processImg($event)" id="file-input">
-    </div>
-
-    <div>
-        <div v-if="errors.length">
-          <b>Please correct the following error(s):</b>
-          <ul>
-            <li v-for="error in errors" :key=error>{{ error }}</li>
-          </ul>
-        </div>
     </div>
 
     <div class="mb-3 d-flex justify-content-end">
@@ -52,7 +63,9 @@
 
 <script>
 
+import FieldErrorMessage from '../global/FieldErrorMessage'
 export default {
+  components: { FieldErrorMessage },
   data () {
     return {
       formData: {
@@ -64,8 +77,7 @@ export default {
         photo_url: null,
         blocked: 0
       },
-      errors: [],
-      msgErrors: []
+      errors: []
     }
   },
   methods: {
@@ -97,29 +109,11 @@ export default {
       if (this.errors.length) {
         return
       }
+
       if (!this.canCreateCard) {
-        this.errors.push('Fill all the camps')
+        this.$toast.error('Fill all the camps')
       }
-      if (String(this.formData.phone_number).length !== 9) {
-        this.errors.push('Phone Should have 9 numbers')
-        return
-      }
-      if (String(this.formData.password).length < 6) {
-        this.errors.push('Password Should have more that 6 caracteres')
-        return
-      }
-      if (String(this.formData.name).length < 3 || !String(this.formData.name).trim()) {
-        this.errors.push('Name Should have more that 3 caracteres')
-        return
-      }
-      if (!emailRegex.test(this.formData.email)) {
-        this.errors.push('email invalido')
-        return
-      }
-      if (String(this.formData.confirmation_code).length !== 4) {
-        this.errors.push('Confirmation code Should have 4 numbers')
-        return
-      }
+
       if (this.formData.photo_url !== null) {
         formDataA.append('photo_url', this.formData.photo_url)
         console.log('photo uploaded')
@@ -135,15 +129,12 @@ export default {
         .catch(errorResponse => {
           if (errorResponse.response.status === 422) {
             // console.log(errorResponse.response.data.message)
-            console.log(errorResponse)
-            console.log(errorResponse.message)
-            console.log(errorResponse.response.status)
-            console.log(errorResponse.response.data.message)
-            this.errors.push(errorResponse.response.data.message)
+            this.errors = errorResponse.response.data.errors
+            console.log(this.errors)
+            this.$toast.error(errorResponse.response.data.message)
           }
           if (errorResponse.response.status === 500) {
-            console.log(errorResponse)
-            this.errors.push('Sorry, we cant create')
+            this.$toast.error('Sorry, internal server error')
           }
         })
     },

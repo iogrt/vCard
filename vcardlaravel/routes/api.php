@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use App\Models\Vcard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\VCardController;
 use App\Http\Controllers\api\AuthController;
@@ -38,6 +39,7 @@ Route::middleware(['auth:api'])->group(function(){
         Route::get('vcards/transactions', [TransactionController::class, 'show_user_transactions']);
         Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
         Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
+        Route::get('/vcards/categories', [VCardController::class, 'getCategories']);
         Route::delete('/vcards/categories', [VCardController::class, 'removeCategory']);
         Route::post('/transactions',[TransactionController::class,'userTransaction']);
 
@@ -51,6 +53,7 @@ Route::middleware(['auth:api'])->group(function(){
         Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
         Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
         Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
+        Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
         Route::post('/transactions',[TransactionController::class,'adminTransaction']);
     });
 });
