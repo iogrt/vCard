@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Requests\DefaultCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\TransactionResource;
 use App\Models\AuthUser;
 use App\Models\Category;
 use App\Models\DefaultCategory;
@@ -36,8 +37,10 @@ class VCardController extends Controller
     }
 
     public function blockVcard(Vcard $vcard){
-        return DB::transaction(function(){
-            return 4;
+        return DB::transaction(function() use($vcard){
+            $vcard->blocked ^= 1;
+
+            return new VCardResource($vcard);
         });
     }
 

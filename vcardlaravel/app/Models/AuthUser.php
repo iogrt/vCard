@@ -14,8 +14,15 @@ class AuthUser extends Authenticatable
 
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $hidden = [
+    protected $fillable = [
+        'name',
+        'email',
         'password'
+    ];
+
+    protected $hidden = [
+        'password',
+        'confirmation_code'
     ];
 
     public function findForPassport($username)

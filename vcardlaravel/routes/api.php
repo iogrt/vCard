@@ -35,6 +35,8 @@ Route::middleware(['auth:api'])->group(function(){
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('users/me', [AuthController::class, 'myself']);
 
+    Route::put('users/me',[AuthController::class,'editProfile']);
+
     Route::middleware(['isUnblockedUser'])->group(function() {
         Route::get('vcards/transactions', [TransactionController::class, 'show_user_transactions']);
         Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
