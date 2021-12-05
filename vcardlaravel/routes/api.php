@@ -9,6 +9,7 @@ use App\Models\PaymentType;
 use App\Models\Transaction;
 use App\Models\Vcard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\VCardController;
 use App\Http\Controllers\api\AuthController;
@@ -32,9 +33,9 @@ Route::post('vcards', [VCardController::class, 'store']);
 Route::middleware(['auth:api'])->group(function(){
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('users/me', [AuthController::class, 'myself']);
-    Route::get('vcards/{vcard}/transactions', [VCardController::class, 'getVcardTransactions']);
 
     Route::middleware(['isUnblockedUser'])->group(function() {
+        Route::get('vcards/transactions', [TransactionController::class, 'show_user_transactions']);
         Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
         Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
         Route::delete('/vcards/categories', [VCardController::class, 'removeCategory']);

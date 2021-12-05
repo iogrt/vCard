@@ -17,7 +17,7 @@ class isUnblockedUser
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()->user_type = 'V' && Auth::user()->blocked != 1){
+        if(Auth::user()->user_type == 'V' && Auth::user()->blocked != 1){
             return $next($request);
         }
         else if(Auth::user()->blocked == 1){

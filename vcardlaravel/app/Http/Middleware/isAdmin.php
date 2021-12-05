@@ -17,7 +17,7 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::check() && Auth::user()->user_type = 'A'){
+        if(Auth::check() && Auth::user()->user_type == 'A'){
             return $next($request);
         }
 
