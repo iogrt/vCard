@@ -18,6 +18,7 @@ import Transactions from '../components/transactions/Transactions.vue'
 
 import store from '../store'
 import CategoriesManage from '../components/categories/CategoriesManage'
+import Category from '../components/categories/Category'
 
 const routes = [
   {
@@ -77,6 +78,18 @@ const routes = [
     path: '/categories',
     name: 'CategoriesManage',
     component: CategoriesManage
+  },
+  {
+    path: '/categories/:id',
+    name: 'EditCategory',
+    component: Category,
+    props: route => ({ id: parseInt(route.params.id) })
+  },
+  {
+    path: '/categories/new',
+    name: 'NewCategory',
+    component: Category,
+    props: route => ({ id: null })
   },
   {
     path: '/users/:id',

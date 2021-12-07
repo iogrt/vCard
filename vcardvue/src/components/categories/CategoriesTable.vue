@@ -53,7 +53,6 @@ export default {
     }
   },
   emits: [
-    'completeToggled',
     'edit',
     'deleted'
   ],
@@ -77,20 +76,18 @@ export default {
   },
   methods: {
     editClick (cat) {
-      this.$emit('edit', cat)
+      this.$router.push({ name: 'EditCategory', params: { id: cat.id } })
     },
     deleteConfirmed () {
-      this.$axios.delete('categories/', {
-        data: {
-          name: this.categoryToDelete.name,
-          type: this.categoryToDelete.type
-        }
-      })
+      this.$axios.delete('vcards/categories/', { data: this.categoryToDelete })
         .then((response) => {
-          const deletedCat = response.data.data
-          this.$emit('deleted', deletedCat)
+          console.log(response.data.data)
+          this.$toast.success('Successfully deleted')
+
+          this.$emit('deleted', this.categoryToDelete)
         })
-        .catch((error) => {
+        .catch(error => {
+          this.$toast.error(error.message)
           console.log(error)
         })
     },

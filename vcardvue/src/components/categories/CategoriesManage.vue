@@ -35,10 +35,12 @@
           type="button"
           class="btn btn-success px-4 btn-addCategory"
           @click="addCategory"
-      ><i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add Category</button>
+      ><i class="bi bi-xs bi-plus-circle"></i>Add Category</button>
     </div>
   <CategoriesTable
-      :categories="filteredCategories">
+      :categories="filteredCategories"
+      @edit="editCategory"
+      @deleted="deletedCategory">
   </CategoriesTable>
 </template>
 
@@ -58,7 +60,7 @@ export default {
   computed: {
     filteredCategories () {
       return this.categories.filter((cat, index) => {
-        const funName = () => this.filterByName ? cat.name === this.filterByName : true
+        const funName = () => this.filterByName ? cat.name.toLowerCase().includes(this.filterByName.toLowerCase()) : true
         const funType = () => this.filterByType ? cat.type === this.filterByType : true
 
         return funName() && funType()
@@ -78,19 +80,20 @@ export default {
         .catch((error) => {
           console.error(error)
         })
-    }
-    /* addCategory () {
-      this.$router.push({ name: 'NewTask' })
     },
-    editCategory (task) {
-      this.$router.push({ name: 'Task', params: { id: task.id } })
+    addCategory () {
+      this.$router.push({ name: 'NewCategory' })
     },
-    deletedCategory (deletedTask) {
-      const idx = this.tasks.findIndex((t) => t.id === deletedTask.id)
+    editCategory (cat) {
+      this.$router.push({ name: 'EditCategory', params: { id: cat.id } })
+    },
+    deletedCategory (cat) {
+      console.log('gegegregerg')
+      const idx = this.categories.findIndex(t => t.id === cat.id)
       if (idx >= 0) {
-        this.tasks.splice(idx, 1)
+        this.categories.splice(idx, 1)
       }
-    } */
+    }
   },
   created () {
     this.loadCategories()

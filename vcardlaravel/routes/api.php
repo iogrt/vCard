@@ -41,7 +41,9 @@ Route::middleware(['auth:api'])->group(function(){
         Route::get('vcards/transactions', [TransactionController::class, 'show_user_transactions']);
         Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
         Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
+        Route::put('/vcards/categories/{id}', [VCardController::class, 'alterCategory']);
         Route::get('/vcards/categories', [VCardController::class, 'getCategories']);
+        Route::get('/vcards/categories/{id}', [VCardController::class, 'getCategory']);
         Route::delete('/vcards/categories', [VCardController::class, 'removeCategory']);
         Route::post('/transactions',[TransactionController::class,'userTransaction']);
 

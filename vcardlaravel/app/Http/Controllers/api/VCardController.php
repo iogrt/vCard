@@ -128,6 +128,18 @@ class VCardController extends Controller
         return CategoryResource::collection(Vcard::find(Auth::user()->username)->categories);
     }
 
+    public function getCategory($id){
+        $category = Category::where('vcard',Auth::user()->username)->where('id',$id)->first();
+
+        if($category != null){
+            return new CategoryResource($category);
+        }
+
+        return response()->json([
+            'error' => 'could not find category'
+        ],500);
+    }
+
     public function addCategoryFromDefault(Request $request){
         $validator = Validator::make($request->all(), [
             'id' => ['required','exists:default_categories,id,deleted_at,NULL'],
@@ -138,7 +150,7 @@ class VCardController extends Controller
 
 
         if($validator->fails()){
-            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],403);
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
         }
 
         $def = DefaultCategory::find($request->id);
@@ -163,7 +175,7 @@ class VCardController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],403);
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
         }
 
         $category = Category::create([
@@ -171,6 +183,42 @@ class VCardController extends Controller
             'type' => $request->type,
             'name' => $request->name,
         ]);
+
+        return new CategoryResource($category);
+    }
+
+    public function alterCategory(Request $request,$id){
+        $validator = Validator::make($request->all(), [
+            'name' => 'string',
+            'type' => 'in:C,D',
+        ],[
+            'name.string' => 'Name must be text',
+            'type.in' => 'Type must be either (C)redit or (D)debit',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
+        }
+
+        DB::beginTransaction();
+
+        $category = Category::find($request->id);
+
+        if($category == null){
+            return response()->json(["message" => "Invalid Id"],403);
+        }
+
+        if($request->name){
+            $category->name = $request->name;
+        }
+
+        if($request->type){
+            $category->type = $request->type;
+        }
+
+        $category->update();
+
+        DB::commit();
 
         return new CategoryResource($category);
     }
@@ -197,7 +245,7 @@ class VCardController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],403);
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
         }
 
         $vcardTransactions = DB::table('transactions')->leftJoin('categories',function($join) use($request){
