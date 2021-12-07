@@ -18,12 +18,12 @@
         :key="transaction.id"
       >
         <td v-if="showId">{{ transaction.id }}</td>
-        <td v-if="transaction.vcard_owner">{{ transaction.vcard_owner.phone_number }}</td>
+        <td v-if="transaction.vcard_owner">{{ transaction.vcard_owner }}</td>
         <td v-else>{{ 'Admin' }}</td>
         <td>{{ transaction.date }}</td>
         <td v-if="showType">{{ transaction.type }}</td>
-        <td>{{ transaction.payment_type.code }}</td>
-        <td v-if="transaction.type === 'Debit' && showValue" class="red">{{- transaction.value }}</td>
+        <td>{{ transaction.payment_type }}</td>
+        <td v-if="transaction.type === 'D' && showValue" class="red">{{- transaction.value }}</td>
         <td v-else class="green">{{ transaction.value }}</td>
         <td
           class="text-end"
@@ -45,18 +45,6 @@
             </button>
           </div>
         </td>
-      </tr>
-      <tr  v-if="editingTask">
-        <div>
-            <h2>Teste detail</h2>
-            <div class="form-group">
-                <label for="inputEditiginTask">editigin teste</label>
-            </div>
-            <div class="form-group">
-                <a class="btn btn-danger">Save</a>
-                <a class="btn btn-primary">Cancel</a>
-            </div>
-        </div>
       </tr>
     </tbody>
   </table>
@@ -105,9 +93,8 @@ export default {
     'edit'
   ],
   methods: {
-    editClick () {
-      // this.$emit('edit', transaction)
-      this.editingTask = true
+    editClick (transaction) {
+      this.$emit('edit', transaction)
     },
     deleteClick () {
     }

@@ -14,7 +14,7 @@ import User from '../components/users/User.vue'
 
 import Card from '../components/cards/Card.vue'
 import Transactions from '../components/transactions/Transactions.vue'
-// import Transaction from '../components/transactions/Transaction.vue'
+import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
 import CategoriesManage from '../components/categories/CategoriesManage'
@@ -56,12 +56,12 @@ const routes = [
     name: 'Transactions',
     component: Transactions
   },
-  /*  {
+  {
     path: '/transactions/:id',
     name: 'Transaction',
     component: Transaction,
     props: route => ({ id: parseInt(route.params.id) })
-  }, */
+  },
   /*  {
     path: '/reports',
     name: 'Reports',
