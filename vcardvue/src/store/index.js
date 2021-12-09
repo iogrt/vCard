@@ -7,18 +7,25 @@ export default createStore({
   plugins: [createPersistedState({
     storage: window.sessionStorage,
     paths: [
-      'user'
+      'user', 'token'
     ]
   })],
   state: {
-    user: null
+    user: null,
+    token: null
   },
   mutations: {
     resetUser (state) {
       state.user = null
     },
+    resetToken (state) {
+      state.token = null
+    },
     setUser (state, loggedInUser) {
       state.user = loggedInUser
+    },
+    setToken (state, token) {
+      state.token = token
     }
   },
   getter: {
@@ -29,6 +36,7 @@ export default createStore({
         const response = await axios.post('/login', credentials, { 'Content-Type': 'application/json' })
         axios.defaults.headers.common.Authorization = 'Bearer ' + response.data.access_token
         sessionStorage.setItem('token', response.data.access_token)
+        this.state.token = response.data.access_token
       } catch (error) {
         console.log(error)
         delete axios.defaults.headers.common.Authorization

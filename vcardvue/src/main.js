@@ -34,6 +34,7 @@ console.log(process.env)
 axios.defaults.baseURL = process.env.VUE_APP_API_URL
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$serverUrl = process.env.VUE_APP_BASE_URL
+axios.defaults.headers.common.Authorization = 'Bearer ' + store.state.token
 
 app.component('field-error-message', FieldErrorMessage)
 app.component('confirmation-dialog', ConfirmationDialog)

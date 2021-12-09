@@ -37,7 +37,7 @@ class Transaction extends Model
     ];
 
     public function paymentType(){
-        return $this->belongsTo(PaymentType::class,'payment_type');
+        return $this->belongsTo(PaymentType::class,'payment_type')->withTrashed();
     }
 
     public function category(){
