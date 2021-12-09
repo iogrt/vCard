@@ -124,7 +124,7 @@ router.beforeEach((to, from, next) => {
     next()
     return
   }
-  if (!store.state.user) {
+  if (!store.getters.isLoggedIn) {
     next({ name: 'Login' })
     return
   }

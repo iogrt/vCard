@@ -34,6 +34,9 @@ export default createStore({
     }
   },
   getters: {
+    isLoggedIn (state) {
+      return state.user.name !== ''
+    }
   },
   actions: {
     async login (context, credentials) {
