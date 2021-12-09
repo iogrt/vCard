@@ -3,6 +3,11 @@ import createPersistedState from 'vuex-persistedstate'
 
 import axios from 'axios'
 
+const emptyUser = {
+  photo_url: 'img/avatar-none.png',
+  name: '',
+  email: ''
+}
 export default createStore({
   plugins: [createPersistedState({
     storage: window.sessionStorage,
@@ -11,24 +16,30 @@ export default createStore({
     ]
   })],
   state: {
-    user: null,
-    token: null
+    user: emptyUser
   },
   mutations: {
     resetUser (state) {
-      state.user = null
+      state.user = emptyUser
     },
     resetToken (state) {
       state.token = null
     },
     setUser (state, loggedInUser) {
-      state.user = loggedInUser
-    },
-    setToken (state, token) {
-      state.token = token
+      const urlPhoto = loggedInUser ? loggedInUser.photo_url : null
+      const ret = urlPhoto
+        ? process.env.VUE_APP_BASE_URL + '/storage/fotos/' + urlPhoto
+        : 'img/avatar-none.png'
+      state.user = {
+        ...loggedInUser,
+        photo_url: ret
+      }
     }
   },
-  getter: {
+  getters: {
+    isLoggedIn (state) {
+      return state.user.name !== ''
+    }
   },
   actions: {
     async login (context, credentials) {
@@ -71,20 +82,20 @@ export default createStore({
       }
     },
     /* async loadTransactions (context) {
-      try {
-        const response = await axios.get('transactions')
-        context.commit('setTransactions', response.data.data)
-        return response.data.data
-      } catch (error) {
-        context.commit('resetTransactions', null)
-        throw error
-      }
-    }, */
+       try {
+       const response = await axios.get('transactions')
+       context.commit('setTransactions', response.data.data)
+       return response.data.data
+       } catch (error) {
+       context.commit('resetTransactions', null)
+       throw error
+       }
+       }, */
     /* transactionsFilter: (state) => (type) => {
-      return type.transaction.filter(p =>
-        (!type || type === p.type)
-      )
-    }, */
+       return type.transaction.filter(p =>
+       (!type || type === p.type)
+       )
+       }, */
     async refresh (context) {
       const userPromise = context.dispatch('loadLoggedInUser')
       // const transactionsPromise = context.dispatch('loadTransactions')

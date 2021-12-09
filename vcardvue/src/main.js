@@ -41,5 +41,8 @@ app.component('confirmation-dialog', ConfirmationDialog)
 
 app.mount('#app')
 
+// to access store inside router
+router.app = app
+
 store.$toast = app.$toast
 // store.$socket = socketIO.io
