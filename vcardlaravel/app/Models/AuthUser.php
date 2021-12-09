@@ -14,12 +14,6 @@ class AuthUser extends Authenticatable
 
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'password'
-    ];
-
     protected $hidden = [
         'password',
         'confirmation_code'

@@ -31,6 +31,11 @@ const app = createApp(App).use(router).use(store).use(Toaster, toastOptions)
 store.$toast = app.$toast
 
 console.log(process.env)
+
+if (sessionStorage.getItem('token')) {
+  axios.defaults.headers.common.Authorization = 'Bearer ' + sessionStorage.getItem('token')
+}
+
 axios.defaults.baseURL = process.env.VUE_APP_API_URL
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$serverUrl = process.env.VUE_APP_BASE_URL
