@@ -12,6 +12,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use \Illuminate\Support\Facades\Hash;
 
 
 class AuthController extends Controller
@@ -45,7 +46,7 @@ class AuthController extends Controller
     }
 
     public function editProfile(EditProfileRequest $request){
-        DB::transaction(function() use($request){
+        return DB::transaction(function() use($request){
             switch(Auth::user()->user_type){
                 case 'A':
                     $user = User::find(Auth::user()->username);
@@ -74,9 +75,8 @@ class AuthController extends Controller
 
             $user->update();
 
+            return new AuthUserResource($user);
         });
-
-        return new AuthUserResource(AuthUser::find(Auth::user()->username));
     }
 
     public function myself(){

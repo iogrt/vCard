@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     editTransaction (transaction) {
-    //      this.$router.push({ name: 'Transaction', params: { id: transaction.id } })
+      this.$router.push({ name: 'Transaction', params: { id: transaction.id } })
     },
     deleteTransaction () {
     }
