@@ -3,7 +3,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import DebitTransactionCreate from '../views/DebitTransactionCreate'
 import About from '../views/About.vue'
 
-// ver depois
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
 import ChangePassword from '../components/auth/ChangePassword.vue'
@@ -12,7 +11,8 @@ import User from '../components/users/User.vue'
 
 // import Report from '../components/Report.vue'
 
-import Card from '../components/cards/Card.vue'
+import CreateCard from '../components/cards/CreateCard.vue'
+import EditCard from '../components/cards/EditCard.vue'
 import Transactions from '../components/transactions/Transactions.vue'
 import Transaction from '../components/transactions/Transaction.vue'
 
@@ -30,9 +30,9 @@ const routes = [
     component: () => About
   },
   {
-    path: '/cards',
+    path: '/card/new',
     name: 'CardCreate',
-    component: Card
+    component: CreateCard
   },
   {
     path: '/login',
@@ -47,9 +47,14 @@ const routes = [
     component: ChangePassword
   },
   {
-    path: '/dashboard',
+    path: '/card',
     name: 'Dashboard',
     component: Dashboard
+  },
+  {
+    path: '/card/edit',
+    name: 'EditCard',
+    component: EditCard
   },
   {
     path: '/transactions',
