@@ -46,8 +46,7 @@ class AuthController extends Controller
     }
 
     public function editProfile(EditProfileRequest $request){
-
-        $transactionStatus = DB::transaction(function() use($request){
+        return DB::transaction(function() use($request){
             switch(Auth::user()->user_type){
                 case 'A':
                     $user = User::find(Auth::user()->username);
@@ -56,21 +55,13 @@ class AuthController extends Controller
                     $user = Vcard::find(Auth::user()->username);
                     break;
             }
-            if($request->password || $request->confirmation_code) {
-                if(!Hash::check($request->current_password,$user->password)) {
-                    return response()->json(
-                        ['msg' => 'current password is incorrect'],
-                        400
-                    );
-                }
-            }
+
             if($request->name){
                 $user->name = $request->name;
             }
 
-
             if($request->password){
-                $user->password = bcrypt($request->password);
+                $user->name = bcrypt($request->password);
             }
 
             if($request->email){
@@ -82,17 +73,10 @@ class AuthController extends Controller
                 $user->photo_url = basename($path);
             }
 
-            if($request->confirmation_code){
-                $user->confirmation_code = bcrypt($request->confirmation_code);
-            }
-
             $user->update();
-            return null;
 
+            return new AuthUserResource($user);
         });
-
-        // outside because transaction needs to commit
-        return $transactionStatus ? $transactionStatus : new AuthUserResource(AuthUser::find(Auth::user()->username));
     }
 
     public function myself(){
