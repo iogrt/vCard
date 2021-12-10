@@ -100,6 +100,7 @@ export default {
     }
   },
   created () {
+    console.log('transactions', this.transactions)
   }
 }
 </script>

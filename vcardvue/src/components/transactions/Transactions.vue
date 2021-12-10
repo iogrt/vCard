@@ -4,6 +4,9 @@
     <div class="mx-2">
       <h3 class="mt-4">Transactions</h3>
     </div>
+    <div class="mx-2 total-filtro">
+      <h5 class="mt-4">Total: {{ totalTransactions }}</h5>
+    </div>
   </div>
   <hr>
   <div class="mb-3 d-flex justify-content-between flex-wrap">
@@ -57,6 +60,12 @@ export default {
   computed: {
     filteredTransactions () {
       return this.transactions
+    },
+    totalTransactions () { // tirar caso com paginate n de certo
+      return this.transactions.length
+    /*  return this.transactions.reduce((c, t) =>
+        (this.transactions) ? c + 1 : c, 0)
+    } */
     }
   },
   methods: {
