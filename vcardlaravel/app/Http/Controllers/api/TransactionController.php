@@ -14,7 +14,6 @@ use App\Rules\CategoryRule;
 use App\Rules\DebitRule;
 use App\Rules\TransactionTypeRule;
 use Carbon\Carbon;
-use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;

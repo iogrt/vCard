@@ -9,8 +9,6 @@ import ChangePassword from '../components/auth/ChangePassword.vue'
 import Users from '../components/users/Users.vue'
 import User from '../components/users/User.vue'
 
-// import Report from '../components/Report.vue'
-
 import CreateCard from '../components/cards/CreateCard.vue'
 import EditCard from '../components/cards/EditCard.vue'
 import Transactions from '../components/transactions/Transactions.vue'
@@ -19,6 +17,9 @@ import Transaction from '../components/transactions/Transaction.vue'
 import store from '../store'
 import CategoriesManage from '../components/categories/CategoriesManage'
 import Category from '../components/categories/Category'
+
+import PaymentTypes from '../components/paymentTypes/PaymentTypes'
+import PaymentType from '../components/paymentTypes/PaymentType'
 
 const routes = [
   {
@@ -67,18 +68,11 @@ const routes = [
     component: Transaction,
     props: route => ({ id: parseInt(route.params.id) })
   },
-  /*  {
-    path: '/reports',
-    name: 'Reports',
-    component: Report
-  },
-*/
   {
     path: '/users',
     name: 'Users',
     component: Users
   },
-
   {
     path: '/categories',
     name: 'CategoriesManage',
@@ -95,6 +89,23 @@ const routes = [
     name: 'NewCategory',
     component: Category,
     props: route => ({ id: null })
+  },
+  {
+    path: '/paymentTypes/:code',
+    name: 'EditPaymentType',
+    component: PaymentType,
+    props: route => ({ code: route.params.code })
+  },
+  {
+    path: '/paymentTypes/new',
+    name: 'NewPaymentType',
+    component: PaymentType,
+    props: route => ({ code: null })
+  },
+  {
+    path: '/paymentTypes',
+    name: 'PaymentTypes',
+    component: PaymentTypes
   },
   {
     path: '/users/:id',

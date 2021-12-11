@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <div class="d-flex justify-content-between">
     <div class="mx-2">
       <h3 class="mt-4">Payment Types</h3>
@@ -6,39 +6,48 @@
   </div>
   <hr>
   <div class="mx-2 mt-2 flex-grow-1 filter-div">
+    <input id="chooseTimestamp" v-model="showTimestamps" type="checkbox" />
+    &nbsp;
     <label
-        for="selectType"
+        for="chooseTimestamp"
         class="form-label"
-    >Filter by type:</label>
-    <select
-        class="form-select"
-        id="selectCompleted"
-        v-model="filterByType"
-    >
-      <option value="C">Credit</option>
-      <option value="D">Debit</option>
-    </select>
+    >Show TimeStamps</label>
   </div>
   <div class="mx-2 mt-2 flex-grow-1 filter-div">
     <label
-        for="selectName"
+        for="inputCode"
+        class="form-label"
+    >Filter by code:</label>
+    <input id="inputCode" class="textbox  form-control" type="text" placeholder="Code" v-model="filterByCode">
+  </div>
+  <div class="mx-2 mt-2 flex-grow-1 filter-div">
+    <label
+        for="inputName"
         class="form-label"
     >Filter by name:</label>
 
-    <input id="selectName" class="textbox  form-control" type="text" placeholder="Name" v-model="filterByName">
+    <input id="inputName" class="textbox  form-control" type="text" placeholder="Name" v-model="filterByName">
+  </div>
+  <div class="mx-2 mt-2 flex-grow-1 filter-div">
+    <label
+        for="inputDescription"
+        class="form-label"
+    >Filter by description:</label>
+    <input id="inputDescription" class="textbox  form-control" type="text" placeholder="Description" v-model="filterByDescription">
   </div>
   <div class="mx-2 mt-2">
     <button
         type="button"
-        class="btn btn-success px-4 btn-addCategory"
-        @click="addCategory"
-    ><i class="bi bi-xs bi-plus-circle"></i>Add Category</button>
+        class="btn btn-success px-4 btn-addPaymentType"
+        @click="addPaymentType"
+    ><i class="bi bi-xs bi-plus-circle"></i>Add Payment Type</button>
   </div>
-  <CategoriesTable
-      :categories="filteredCategories"
-      @edit="editCategory"
-      @deleted="deletedCategory">
-  </CategoriesTable>
+  <PaymentTypesTable
+      :payment-types="filteredTypes"
+      :showTimestamps="showTimestamps"
+      @edit="editPaymentType"
+      @deleted="deletedPaymentType">
+  </PaymentTypesTable>
 </template>
 
 <script>
@@ -46,7 +55,7 @@
 import PaymentTypesTable from './PaymentTypesTable'
 
 export default {
-  name: 'CategoriesManage',
+  name: 'PaymentTypes',
   // eslint-disable-next-line vue/no-unused-components
   components: { PaymentTypesTable },
   data () {
@@ -54,49 +63,48 @@ export default {
       paymentTypes: [],
       filterByCode: '',
       filterByName: '',
-      filterByDescription: ''
+      filterByDescription: '',
+      showTimestamps: false
     }
   },
   computed: {
     filteredTypes () {
       return this.paymentTypes.filter((cat, index) => {
+        const funCode = () => this.filterByCode ? cat.code.toLowerCase().includes(this.filterByCode.toLowerCase()) : true
         const funName = () => this.filterByName ? cat.name.toLowerCase().includes(this.filterByName.toLowerCase()) : true
-        const funType = () => this.filterByType ? cat.type === this.filterByType : true
+        const funDescription = () => this.filterByDescription ? cat.description.toLowerCase().includes(this.filterByDescription.toLowerCase()) : true
 
-        return funName() && funType()
+        return funName() && funCode() && funDescription()
       })
-    },
-    totalCategories () {
-      return this.categories.length
     }
   },
   methods: {
-    loadCategories () {
-      this.$axios.get('vcards/categories')
-          .then(response => {
-            this.categories = response.data.data
-            console.log(this.categories)
-          })
-          .catch((error) => {
-            console.error(error)
-          })
+    loadPaymentTypes () {
+      this.$axios.get('admin/payment_types')
+        .then(response => {
+          this.paymentTypes = response.data.data
+          console.log(this.paymentTypes)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     },
-    addCategory () {
-      this.$router.push({ name: 'NewCategory' })
+    addPaymentType () {
+      this.$router.push({ name: 'NewPaymentType' })
     },
-    editCategory (cat) {
-      this.$router.push({ name: 'EditCategory', params: { id: cat.id } })
+    editPaymentType (cat) {
+      this.$router.push({ name: 'EditPaymentType', params: { id: cat.id } })
     },
-    deletedCategory (cat) {
-      console.log('gegegregerg')
-      const idx = this.categories.findIndex(t => t.id === cat.id)
+    deletedPaymentType (cat) {
+      const idx = this.paymentTypes.findIndex(t => t.id === cat.id)
+
       if (idx >= 0) {
-        this.categories.splice(idx, 1)
+        this.paymentTypes.splice(idx, 1)
       }
     }
   },
   created () {
-    this.loadCategories()
+    this.loadPaymentTypes()
   }
 }
 </script>
@@ -108,8 +116,7 @@ export default {
 .total-filtro {
   margin-top: 0.35rem;
 }
-.btn-addCategory {
+.btn-addPaymentType {
   margin-top: 1.85rem;
 }
 </style>
--->

@@ -120,6 +120,17 @@
 
             <li class="nav-item">
               <router-link
+                  class="nav-link"
+                  :class="{active: $route.name === 'PaymentTypes'}"
+                  :to="{ name: 'PaymentTypes'}"
+              >
+                <i class="bi bi-pentagon"></i>
+                Payment Types
+              </router-link>
+            </li>
+
+            <li class="nav-item">
+              <router-link
                 class="nav-link"
                 :class="{active: $route.name === 'CardCreate'}"
                 :to="{name: 'CardCreate'}"

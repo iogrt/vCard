@@ -17,6 +17,7 @@ class PaymentType extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'code',
         'name',
         'description',
         'validation_rules',
