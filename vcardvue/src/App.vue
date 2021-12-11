@@ -141,13 +141,10 @@
             </li>
 
             <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-files"></i>
+              <router-link :to="{name: 'DebitTransactionCreate'}" class="nav-link">
+                <i class="bi bi-send"></i>
                 Send Money
-              </a>
+              </router-link>
             </li>
 
             <li class="nav-item">

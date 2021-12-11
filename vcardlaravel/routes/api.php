@@ -40,6 +40,7 @@ Route::middleware(['auth:api'])->group(function(){
         // Routes for admins OR unblocked users
         Route::get('users/me', [AuthController::class, 'myself']);
         Route::put('users/me',[AuthController::class,'editProfile']);
+        Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
 
         // Routes for unblocked users
         Route::middleware(['isVcardUser'])->group(function() {
@@ -63,7 +64,6 @@ Route::middleware(['auth:api'])->group(function(){
         Route::delete('/categories/default/{category}',[CategoryController::class, 'deleteDefaultCategory']);
         Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
         Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
-        Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
         Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
         Route::post('/transactions',[TransactionController::class,'adminTransaction']);
     });
