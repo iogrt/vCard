@@ -1,5 +1,4 @@
 <template>
-<div>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
     <div class="container-fluid">
       <a
@@ -142,9 +141,9 @@
 
             <li class="nav-item">
               <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'Transactions'}"
-                :to="{name: 'Transactions'}"
+                  class="nav-link"
+                  :class="{active: $route.name === 'Transactions'}"
+                  :to="{name: 'Transactions'}"
               >
                 <i class="bi bi-list-stars"></i>
                 Transactions
@@ -152,13 +151,10 @@
             </li>
 
             <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-files"></i>
+              <router-link :to="{name: 'DebitTransactionCreate'}" class="nav-link">
+                <i class="bi bi-send"></i>
                 Send Money
-              </a>
+              </router-link>
             </li>
 
             <li class="nav-item">
@@ -214,7 +210,7 @@
                   aria-expanded="false"
                 >
                   <img
-                    :src="user.photo_url"
+                    :src="userPhotoUrl"
                     class="rounded-circle z-depth-0 avatar-img"
                     alt="avatar image"
                   >
@@ -252,10 +248,10 @@
       </main>
     </div>
   </div>
-</div>
 </template>
 
 <script>
+// REMOVE THESE IMPORTS WHEN VUE-ROUTER IS CONFIGURED
 export default {
   name: 'RootComponent',
   methods: {
@@ -284,10 +280,19 @@ export default {
     },
     userName () {
       return this.$store.state.user ? this.$store.state.user.name : ''
+    },
+    userPhotoUrl () {
+      // console.log(this.$store.state.user)
+      const urlPhoto = this.$store.state.user
+        ? this.$store.state.user.photo_url
+        : null
+
+      const ret = urlPhoto
+        ? this.$serverUrl + '/storage/fotos/' + urlPhoto
+        : 'img/avatar-none.png'
+
+      return ret
     }
-  },
-  created () {
-    console.log('created', this.$store.state)
   }
 }
 </script>

@@ -14,9 +14,16 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentTypeController extends Controller
 {
-    public function getAllPaymentTypes(){
+    public function getAllPaymentTypesAdmin(){
         $types = PaymentType::withTrashed()->get();
         PaymentTypeResource::$timestamps = true;
+
+        return PaymentTypeResource::collection($types);
+    }
+
+    public function getAllPaymentTypes(){
+        $types = PaymentType::all();
+        PaymentTypeResource::$timestamps = false;
 
         return PaymentTypeResource::collection($types);
     }

@@ -10,13 +10,14 @@ class PaymentTypesTableSeeder extends Seeder
     static private $sum_debit_weight;
     static private $sum_credit_weight;
     static public $paymentTypes = [
-        ['code' => 'VCARD', 'name' => 'vCard', 'description' => 'vCard phone number', 'deleted' => false, 'debit_weight' => 100, 'credit_weight' => 100],
-        ['code' => 'PAYPAL', 'name' => 'PayPal', 'description' => 'PayPal email account', 'deleted' => false, 'debit_weight' => 50, 'credit_weight' => 50],
-        ['code' => 'MBWAY', 'name' => 'MB WAY', 'description' => 'MB WAY phone number', 'deleted' => false, 'debit_weight' => 50, 'credit_weight' => 100],
-        ['code' => 'IBAN', 'name' => 'Bank Transfer', 'description' => 'Bank Transfer - IBAN account code (2 letters and 23 digits)', 'deleted' => false, 'debit_weight' => 100, 'credit_weight' => 400],
-        ['code' => 'MB', 'name' => 'Multibanco', 'description' => 'Multibanco payment - Entity (5 digits) + Reference (9 digits)', 'deleted' => false, 'debit_weight' => 400, 'credit_weight' => 0],
-        ['code' => 'VISA', 'name' => 'Visa Card', 'description' => 'Visa Card number', 'deleted' => false, 'debit_weight' => 100, 'credit_weight' => 20],
-        ['code' => 'MASTERCARD', 'name' => 'Mastercard', 'description' => 'Mastercard number', 'deleted' => true, 'debit_weight' => 50, 'credit_weight' => 20],
+        ['code' => 'VCARD', 'name' => 'vCard', 'description' => 'vCard phone number', 'deleted' => false, 'debit_weight' => 100, 'credit_weight' => 100, 'validation_rules' => '"^9\\\d{8}$"'],
+        // email regex used by W3C (used in HTML specification)
+        ['code' => 'PAYPAL', 'name' => 'PayPal', 'description' => 'PayPal email account', 'deleted' => false, 'debit_weight' => 50, 'credit_weight' => 50, 'validation_rules' => '"^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\\.[a-zA-Z0-9-]+)*$"'],
+        ['code' => 'MBWAY', 'name' => 'MB WAY', 'description' => 'MB WAY phone number', 'deleted' => false, 'debit_weight' => 50, 'credit_weight' => 100, 'validation_rules' => '"^9\\\d{8}$"'],
+        ['code' => 'IBAN', 'name' => 'Bank Transfer', 'description' => 'Bank Transfer - IBAN account code (2 letters and 23 digits)', 'deleted' => false, 'debit_weight' => 100, 'credit_weight' => 400, 'validation_rules' => '"^[a-zA-Z]{2}\\\d{23}$"'],
+        ['code' => 'MB', 'name' => 'Multibanco', 'description' => 'Multibanco payment - Entity (5 digits) + Reference (9 digits) separated by a space', 'deleted' => false, 'debit_weight' => 400, 'credit_weight' => 0, 'validation_rules' => '"^\\\d{5} \\\d{9}$"'],
+        ['code' => 'VISA', 'name' => 'Visa Card', 'description' => 'Visa Card number', 'deleted' => false, 'debit_weight' => 100, 'credit_weight' => 20, 'validation_rules' => '"^4[0-9]{12}(?:[0-9]{3})?$"'],
+        ['code' => 'MASTERCARD', 'name' => 'Mastercard', 'description' => 'Mastercard number', 'deleted' => true, 'debit_weight' => 50, 'credit_weight' => 20,'validation_rules' => '"^5[1-5][0-9]{14}$"'],
     ];
 
     static private function calculateSumWeight()
@@ -108,6 +109,7 @@ class PaymentTypesTableSeeder extends Seeder
                 'code' => $row['code'],
                 'name' => $row['name'],
                 'description' => $row['description'],
+                'validation_rules' => $row['validation_rules'],
                 'created_at' => $createdAt,
                 'updated_at' => $updatedAt,
                 'deleted_at' => $row['deleted'] ? $updatedAt : null,

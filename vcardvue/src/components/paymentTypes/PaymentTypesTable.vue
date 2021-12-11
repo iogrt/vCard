@@ -2,10 +2,11 @@
   <confirmation-dialog
       ref="confirmationDialog"
       confirmationBtn="Delete category"
-      :msg="`Do you really want to delete this payment types ${ paymentTypeToDeleteDescription }?`"
+      :msg="`Do you really want to delete this payment type ${ paymentTypeToDeleteDescription }?`"
       @confirmed="deleteConfirmed"
   >
   </confirmation-dialog>
+
   <table class="table">
     <thead>
     <tr>
@@ -25,22 +26,23 @@
       <td>{{ pay.name}} </td>
       <td>{{ pay.description}} </td>
       <td v-if="showRules">{{ pay.validation_rules}} </td>
-      <td v-if="showTimestamps">{{new Date(pay.deleted_at)}}</td>
-      <td v-if="showTimestamps"></td>
-      <td v-if="showTimestamps"></td>
+      <td v-if="showTimestamps">{{pay.deleted_at ? new Date(pay.deleted_at) : ""}}</td>
       <td class="text-end">
         <div class="d-flex justify-content-end">
           <button
+              v-if="!pay.deleted_at"
               class="btn btn-xs btn-light"
               @click="editClick(pay)"
           ><i class="bi bi-xs bi-pencil"></i>
           </button>
 
           <button
+              v-if="!pay.deleted_at"
               class="btn btn-xs btn-light"
               @click="deleteClick(pay)"
           ><i class="bi bi-xs bi-x-square-fill"></i>
           </button>
+
         </div>
       </td>
     </tr>
@@ -89,7 +91,8 @@ export default {
       this.$router.push({ name: 'EditPaymentType', params: { code: pay.code } })
     },
     deleteConfirmed () {
-      this.$axios.delete('admin/payment_types/', { data: this.paymentTypeToDelete })
+      console.log(this.paymentTypeToDelete)
+      this.$axios.delete('admin/payment_types/' + this.paymentTypeToDelete.code)
         .then((response) => {
           console.log(response.data.data)
           this.$toast.success('Successfully deleted')
@@ -98,7 +101,6 @@ export default {
         })
         .catch(error => {
           this.$toast.error(error.message)
-          console.log(error)
         })
     },
     deleteClick (pay) {

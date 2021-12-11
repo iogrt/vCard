@@ -175,14 +175,6 @@ class TransactionController extends Controller
             $newTransaction->date = Carbon::now();
             $newTransaction->datetime = Carbon::now();
 
-            if($request->description){
-                $newTransaction->description = $request->description;
-            }
-
-            if($request->category){
-                $newTransaction->category_id = Category::where('name', $request->category)->first()->id;
-            }
-
             $newTransaction->payment_type = $request->payment_type;
 
             $vcard_owner = Vcard::where('phone_number', $request->vcard)->first();

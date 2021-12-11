@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import DebitTransactionCreate from '../views/DebitTransactionCreate'
 import About from '../views/About.vue'
 
+// ver depois
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
 import ChangePassword from '../components/auth/ChangePassword.vue'
@@ -31,24 +32,24 @@ const routes = [
     component: () => About
   },
   {
-    path: '/card/new',
+    path: '/cards',
     name: 'CardCreate',
     component: CreateCard
   },
+
+  // ver depois
   {
     path: '/login',
     name: 'Login',
     component: Login
   },
-
-  // ver depois
   {
     path: '/password',
     name: 'ChangePassword',
     component: ChangePassword
   },
   {
-    path: '/card',
+    path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard
   },
@@ -108,6 +109,11 @@ const routes = [
     component: PaymentTypes
   },
   {
+    path: '/users',
+    name: 'Users',
+    component: Users
+  },
+  {
     path: '/users/:id',
     name: 'User',
     component: User,
@@ -135,7 +141,7 @@ router.beforeEach((to, from, next) => {
     next()
     return
   }
-  if (!store.getters.isLoggedIn) {
+  if (!store.state.user) {
     next({ name: 'Login' })
     return
   }

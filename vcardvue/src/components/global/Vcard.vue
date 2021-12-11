@@ -6,7 +6,7 @@
       <small>{{user.name}}<br>
       <i class="bi bi-envelope"></i>{{user.email}}</small>
     </p>
-    <router-link title="Edit Info" :to="{name: 'EditCard'}" class="vcard-editbtn">
+    <router-link v-show="canEdit" title="Edit Info" :to="{name: 'EditCard'}" class="vcard-editbtn">
       <div class="btn btn-sm rounded-circle border-white text-center" style="border-style: dashed">
         <i class="bi bi-pen text-white fs-5 mx-auto"></i></div>
     </router-link>
@@ -18,7 +18,8 @@
 export default {
   name: 'Vcard',
   props: {
-    user: Object
+    user: Object,
+    canEdit: Boolean
   }
 }
 
