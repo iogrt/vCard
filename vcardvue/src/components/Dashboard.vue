@@ -3,7 +3,7 @@
     <h1 class="h2">My vCard</h1>
   </div>
   <div>
-    <Vcard :user="user"/>
+    <Vcard :user="user" canEdit />
     <p>Your balance: <span class="fs-5 text-success">{{user.balance}}€</span></p>
   </div>
 </template>
