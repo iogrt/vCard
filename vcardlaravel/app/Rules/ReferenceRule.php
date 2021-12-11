@@ -3,10 +3,15 @@
 namespace App\Rules;
 
 use App\Models\PaymentType;
+use App\Models\Vcard;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class ReferenceRule implements Rule
 {
+
+    private $error = 'Payment Reference Validation Error';
+
     /**
      * Create a new rule instance.
      *
@@ -27,20 +32,40 @@ class ReferenceRule implements Rule
     public function passes($attribute, $value)
     {
         if($value == null || !request()->has('payment_type')){
+            $this->error = "No Payment Reference";
+
             return false;
         }
 
         $type = request()->get('payment_type');
-        $payment_type = PaymentType::find($type);
 
-        //é um hack, mas as regras de validaçao estão contidas em regex
-        $reg = json_decode($payment_type->validation_rules);
+        if($type == 'VCARD'){
+            if(mb_strlen($value) != 9){
+                $this->error = 'Digit length must be 9 for vcard transactions';
+                return false;
+            }
 
-        if($reg == '' || !$reg){
+            if($value == Auth::user()->username){
+                $this->error = 'Can\'t transfer money to yourself';
+                return false;
+            }
+
+            if(Vcard::find($value) == null){
+                $this->error = 'Invalid vcard';
+                return false;
+            }
+
             return true;
         }
 
-        return preg_match($reg,$value) == 1;
+        //é um hack, mas as regras de validaçao supostamente estão contidas em regex
+        //$reg = json_decode($payment_type->validation_rules);
+
+        //if($reg == '' || !$reg){
+        //    return true;
+        //}
+        //return preg_match($reg,$value) == 1;
+        return true;
     }
 
     /**
@@ -50,6 +75,6 @@ class ReferenceRule implements Rule
      */
     public function message()
     {
-        return 'Invalid payment reference';
+        return $this->error;
     }
 }

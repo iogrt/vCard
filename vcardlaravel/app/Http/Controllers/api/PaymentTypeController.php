@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class PaymentTypeController extends Controller
 {
     public function getAllPaymentTypes(){
-        $types = PaymentType::all();
+        $types = PaymentType::whereNull('deleted_at')->get();
 
         return PaymentTypeResource::collection($types);
     }

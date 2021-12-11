@@ -1,4 +1,5 @@
 <template>
+<div>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
     <div class="container-fluid">
       <a
@@ -54,7 +55,7 @@
               aria-expanded="false"
             >
               <img
-                :src="userPhotoUrl"
+                :src="user.photo_url"
                 class="rounded-circle z-depth-0 avatar-img"
                 alt="avatar image"
               >
@@ -102,7 +103,18 @@
                 :to="{ name: 'Dashboard'}"
               >
                 <i class="bi bi-house"></i>
-                About
+                My vCard
+              </router-link>
+            </li>
+
+            <li class="nav-item">
+              <router-link
+                  class="nav-link"
+                  :class="{active: $route.name === 'CategoriesManage'}"
+                  :to="{ name: 'CategoriesManage'}"
+              >
+                <i class="bi bi-pentagon"></i>
+                Categories
               </router-link>
             </li>
 
@@ -118,13 +130,14 @@
             </li>
 
             <li class="nav-item">
-              <a
+              <router-link
                 class="nav-link"
-                href="#"
+                :class="{active: $route.name === 'Transactions'}"
+                :to="{name: 'Transactions'}"
               >
                 <i class="bi bi-list-stars"></i>
                 Transactions
-              </a>
+              </router-link>
             </li>
 
             <li class="nav-item">
@@ -190,7 +203,7 @@
                   aria-expanded="false"
                 >
                   <img
-                    :src="userPhotoUrl"
+                    :src="user.photo_url"
                     class="rounded-circle z-depth-0 avatar-img"
                     alt="avatar image"
                   >
@@ -228,10 +241,10 @@
       </main>
     </div>
   </div>
+</div>
 </template>
 
 <script>
-// REMOVE THESE IMPORTS WHEN VUE-ROUTER IS CONFIGURED
 export default {
   name: 'RootComponent',
   methods: {
@@ -260,19 +273,10 @@ export default {
     },
     userName () {
       return this.$store.state.user ? this.$store.state.user.name : ''
-    },
-    userPhotoUrl () {
-      // console.log(this.$store.state.user)
-      const urlPhoto = this.$store.state.user
-        ? this.$store.state.user.photo_url
-        : null
-
-      const ret = urlPhoto
-        ? this.$serverUrl + '/storage/fotos/' + urlPhoto
-        : 'img/avatar-none.png'
-
-      return ret
     }
+  },
+  created () {
+    console.log('created', this.$store.state)
   }
 }
 </script>

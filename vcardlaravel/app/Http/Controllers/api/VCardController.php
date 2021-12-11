@@ -4,11 +4,13 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Requests\DefaultCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\TransactionResource;
 use App\Models\AuthUser;
 use App\Models\Category;
 use App\Models\DefaultCategory;
 use App\Models\Transaction;
 use App\Rules\CategoryRule;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Models\Vcard;
 use App\Http\Resources\VCardResource;
@@ -34,34 +36,63 @@ class VCardController extends Controller
         return TransactionResource::collection($vcard->transactions);
     }
 
+    public function blockVcard(Vcard $vcard){
+        return DB::transaction(function() use($vcard){
+            $vcard->blocked ^= 1;
+
+            return new VCardResource($vcard);
+        });
+    }
+
     //public function store(StoreVCardRequest $request){
     public function store(StoreVCardRequest $request){
-        $find = Vcard::where('phone_number',$request->phone_number)->first();
-        if($find){
-            return response()->json(['message'=>'This phone cant be used!' ], 422);
+
+        try {
+            DB::beginTransaction();
+
+            $find = Vcard::where('phone_number', $request->phone_number)->first();
+            if ($find) {
+                return response()->json(['message' => 'This phone cant be used!'], 422);
+            }
+
+            $finDel = Vcard::withTrashed()->where('phone_number', $request->phone_number)->whereNotNull('deleted_at')->first();
+            if (!is_null($finDel)) {
+                return response()->json(['message' => 'This phone was used before in a deleted account!!'], 422);
+            }
+
+            $now = Carbon::now();//data corrente
+
+            $newCard = new Vcard;
+
+            $newCard->phone_number = $request->phone_number;
+            $newCard->name = $request->name;
+            $newCard->email = $request->email;
+            $newCard->blocked = 0;
+            $newCard->password = bcrypt($request->password);
+            $newCard->confirmation_code = bcrypt($request->confirmation_code);
+            if ($request->file('photo_url') != null) {
+                $path = $request->photo_url->store('public/fotos');
+                $newCard->photo_url = basename($path);
+            }
+
+            $newCard->save();
+
+            $defaultCategories = DefaultCategory::all();
+
+            $defaultCategories->each(function ($item) use ($request) {
+                Category::create([
+                    'vcard' => $request->phone_number,
+                    'name' => $item->name,
+                    'type' => $item->type,
+                ]);
+            });
+
+            DB::commit();
         }
-
-        $finDel = Vcard::withTrashed()->where('phone_number',$request->phone_number)->whereNotNull('deleted_at')->first();
-        if(!is_null($finDel)){
-            return response()->json(['message'=>'This phone was used before in a deleted account!!' ], 422);
+        catch(\Throwable $th){
+            DB::rollBack();
+            return response()->json(['message' => 'Internal server Error','error' => $th->getMessage()],500);
         }
-
-        $now = Carbon::now();//data corrente
-
-        $newCard = new Vcard;
-
-        $newCard->phone_number = $request->phone_number;
-        $newCard->name = $request->name;
-        $newCard->email = $request->email;
-        $newCard->blocked = 0;
-        $newCard->password = bcrypt($newCard->password);
-        $newCard->confirmation_code = bcrypt($request->confirmation_code);
-        if ($request->file('photo_url')!=null) {
-            $path = $request->photo_url->store('public/fotos');
-            $newCard->photo_url = basename($path);
-        }
-
-        $newCard->save();
 
         return new VCardResource($newCard);
     }
@@ -93,6 +124,22 @@ class VCardController extends Controller
         return (new AuthController)->logout($request);
     }
 
+    public function getCategories(){
+        return CategoryResource::collection(Vcard::find(Auth::user()->username)->categories);
+    }
+
+    public function getCategory($id){
+        $category = Category::where('vcard',Auth::user()->username)->where('id',$id)->first();
+
+        if($category != null){
+            return new CategoryResource($category);
+        }
+
+        return response()->json([
+            'error' => 'could not find category'
+        ],500);
+    }
+
     public function addCategoryFromDefault(Request $request){
         $validator = Validator::make($request->all(), [
             'id' => ['required','exists:default_categories,id,deleted_at,NULL'],
@@ -103,7 +150,7 @@ class VCardController extends Controller
 
 
         if($validator->fails()){
-            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],403);
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
         }
 
         $def = DefaultCategory::find($request->id);
@@ -128,7 +175,7 @@ class VCardController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],403);
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
         }
 
         $category = Category::create([
@@ -136,6 +183,42 @@ class VCardController extends Controller
             'type' => $request->type,
             'name' => $request->name,
         ]);
+
+        return new CategoryResource($category);
+    }
+
+    public function alterCategory(Request $request,$id){
+        $validator = Validator::make($request->all(), [
+            'name' => 'string',
+            'type' => 'in:C,D',
+        ],[
+            'name.string' => 'Name must be text',
+            'type.in' => 'Type must be either (C)redit or (D)debit',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
+        }
+
+        DB::beginTransaction();
+
+        $category = Category::find($request->id);
+
+        if($category == null){
+            return response()->json(["message" => "Invalid Id"],403);
+        }
+
+        if($request->name){
+            $category->name = $request->name;
+        }
+
+        if($request->type){
+            $category->type = $request->type;
+        }
+
+        $category->update();
+
+        DB::commit();
 
         return new CategoryResource($category);
     }
@@ -162,7 +245,7 @@ class VCardController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],403);
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
         }
 
         $vcardTransactions = DB::table('transactions')->leftJoin('categories',function($join) use($request){

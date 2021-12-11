@@ -9,10 +9,13 @@ use App\Models\PaymentType;
 use App\Models\Transaction;
 use App\Models\Vcard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\VCardController;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\TransactionController;
+use App\Http\Resources\AuthUserResource;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,16 +34,27 @@ Route::post('vcards', [VCardController::class, 'store']);
 
 Route::middleware(['auth:api'])->group(function(){
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('users/me', [AuthController::class, 'myself']);
-    Route::get('vcards/{vcard}/transactions', [VCardController::class, 'getVcardTransactions']);
 
-    Route::middleware(['isUnblockedUser'])->group(function() {
-        Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
-        Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
-        Route::delete('/vcards/categories/', [VCardController::class, 'removeCategory']);
-        Route::post('/transactions/',[TransactionController::class,'userTransaction']);
 
-        Route::delete('/vcards', [VCardController::class, 'deleteVcard']);
+    Route::middleware(['isUnblocked'])->group(function() {
+        // Routes for admins OR unblocked users
+        Route::get('users/me', [AuthController::class, 'myself']);
+        Route::put('users/me',[AuthController::class,'editProfile']);
+
+        // Routes for unblocked users
+        Route::middleware(['isVcardUser'])->group(function() {
+
+            Route::get('vcards/transactions', [TransactionController::class, 'show_user_transactions']);
+            Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
+            Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
+            Route::put('/vcards/categories/{id}', [VCardController::class, 'alterCategory']);
+            Route::get('/vcards/categories', [VCardController::class, 'getCategories']);
+            Route::get('/vcards/categories/{id}', [VCardController::class, 'getCategory']);
+            Route::delete('/vcards/categories', [VCardController::class, 'removeCategory']);
+            Route::post('/transactions',[TransactionController::class,'userTransaction']);
+            
+            Route::delete('/vcards', [VCardController::class, 'deleteVcard']);
+        });
     });
 
     Route::middleware(['isAdmin'])->prefix('admin')->group(function() {
@@ -48,9 +62,10 @@ Route::middleware(['auth:api'])->group(function(){
         Route::post('/categories/default',[CategoryController::class,'createDefaultCategory']);
         Route::delete('/categories/default/{category}',[CategoryController::class, 'deleteDefaultCategory']);
         Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
-        Route::get('/transactions/',[TransactionController::class,'show_all_transactions']);
+        Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
         Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
-        Route::post('/transactions/',[TransactionController::class,'adminTransaction']);
+        Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
+        Route::post('/transactions',[TransactionController::class,'adminTransaction']);
     });
 });
 

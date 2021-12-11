@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Vcard;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AuthUserResource extends JsonResource
@@ -14,7 +15,7 @@ class AuthUserResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $userData = [
             'id' => $this->id,
             'user_type' => $this->user_type,
             'username' => $this->username,
@@ -22,5 +23,12 @@ class AuthUserResource extends JsonResource
             'email' => $this->email,
             'photo_url' => $this->photo_url
         ];
+        if($this->user_type != 'V') {
+         return $userData;
+        }
+        // vcard
+        $vcard = Vcard::find($this->username);
+        return (new VCardResource($vcard))->toArray($request);;
+            
     }
 }

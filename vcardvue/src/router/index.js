@@ -3,7 +3,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import DebitTransactionCreate from '../views/DebitTransactionCreate'
 import About from '../views/About.vue'
 
-// ver depois
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
 import ChangePassword from '../components/auth/ChangePassword.vue'
@@ -12,9 +11,14 @@ import User from '../components/users/User.vue'
 
 // import Report from '../components/Report.vue'
 
-import Card from '../components/cards/Card.vue'
+import CreateCard from '../components/cards/CreateCard.vue'
+import EditCard from '../components/cards/EditCard.vue'
+import Transactions from '../components/transactions/Transactions.vue'
+import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
+import CategoriesManage from '../components/categories/CategoriesManage'
+import Category from '../components/categories/Category'
 
 const routes = [
   {
@@ -26,26 +30,42 @@ const routes = [
     component: () => About
   },
   {
-    path: '/cards',
+    path: '/card/new',
     name: 'CardCreate',
-    component: Card
+    component: CreateCard
   },
-
-  // ver depois
   {
     path: '/login',
     name: 'Login',
     component: Login
   },
+
+  // ver depois
   {
     path: '/password',
     name: 'ChangePassword',
     component: ChangePassword
   },
   {
-    path: '/dashboard',
+    path: '/card',
     name: 'Dashboard',
     component: Dashboard
+  },
+  {
+    path: '/card/edit',
+    name: 'EditCard',
+    component: EditCard
+  },
+  {
+    path: '/transactions',
+    name: 'Transactions',
+    component: Transactions
+  },
+  {
+    path: '/transactions/:id',
+    name: 'Transaction',
+    component: Transaction,
+    props: route => ({ id: parseInt(route.params.id) })
   },
   /*  {
     path: '/reports',
@@ -57,6 +77,24 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: Users
+  },
+
+  {
+    path: '/categories',
+    name: 'CategoriesManage',
+    component: CategoriesManage
+  },
+  {
+    path: '/categories/:id',
+    name: 'EditCategory',
+    component: Category,
+    props: route => ({ id: parseInt(route.params.id) })
+  },
+  {
+    path: '/categories/new',
+    name: 'NewCategory',
+    component: Category,
+    props: route => ({ id: null })
   },
   {
     path: '/users/:id',
@@ -86,7 +124,7 @@ router.beforeEach((to, from, next) => {
     next()
     return
   }
-  if (!store.state.user) {
+  if (!store.getters.isLoggedIn) {
     next({ name: 'Login' })
     return
   }
