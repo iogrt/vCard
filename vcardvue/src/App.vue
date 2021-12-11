@@ -94,76 +94,15 @@
         class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse"
       >
         <div class="position-sticky pt-3">
-          <ul class="nav flex-column"
-          >
-            <li class="nav-item">
-              <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'Dashboard'}"
-                :to="{ name: 'Dashboard'}"
-              >
-                <i class="bi bi-house"></i>
-                My vCard
-              </router-link>
-            </li>
+          <ul class="nav flex-column">
 
-            <li class="nav-item">
-              <router-link
-                  class="nav-link"
-                  :class="{active: $route.name === 'CategoriesManage'}"
-                  :to="{ name: 'CategoriesManage'}"
-              >
-                <i class="bi bi-pentagon"></i>
-                Categories
+            <li class="nav-item" v-for="sidebarLink in sidebarLinks" :key="sidebarLink.routeName">
+              <router-link :to="{name: sidebarLink.routeName}"
+                           class="nav-link"
+                           :class="{active: $route.name === sidebarLink.routeName}">
+                <i class="bi" :class="{[sidebarLink.icon]: true}"></i>
+                {{sidebarLink.label}}
               </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'CardCreate'}"
-                :to="{name: 'CardCreate'}"
-              >
-                <i class="bi bi-list-check"></i>
-                Create Vcard
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'Transactions'}"
-                :to="{name: 'Transactions'}"
-              >
-                <i class="bi bi-list-stars"></i>
-                Transactions
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link :to="{name: 'DebitTransactionCreate'}" class="nav-link">
-                <i class="bi bi-send"></i>
-                Send Money
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-people"></i>
-                Administration
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-bar-chart-line"></i>
-                Statistics
-              </a>
             </li>
           </ul>
 
@@ -242,6 +181,41 @@
 </template>
 
 <script>
+
+const anonSidebarLinks = [
+  {
+    routeName: 'CardCreate',
+    label: 'Create Vcard',
+    icon: 'bi-list-check'
+  }
+]
+
+const vcardSidebarLinks = [
+  {
+    routeName: 'Dashboard',
+    label: 'My vCard',
+    icon: 'bi-house'
+  },
+  {
+    routeName: 'DebitTransactionCreate',
+    label: 'Send Money',
+    icon: 'bi-send'
+  }
+]
+
+const adminSidebarLinks = [
+  {
+    routeName: 'CategoriesManage',
+    label: 'Categories',
+    icon: 'bi-pentagon'
+  },
+  {
+    routeName: 'Transactions',
+    label: 'Transactions',
+    icon: 'bi-list-stars'
+  }
+]
+
 export default {
   name: 'RootComponent',
   methods: {
@@ -270,6 +244,15 @@ export default {
     },
     userName () {
       return this.$store.state.user ? this.$store.state.user.name : ''
+    },
+    sidebarLinks () {
+      if (!this.$store.getters.isLoggedIn) {
+        return anonSidebarLinks
+      }
+      if (this.user.user_type === 'A') {
+        return adminSidebarLinks
+      }
+      return vcardSidebarLinks
     }
   },
   created () {

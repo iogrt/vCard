@@ -5,7 +5,7 @@ import About from '../views/About.vue'
 
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
-import ChangePassword from '../components/auth/ChangePassword.vue'
+// import ChangePassword from '../components/auth/ChangePassword.vue'
 import Users from '../components/users/Users.vue'
 import User from '../components/users/User.vue'
 
@@ -20,7 +20,15 @@ import store from '../store'
 import CategoriesManage from '../components/categories/CategoriesManage'
 import Category from '../components/categories/Category'
 
-const routes = [
+const addAuthLevel = (authLevel) => route => ({
+  ...route,
+  meta: {
+    ...route.meta,
+    authLevel
+  }
+})
+
+const anonymousRoutes = [
   {
     path: '/about',
     name: 'About',
@@ -38,14 +46,10 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
-  },
+  }
+]
 
-  // ver depois
-  {
-    path: '/password',
-    name: 'ChangePassword',
-    component: ChangePassword
-  },
+const userRoutes = [
   {
     path: '/card',
     name: 'Dashboard',
@@ -55,6 +59,22 @@ const routes = [
     path: '/card/edit',
     name: 'EditCard',
     component: EditCard
+  },
+  {
+    path: '/card/transaction/debit',
+    name: 'DebitTransactionCreate',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => DebitTransactionCreate
+  }
+]
+
+const adminRoutes = [
+  {
+    path: '/users',
+    name: 'Users',
+    component: Users
   },
   {
     path: '/transactions',
@@ -73,12 +93,6 @@ const routes = [
     component: Report
   },
 */
-  {
-    path: '/users',
-    name: 'Users',
-    component: Users
-  },
-
   {
     path: '/categories',
     name: 'CategoriesManage',
@@ -103,15 +117,13 @@ const routes = [
     // props: true
     // Replaced with the following line to ensure that id is a number
     props: route => ({ id: parseInt(route.params.id) })
-  },
-  {
-    path: '/card/transaction/debit',
-    name: 'DebitTransactionCreate',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => DebitTransactionCreate
   }
+]
+
+const routes = [
+  ...anonymousRoutes.map(addAuthLevel('anon')),
+  ...userRoutes.map(addAuthLevel('user')),
+  ...adminRoutes.map(addAuthLevel('admin'))
 ]
 
 const router = createRouter({
@@ -120,7 +132,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if ((to.name === 'Login') || (to.name === 'Dashboard') || (to.name === 'CardCreate')) {
+  if (to.meta.authLevel === 'anon') {
+    console.log('anon route')
     next()
     return
   }
@@ -128,19 +141,8 @@ router.beforeEach((to, from, next) => {
     next({ name: 'Login' })
     return
   }
-  if (to.name === 'Reports') {
-    if (store.state.user.user_type !== 'A') {
-      next(false)
-      return
-    }
-  }
-  if (to.name === 'User') {
-    if ((store.state.user.user_type === 'A') || (store.state.user.id === to.params.id)) {
-      next()
-      return
-    }
+  if (to.meta.authLevel === 'admin' && store.state.user.user_type !== 'A') {
     next(false)
-    return
   }
   next()
 })
