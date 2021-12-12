@@ -23,6 +23,7 @@ import PaymentTypes from '../components/paymentTypes/PaymentTypes'
 import PaymentType from '../components/paymentTypes/PaymentType'
 import DefaultCategories from '../components/categories/DefaultCategories'
 import DefaultCategory from '../components/categories/DefaultCategory'
+import AdminStatistics from '../components/statistics/AdminStatistics'
 
 const routes = [
   {
@@ -131,6 +132,11 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: Users
+  },
+  {
+    path: '/admin/statistics',
+    name: 'AdminStatistics',
+    component: AdminStatistics
   },
   {
     path: '/users/:id',

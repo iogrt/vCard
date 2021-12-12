@@ -141,6 +141,17 @@
 
             <li class="nav-item">
               <router-link
+                  class="nav-link"
+                  :class="{active: $route.name === 'AdminStatistics'}"
+                  :to="{ name: 'AdminStatistics'}"
+              >
+                <i class="bi bi-bar-chart"></i>
+                Admin Statistics
+              </router-link>
+            </li>
+
+            <li class="nav-item">
+              <router-link
                 class="nav-link"
                 :class="{active: $route.name === 'CardCreate'}"
                 :to="{name: 'CardCreate'}"
