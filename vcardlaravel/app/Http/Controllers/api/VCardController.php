@@ -189,7 +189,7 @@ class VCardController extends Controller
 
     public function alterCategory(Request $request,$id){
         $validator = Validator::make($request->all(), [
-            'name' => 'string',
+            'name' => ['string',Rule::unique('categories','name')->where(fn($qry) => $qry->where('type',$request->type)->whereNull('deleted_at'))],
             'type' => 'in:C,D',
         ],[
             'name.string' => 'Name must be text',

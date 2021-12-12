@@ -1,8 +1,8 @@
 <template>
   <confirmation-dialog
       ref="confirmationDialog"
-      confirmationBtn="Delete category"
-      :msg="`Do you really want to delete the category ${ categoryToDeleteDescription }?`"
+      confirmationBtn="Delete Default category"
+      :msg="`Do you really want to delete the default category ${ categoryToDeleteDescription }?`"
       @confirmed="deleteConfirmed"
   >
   </confirmation-dialog>
@@ -45,7 +45,7 @@
 
 <script>
 export default {
-  name: 'CategoriesTable',
+  name: 'DefaultCategoryTable',
   props: {
     categories: {
       type: Array,
@@ -70,16 +70,16 @@ export default {
     }
   },
   watch: {
-    /* tasks (newTasks) {
-      this.editingTasks = newTasks
-    } */
+    categories (newCategories) {
+      this.editingCategories = [...newCategories]
+    }
   },
   methods: {
     editClick (cat) {
-      this.$router.push({ name: 'EditCategory', params: { id: cat.id } })
+      this.$router.push({ name: 'EditDefaultCategory', params: { id: cat.id } })
     },
     deleteConfirmed () {
-      this.$axios.delete('vcards/categories/', { data: this.categoryToDelete })
+      this.$axios.delete('admin/categories/' + this.categoryToDelete.id)
         .then((response) => {
           console.log(response.data.data)
           this.$toast.success('Successfully deleted')
@@ -87,7 +87,7 @@ export default {
           this.$emit('deleted', this.categoryToDelete)
         })
         .catch(error => {
-          this.$toast.error(error.message)
+          this.$toast.error(error.response.data.message)
           console.log(error)
         })
     },

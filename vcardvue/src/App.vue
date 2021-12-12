@@ -120,6 +120,17 @@
             <li class="nav-item">
               <router-link
                   class="nav-link"
+                  :class="{active: $route.name === 'DefaultCategories'}"
+                  :to="{ name: 'DefaultCategories'}"
+              >
+                <i class="bi bi-hexagon"></i>
+                DefaultCategories
+              </router-link>
+            </li>
+
+            <li class="nav-item">
+              <router-link
+                  class="nav-link"
                   :class="{active: $route.name === 'PaymentTypes'}"
                   :to="{ name: 'PaymentTypes'}"
               >

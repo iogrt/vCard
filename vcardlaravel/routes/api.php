@@ -60,9 +60,11 @@ Route::middleware(['auth:api'])->group(function(){
     });
 
     Route::middleware(['isAdmin'])->prefix('admin')->group(function() {
-        Route::get('/categories/default',[CategoryController::class,'listDefaultCategories']);
-        Route::post('/categories/default',[CategoryController::class,'createDefaultCategory']);
-        Route::delete('/categories/default/{category}',[CategoryController::class, 'deleteDefaultCategory']);
+        Route::get('/categories',[CategoryController::class,'show_all']);
+        Route::get('/categories/{category}', [CategoryController::class, 'show']);
+        Route::post('/categories',[CategoryController::class,'create']);
+        Route::delete('/categories/{category}',[CategoryController::class, 'delete']);
+        Route::put('/categories/{category}', [CategoryController::class, 'update']);
         Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
         Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
         Route::put('/payment_types/{id}', [PaymentTypeController::class, 'alterPaymentType']);

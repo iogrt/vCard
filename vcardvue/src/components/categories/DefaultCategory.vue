@@ -3,8 +3,7 @@
       ref="confirmationDialog"
       confirmationBtn="Discard changes and leave"
       msg="Do you really want to leave? You have unsaved changes!"
-      @confirmed="leaveConfirmed"
-  >
+      @confirmed="leaveConfirmed">
   </ConfirmationDialog>
 
   <form
@@ -75,7 +74,7 @@
 import FieldErrorMessage from '../global/FieldErrorMessage'
 import ConfirmationDialog from '../global/ConfirmationDialog'
 export default {
-  name: 'Category',
+  name: 'DefaultCategory',
   components: { ConfirmationDialog, FieldErrorMessage },
   props: {
     id: {
@@ -103,9 +102,9 @@ export default {
   },
   computed: {
     title () {
-      return this.id === -1
-        ? 'New Category'
-        : 'Category #' + this.editingCategory.id
+      return !this.id
+        ? 'New Default Category'
+        : 'Default Category #' + this.editingCategory.id
     }
   },
   methods: {
@@ -118,10 +117,10 @@ export default {
     },
     save () {
       if (this.id != null && this.id !== -1) {
-        this.$axios.put(`vcards/categories/${this.id}`, this.editingCategory)
+        this.$axios.put(`admin/categories/${this.id}`, this.editingCategory)
           .then(response => {
             this.category = response.data.data
-            this.$toast.success(`Successfully updated category ${this.category.id}!`)
+            this.$toast.success(`Successfully updated default category ${this.category.id}!`)
             this.$router.back()
           })
           .catch(err => {
@@ -132,7 +131,7 @@ export default {
         return
       }
 
-      this.$axios.post('vcards/categories', this.editingCategory)
+      this.$axios.post('admin/categories', this.editingCategory)
         .then(response => {
           this.category = response.data.data
           this.$toast.success(`Successfully created category ${this.category.name}!`)
@@ -148,13 +147,13 @@ export default {
     },
     loadCategory () {
       this.errors = null
-      this.$axios.get(`vcards/categories/${this.id}`)
+      this.$axios.get(`admin/categories/${this.id}`)
         .then(response => {
           this.category = response.data.data
           console.log(this.category)
         })
         .catch(response => {
-          this.errors = [response.data.error]
+          this.$toast.error(response.message)
         })
     },
     leaveConfirmed () {
@@ -167,7 +166,6 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    console.log('wfewefwef')
     this.nextCallBack = null
 
     if (JSON.stringify(this.category) !== this.dataAsString()) {

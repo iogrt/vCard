@@ -21,6 +21,8 @@ import Category from '../components/categories/Category'
 
 import PaymentTypes from '../components/paymentTypes/PaymentTypes'
 import PaymentType from '../components/paymentTypes/PaymentType'
+import DefaultCategories from '../components/categories/DefaultCategories'
+import DefaultCategory from '../components/categories/DefaultCategory'
 
 const routes = [
   {
@@ -73,6 +75,23 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: Users
+  },
+  {
+    path: '/default_categories',
+    name: 'DefaultCategories',
+    component: DefaultCategories
+  },
+  {
+    path: '/default_categories/:id',
+    name: 'EditDefaultCategory',
+    component: DefaultCategory,
+    props: route => ({ id: parseInt(route.params.id) })
+  },
+  {
+    path: '/default_categories/new',
+    name: 'NewDefaultCategory',
+    component: DefaultCategory,
+    props: route => ({ id: null })
   },
   {
     path: '/categories',
