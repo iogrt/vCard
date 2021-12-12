@@ -27,6 +27,12 @@ io.on('connection', ws => {
         ws.broadcast.to(ws.userid).emit('deleteCategory', category)
     })
 
+    ws.on('blockVcard', vcard => {
+        console.log(`blocking vcard ${vcard.phone_number}`)
+
+        ws.to(vcard.phone_number.toString()).emit('blockVcard')
+    })
+
     ws.on('logged_in', user => {
         ws.join(user.id)
         ws.userid = user.id

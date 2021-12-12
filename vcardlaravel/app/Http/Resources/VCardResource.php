@@ -24,6 +24,7 @@ class VCardResource extends JsonResource
             'photo_url' => $this->photo_url ? $this->photo_url : '',//pq aceita nulo
             'confirmation_code' => $this->confirmation_code,
             'balance' => $this->balance,
+            'blocked' => $this->blocked,
             'max_debit' => $this->max_debit,
             'custom_options' => $this->custom_options,
             'custom_data' => $this->custom_data,

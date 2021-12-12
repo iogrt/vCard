@@ -39,6 +39,7 @@ class VCardController extends Controller
     public function blockVcard(Vcard $vcard){
         return DB::transaction(function() use($vcard){
             $vcard->blocked ^= 1;
+            $vcard->update();
 
             return new VCardResource($vcard);
         });

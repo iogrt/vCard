@@ -54,6 +54,9 @@ export default createStore({
       const idx = state.categories.findIndex(x => x.id === category.id)
 
       if (idx >= 0) { state.categories.splice(idx, 1) }
+    },
+    blockVcard (state) {
+      state.user.blocked = true
     }
 
   },
@@ -83,6 +86,8 @@ export default createStore({
         this.$axios.defaults.headers.common.Authorization = 'Bearer ' + response.data.access_token
         sessionStorage.setItem('token', response.data.access_token)
         this.state.token = response.data.access_token
+
+        await context.dispatch('refresh')
       } catch (error) {
         console.log(error)
         delete this.$axios.defaults.headers.common.Authorization
@@ -90,7 +95,6 @@ export default createStore({
         context.commit('resetUser', null)
         throw error
       }
-      await context.dispatch('refresh')
     },
     async logout (context) {
       try {
@@ -139,7 +143,7 @@ export default createStore({
       return category
     },
     async loadCategories (context) {
-      if (context.state.user === 'A') {
+      if (context.state.user.user_type === 'A') {
         context.commit('setCategories', [])
         return
       }
@@ -148,14 +152,17 @@ export default createStore({
       console.log(categories.data.data)
       context.commit('setCategories', categories.data.data)
     },
-    async refresh (context) {
-      const userPromise = context.dispatch('loadLoggedInUser')
-      const categoriesPromise = context.dispatch('loadCategories')
-      // const transactionsPromise = context.dispatch('loadTransactions')
+    async blockVcard (context, vcard) {
+      const response = await this.$axios.patch(`admin/vcard/${vcard}/block`)
+      console.log(JSON.stringify(response.data.data))
 
-      await userPromise
-      await categoriesPromise
-      console.log({ ...context.state.categories })
+      this.$socket.emit('blockVcard', response.data.data)
+    },
+    async refresh (context) {
+      await context.dispatch('loadLoggedInUser')
+      await context.dispatch('loadCategories')
+
+      // const transactionsPromise = context.dispatch('loadTransactions')
       // await transactionsPromise
     },
     async SOCKET_newCategory (context, category) {
@@ -172,6 +179,16 @@ export default createStore({
       console.log('Someone else has deleted a category')
       this.$toast.info(`The project (#${category.id} : ${category.name}) was deleted`)
       context.commit('deleteCategory', category)
+    },
+    async SOCKET_blockVcard (context) {
+      this.$toast.info('Your vcard has been blocked :)')
+      context.commit('blockVcard')
+
+      context.dispatch('logout')
     }
+    /* later
+    async SOCKET_insertTransaction(context,transaction){
+
+    } */
   }
 })

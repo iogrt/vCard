@@ -71,9 +71,8 @@ Route::middleware(['auth:api'])->group(function(){
         Route::post('/payment_types', [PaymentTypeController::class, 'addPaymentType']);
         Route::delete('/payment_types/{payment_type}',[PaymentTypeController::class,'deletePaymentType']);
         Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypesAdmin']);
-        Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
         Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
-        Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
+        Route::patch('/vcard/{vcard}/block',[VCardController::class,'blockVcard']);
         Route::post('/transactions',[TransactionController::class,'adminTransaction']);
     });
 });
