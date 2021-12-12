@@ -4,7 +4,7 @@
       <h3 class="mt-4">Your Vcard's Categories</h3>
     </div>
     <div class="mx-2 total-filtro">
-      <h5 class="mt-4">Total: {{ totalCategories }}</h5>
+      <h5 class="mt-4">Total: {{ this.$store.getters.totalCategories }}</h5>
     </div>
   </div>
   <hr>
@@ -15,7 +15,7 @@
       >Filter by type:</label>
       <select
           class="form-select"
-          id="selectCompleted"
+          id="selectType"
           v-model="filterByType"
       >
         <option value="C">Credit</option>
@@ -38,9 +38,9 @@
       ><i class="bi bi-xs bi-plus-circle"></i>Add Category</button>
     </div>
   <CategoriesTable
-      :categories="filteredCategories"
+      :categories="$store.getters.filteredCategories(filterByName,filterByType)"
       @edit="editCategory"
-      @deleted="deletedCategory">
+      @delete="deleteConfirmed">
   </CategoriesTable>
 </template>
 
@@ -52,50 +52,35 @@ export default {
   components: { CategoriesTable },
   data () {
     return {
-      categories: [],
       filterByType: '',
       filterByName: ''
     }
   },
   computed: {
-    filteredCategories () {
-      return this.categories.filter((cat, index) => {
-        const funName = () => this.filterByName ? cat.name.toLowerCase().includes(this.filterByName.toLowerCase()) : true
-        const funType = () => this.filterByType ? cat.type === this.filterByType : true
-
-        return funName() && funType()
-      })
-    },
-    totalCategories () {
-      return this.categories.length
-    }
   },
   methods: {
-    loadCategories () {
-      this.$axios.get('vcards/categories')
-        .then(response => {
-          this.categories = response.data.data
-          console.log(this.categories)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    },
     addCategory () {
       this.$router.push({ name: 'NewCategory' })
     },
     editCategory (cat) {
       this.$router.push({ name: 'EditCategory', params: { id: cat.id } })
     },
-    deletedCategory (cat) {
-      const idx = this.categories.findIndex(t => t.id === cat.id)
-      if (idx >= 0) {
-        this.categories.splice(idx, 1)
-      }
+    deleteConfirmed (cat) {
+      this.$store.dispatch('deleteCategory', cat)
+        .then(category => {
+          this.$toast.success('Successfully deleted')
+
+          this.$emit('deleted', category)
+        })
+        .catch(error => {
+          if (error.status === 422) {
+            console.log(error.response.data.errors)
+            Object.keys(error.response.data.errors).forEach(x => this.$toast.error(error.response.data.errors[x]))
+          } else {
+            this.$toast.error(error)
+          }
+        })
     }
-  },
-  created () {
-    this.loadCategories()
   }
 }
 </script>

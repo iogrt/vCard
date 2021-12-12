@@ -16,6 +16,7 @@ class VCardResource extends JsonResource
     {
         //return parent::toArray($request);
         return [
+            'id' => $this->phone_number,
             'phone_number' => $this->phone_number,
             'name' => $this->name,
             'email' => $this->email,

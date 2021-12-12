@@ -189,7 +189,7 @@ class VCardController extends Controller
 
     public function alterCategory(Request $request,$id){
         $validator = Validator::make($request->all(), [
-            'name' => ['string',Rule::unique('categories','name')->where(fn($qry) => $qry->where('type',$request->type)->whereNull('deleted_at'))],
+            'name' => ['string',Rule::unique('categories','name')->where(fn($qry) => $qry->where('type',$request->type)->where('vcard',Auth::user()->username)->whereNull('deleted_at'))],
             'type' => 'in:C,D',
         ],[
             'name.string' => 'Name must be text',
@@ -240,12 +240,15 @@ class VCardController extends Controller
 
     public function removeCategory(Request $request){
         $validator = Validator::make($request->all(),[
-            'name' => ['required','string',Rule::exists('categories','name')->where(fn($qry) => $qry->where('vcard',Auth::user()->username)->where('type',$request->type))],
+            'name' => ['required','string',Rule::exists('categories','name')->where(fn($qry) => $qry->where('vcard',Auth::user()->username)->where('type',$request->type)->whereNull('deleted_at'))],
             'type' => 'in:C,D'
+        ],
+        [
+            'name.exists' => 'Category doesn\'t exist'
         ]);
 
         if($validator->fails()){
-            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->errors()],422);
         }
 
         $vcardTransactions = DB::table('transactions')->leftJoin('categories',function($join) use($request){

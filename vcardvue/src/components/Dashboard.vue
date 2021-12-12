@@ -7,8 +7,8 @@
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur, minus. Voluptatum cum iusto, commodi sunt molestias beatae adipisci architecto aspernatur, molestiae dicta placeat earum fugiat consequatur. Cum reiciendis ex amet!</p>
   </div>
   <div>
-    <Vcard :user="user" canEdit />
-    <p>Your balance: <span class="fs-5 text-success">{{user.balance}}€</span></p>
+    <Vcard :user="$store.state.user" canEdit />
+    <p>Your balance: <span class="fs-5 text-success">{{this.$store.state.user.balance}}€</span></p>
   </div>
 </template>
 

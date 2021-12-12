@@ -116,6 +116,11 @@ export default {
       }
     },
     save () {
+      if (JSON.stringify(this.editingCategory) === JSON.stringify(this.category)) {
+        this.$toast.info('you haven\'t edited anything')
+        return
+      }
+
       if (this.id != null && this.id !== -1) {
         this.$axios.put(`admin/categories/${this.id}`, this.editingCategory)
           .then(response => {
@@ -124,8 +129,10 @@ export default {
             this.$router.back()
           })
           .catch(err => {
-            this.$toast.error(err.response.data.message)
-            this.errors = err.response.data.errors
+            if (err.status === 422) {
+              this.$toast.error(err.response.data.message)
+              this.errors = err.response.data.errors
+            }
           })
 
         return
@@ -138,8 +145,10 @@ export default {
           this.$router.back()
         })
         .catch(err => {
-          this.$toast.error(err.response.data.message)
-          this.errors = err.response.data.errors
+          if (err.status === 422) {
+            this.$toast.error(err.response.data.message)
+            this.errors = err.response.data.errors
+          }
         })
     },
     cancel () {

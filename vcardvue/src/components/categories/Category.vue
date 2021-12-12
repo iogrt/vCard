@@ -98,7 +98,7 @@ export default {
   },
   watch: {
     category (newCategory) {
-      this.editingCategory = newCategory
+      this.editingCategory = { ...newCategory }
     }
   },
   computed: {
@@ -117,10 +117,16 @@ export default {
       }
     },
     save () {
+      if (JSON.stringify(this.editingCategory) === JSON.stringify(this.category)) {
+        this.$toast.info('You haven\'t edited anything out')
+        return
+      }
+
       if (this.id != null && this.id !== -1) {
-        this.$axios.put(`vcards/categories/${this.id}`, this.editingCategory)
-          .then(response => {
-            this.category = response.data.data
+        this.$store.dispatch('updateCategory', this.editingCategory)
+          .then(category => {
+            console.log(category)
+            this.category = category
             this.$toast.success(`Successfully updated category ${this.category.id}!`)
             this.$router.back()
           })
@@ -132,9 +138,9 @@ export default {
         return
       }
 
-      this.$axios.post('vcards/categories', this.editingCategory)
-        .then(response => {
-          this.category = response.data.data
+      this.$store.dispatch('insertCategory', this.editingCategory)
+        .then(category => {
+          this.category = category
           this.$toast.success(`Successfully created category ${this.category.name}!`)
           this.$router.back()
         })
@@ -154,7 +160,7 @@ export default {
           console.log(this.category)
         })
         .catch(response => {
-          this.errors = [response.data.error]
+          this.$toast.error(response.data.error)
         })
     },
     leaveConfirmed () {
@@ -167,7 +173,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    console.log('wfewefwef')
+    console.log('JAJAJAJAJAJA')
     this.nextCallBack = null
 
     if (JSON.stringify(this.category) !== this.dataAsString()) {
@@ -183,8 +189,5 @@ export default {
 <style scoped>
 .total_hours {
   width: 26rem;
-}
-.checkCompleted {
-  min-height: 2.375rem;
 }
 </style>

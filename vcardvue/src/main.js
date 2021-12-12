@@ -5,12 +5,12 @@ import store from './store'
 import axios from 'axios'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-// import VueSocketIO from 'vue-3-socket.io'
+import VueSocketIO from 'vue-3-socket.io'
 import Toaster from '@meforma/vue-toaster'
 import FieldErrorMessage from './components/global/FieldErrorMessage'
 import ConfirmationDialog from './components/global/ConfirmationDialog'
 
-/* const socketIO = new VueSocketIO({
+const socketIO = new VueSocketIO({
   debug: true,
   connection: process.env.VUE_APP_WS_SERVER,
   vuex: {
@@ -18,7 +18,7 @@ import ConfirmationDialog from './components/global/ConfirmationDialog'
     actionPrefix: 'SOCKET_',
     mutationPrefix: 'SOCKET_'
   }
-}) */
+})
 
 const toastOptions = {
   position: 'top',
@@ -26,8 +26,9 @@ const toastOptions = {
   pauseOnHover: true
 }
 
-const app = createApp(App).use(router).use(store).use(Toaster, toastOptions)
+const app = createApp(App).use(router).use(store).use(Toaster, toastOptions).use(socketIO)
 store.$toast = app.$toast
+store.$socket = socketIO.io
 
 console.log(process.env)
 
@@ -50,5 +51,4 @@ app.mount('#app')
 // to access store inside router
 router.app = app
 
-store.$toast = app.$toast
 // store.$socket = socketIO.io
