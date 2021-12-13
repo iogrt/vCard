@@ -1,4 +1,5 @@
 <template>
+<div>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
     <div class="container-fluid">
       <a
@@ -93,109 +94,15 @@
         class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse"
       >
         <div class="position-sticky pt-3">
-          <ul class="nav flex-column"
-          >
-            <li class="nav-item">
-              <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'Dashboard'}"
-                :to="{ name: 'Dashboard'}"
-              >
-                <i class="bi bi-house"></i>
-                My vCard
-              </router-link>
-            </li>
+          <ul class="nav flex-column">
 
-            <li class="nav-item">
-              <router-link
-                  class="nav-link"
-                  :class="{active: $route.name === 'CategoriesManage'}"
-                  :to="{ name: 'CategoriesManage'}"
-              >
-                <i class="bi bi-pentagon"></i>
-                Categories
+            <li class="nav-item" v-for="sidebarLink in sidebarLinks" :key="sidebarLink.name">
+              <router-link :to="{name: sidebarLink.name}"
+                           class="nav-link"
+                           :class="{active: $route.name === sidebarLink.name}">
+                <i class="bi" :class="{[sidebarLink.icon]: true}"></i>
+                {{sidebarLink.label}}
               </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                  class="nav-link"
-                  :class="{active: $route.name === 'DefaultCategories'}"
-                  :to="{ name: 'DefaultCategories'}"
-              >
-                <i class="bi bi-hexagon"></i>
-                DefaultCategories
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                  class="nav-link"
-                  :class="{active: $route.name === 'PaymentTypes'}"
-                  :to="{ name: 'PaymentTypes'}"
-              >
-                <i class="bi bi-pentagon"></i>
-                Payment Types
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                  class="nav-link"
-                  :class="{active: $route.name === 'AdminStatistics'}"
-                  :to="{ name: 'AdminStatistics'}"
-              >
-                <i class="bi bi-bar-chart"></i>
-                Admin Statistics
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'CardCreate'}"
-                :to="{name: 'CardCreate'}"
-              >
-                <i class="bi bi-list-check"></i>
-                Create Vcard
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                  class="nav-link"
-                  :class="{active: $route.name === 'Transactions'}"
-                  :to="{name: 'Transactions'}"
-              >
-                <i class="bi bi-list-stars"></i>
-                Transactions
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link :to="{name: 'DebitTransactionCreate'}" class="nav-link">
-                <i class="bi bi-send"></i>
-                Send Money
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-people"></i>
-                Administration
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-bar-chart-line"></i>
-                Statistics
-              </a>
             </li>
           </ul>
 
@@ -232,7 +139,7 @@
                   aria-expanded="false"
                 >
                   <img
-                    :src="userPhotoUrl"
+                    :src="user.photo_url"
                     class="rounded-circle z-depth-0 avatar-img"
                     alt="avatar image"
                   >
@@ -270,12 +177,30 @@
       </main>
     </div>
   </div>
+</div>
 </template>
 
 <script>
-// REMOVE THESE IMPORTS WHEN VUE-ROUTER IS CONFIGURED
+
+import { routes } from './router'
+
 export default {
   name: 'RootComponent',
+  data () {
+    return {
+      sidebarLinks: []
+    }
+  },
+  watch: {
+    '$store.state.user.user_type': {
+      handler () {
+        console.log('created', this.$store.state.user.user_type)
+
+        this.createLinks()
+      },
+      deep: true
+    }
+  },
   methods: {
     refresh () {
       this.$store.dispatch('refresh')
@@ -284,14 +209,25 @@ export default {
       this.$store.dispatch('logout')
       // this.$axios.post('logout')
         .then(() => {
-          this.$toast.success('User has logged out of the application.')
-          this.$router.push({ name: 'Dashboard' })
           delete this.$axios.defaults.headers.common.Authorization
+
+          this.$toast.success('User has logged out of the application.')
+          this.$router.push({ name: 'Login' })
         })
         .catch(() => {
           this.$toast.error('There was a problem logging out of the application!')
         })
+    },
+    createLinks () {
+      const typeAuth = type => type === 'A' ? 'admin' : type === 'V' ? 'user' : 'anon'
+
+      this.sidebarLinks = routes
+        .filter(x => x.meta.authLevel === typeAuth(this.$store.state.user.user_type))
+        .filter(x => !!x.icon)
     }
+  },
+  created () {
+    this.createLinks()
   },
   computed: {
     user () {
@@ -302,18 +238,6 @@ export default {
     },
     userName () {
       return this.$store.state.user ? this.$store.state.user.name : ''
-    },
-    userPhotoUrl () {
-      // console.log(this.$store.state.user)
-      const urlPhoto = this.$store.state.user
-        ? this.$store.state.user.photo_url
-        : null
-
-      const ret = urlPhoto
-        ? this.$serverUrl + '/storage/fotos/' + urlPhoto
-        : 'img/avatar-none.png'
-
-      return ret
     }
   }
 }

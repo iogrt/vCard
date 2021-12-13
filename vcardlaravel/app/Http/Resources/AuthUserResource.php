@@ -28,7 +28,8 @@ class AuthUserResource extends JsonResource
         }
         // vcard
         $vcard = Vcard::find($this->username);
-        return (new VCardResource($vcard))->toArray($request);;
-            
+        $arr = (new VCardResource($vcard))->toArray($request);
+
+        return array_merge($arr,['user_type' => $this->user_type]);
     }
 }

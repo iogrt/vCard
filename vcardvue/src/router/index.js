@@ -1,12 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-// import Home from '../views/Home.vue'
+
 import DebitTransactionCreate from '../views/DebitTransactionCreate'
 import About from '../views/About.vue'
 
-// ver depois
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
-import ChangePassword from '../components/auth/ChangePassword.vue'
 import Users from '../components/users/Users.vue'
 import User from '../components/users/User.vue'
 
@@ -25,7 +23,15 @@ import DefaultCategories from '../components/categories/DefaultCategories'
 import DefaultCategory from '../components/categories/DefaultCategory'
 import AdminStatistics from '../components/statistics/AdminStatistics'
 
-const routes = [
+const addAuthLevel = (authLevel) => route => ({
+  ...route,
+  meta: {
+    ...route.meta,
+    authLevel
+  }
+})
+
+const anonymousRoutes = [
   {
     path: '/about',
     name: 'About',
@@ -35,25 +41,27 @@ const routes = [
     component: () => About
   },
   {
-    path: '/cards',
+    path: '/card/new',
     name: 'CardCreate',
+    label: 'Create Vcard',
+    icon: 'bi-list-check',
     component: CreateCard
   },
-
-  // ver depois
   {
     path: '/login',
     name: 'Login',
+    icon: 'bi-box-arrow-in-right',
+    label: 'Login',
     component: Login
-  },
+  }
+]
+
+const userRoutes = [
   {
-    path: '/password',
-    name: 'ChangePassword',
-    component: ChangePassword
-  },
-  {
-    path: '/dashboard',
+    path: '/card',
     name: 'Dashboard',
+    label: 'My vCard',
+    icon: 'bi-house',
     component: Dashboard
   },
   {
@@ -62,8 +70,51 @@ const routes = [
     component: EditCard
   },
   {
+    path: '/card/transaction/debit',
+    name: 'DebitTransactionCreate',
+    label: 'Send Money',
+    icon: 'bi-send',
+    component: () => DebitTransactionCreate
+  },
+  {
+    path: '/categories',
+    name: 'CategoriesManage',
+    label: 'Categories',
+    icon: 'bi-pentagon',
+    component: CategoriesManage
+  },
+  {
+    path: '/categories/:id',
+    name: 'EditCategory',
+    component: Category,
+    props: route => ({ id: parseInt(route.params.id) })
+  },
+  {
+    path: '/categories/new',
+    name: 'NewCategory',
+    component: Category,
+    props: route => ({ id: null })
+  }
+]
+
+const adminRoutes = [
+  {
+    path: '/users',
+    name: 'Users',
+    component: Users
+  },
+  {
+    path: '/administration',
+    name: 'Administration',
+    icon: 'bi-people',
+    label: 'Administration',
+    component: null
+  },
+  {
     path: '/transactions',
     name: 'Transactions',
+    label: 'Transactions',
+    icon: 'bi-list-stars',
     component: Transactions
   },
   {
@@ -80,6 +131,8 @@ const routes = [
   {
     path: '/default_categories',
     name: 'DefaultCategories',
+    icon: 'bi-hexagon',
+    label: 'Default Categories',
     component: DefaultCategories
   },
   {
@@ -92,23 +145,6 @@ const routes = [
     path: '/default_categories/new',
     name: 'NewDefaultCategory',
     component: DefaultCategory,
-    props: route => ({ id: null })
-  },
-  {
-    path: '/categories',
-    name: 'CategoriesManage',
-    component: CategoriesManage
-  },
-  {
-    path: '/categories/:id',
-    name: 'EditCategory',
-    component: Category,
-    props: route => ({ id: parseInt(route.params.id) })
-  },
-  {
-    path: '/categories/new',
-    name: 'NewCategory',
-    component: Category,
     props: route => ({ id: null })
   },
   {
@@ -126,16 +162,15 @@ const routes = [
   {
     path: '/paymentTypes',
     name: 'PaymentTypes',
+    icon: 'bi-pentagon',
+    label: 'Payment Types',
     component: PaymentTypes
-  },
-  {
-    path: '/users',
-    name: 'Users',
-    component: Users
   },
   {
     path: '/admin/statistics',
     name: 'AdminStatistics',
+    icon: 'bi-bar-chart',
+    label: 'Admin Statistics',
     component: AdminStatistics
   },
   {
@@ -145,15 +180,13 @@ const routes = [
     // props: true
     // Replaced with the following line to ensure that id is a number
     props: route => ({ id: parseInt(route.params.id) })
-  },
-  {
-    path: '/card/transaction/debit',
-    name: 'DebitTransactionCreate',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => DebitTransactionCreate
   }
+]
+
+const routes = [
+  ...anonymousRoutes.map(addAuthLevel('anon')),
+  ...userRoutes.map(addAuthLevel('user')),
+  ...adminRoutes.map(addAuthLevel('admin'))
 ]
 
 const router = createRouter({
@@ -162,29 +195,30 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if ((to.name === 'Login') || (to.name === 'Dashboard') || (to.name === 'CardCreate')) {
+  if (to.meta.authLevel === 'anon') {
+    console.log('anon route', to.name)
     next()
     return
   }
-  if (!store.state.user) {
+
+  if (!store.getters.isLoggedIn) {
     next({ name: 'Login' })
     return
   }
-  if (to.name === 'Reports') {
-    if (store.state.user.user_type !== 'A') {
-      next(false)
-      return
-    }
-  }
-  if (to.name === 'User') {
-    if ((store.state.user.user_type === 'A') || (store.state.user.id === to.params.id)) {
-      next()
-      return
-    }
-    next(false)
+
+  if (to.meta.authLevel === 'admin' && store.state.user.user_type === 'A') {
+    console.log('admin route', to.name)
+    next()
     return
   }
-  next()
+
+  if (to.meta.authLevel === 'user' && store.state.user.user_type === 'V') {
+    console.log('user route', to.name)
+    next()
+    return
+  }
+
+  next(false)
 })
 
-export default router
+export { router, routes }
