@@ -54,11 +54,7 @@ export default createStore({
       const idx = state.categories.findIndex(x => x.id === category.id)
 
       if (idx >= 0) { state.categories.splice(idx, 1) }
-    },
-    blockVcard (state) {
-      state.user.blocked = true
     }
-
   },
   getters: {
     isLoggedIn (state) {
@@ -89,10 +85,10 @@ export default createStore({
 
         await context.dispatch('refresh')
       } catch (error) {
-        console.log(error)
         delete this.$axios.defaults.headers.common.Authorization
         sessionStorage.removeItem('token')
         context.commit('resetUser', null)
+
         throw error
       }
     },
@@ -182,13 +178,17 @@ export default createStore({
     },
     async SOCKET_blockVcard (context) {
       this.$toast.info('Your vcard has been blocked :)')
-      context.commit('blockVcard')
 
       context.dispatch('logout')
+    },
+    async SOCKET_insertTransaction (context, transaction) {
+      switch (transaction.payment_type) {
+        case 'VCARD':
+          this.$toast.info(`You just received ${transaction.value}€ from ${transaction.pair_vcard}`)
+          break
+        default:
+          this.$toast.info(`You just received ${transaction.value}€ via ${transaction.payment_type}`)
+      }
     }
-    /* later
-    async SOCKET_insertTransaction(context,transaction){
-
-    } */
   }
 })
