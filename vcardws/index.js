@@ -17,14 +17,19 @@ io.on('connection', ws => {
     console.log(`client ${ws.id} has connected`)
 
     ws.on('newCategory', function (category) {
-        ws.broadcast.to(ws.userid).emit('newCategory', category)
+        ws.to(ws.userid).emit('newCategory', category)
     })
     ws.on('updateCategory', function (category) {
         console.log("updating category " + JSON.stringify(category))
-        ws.broadcast.to(ws.userid).emit('updateCategory', category)
+        ws.to(ws.userid).emit('updateCategory', category)
     })
     ws.on('deleteCategory', function (category) {
-        ws.broadcast.to(ws.userid).emit('deleteCategory', category)
+        ws.to(ws.userid).emit('deleteCategory', category)
+    })
+
+    ws.on('newCreditTransaction', transaction => {
+        console.log(transaction)
+        ws.to(transaction.payment_reference.toString()).emit('newCreditTransaction',transaction)
     })
 
     ws.on('blockVcard', vcard => {
@@ -34,6 +39,7 @@ io.on('connection', ws => {
     })
 
     ws.on('logged_in', user => {
+        console.log({id: user.id})
         ws.join(user.id)
         ws.userid = user.id
 

@@ -101,6 +101,8 @@ const adminRoutes = [
   {
     path: '/users',
     name: 'Users',
+    label: 'Users',
+    icon: 'bi-people',
     component: Users
   },
   {

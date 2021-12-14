@@ -74,6 +74,10 @@ Route::middleware(['auth:api'])->group(function(){
         Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
         Route::patch('/vcard/{vcard}/block',[VCardController::class,'blockVcard']);
         Route::post('/transactions',[TransactionController::class,'adminTransaction']);
+
+        Route::get('/users',[AuthController::class,'getAllUsers']);
+        Route::get('/vcards',[VCardController::class,'getVcards']);
+        Route::delete('/vcards/{vcard}', [VCardController::class, 'deleteVcardHelper']);
     });
 });
 

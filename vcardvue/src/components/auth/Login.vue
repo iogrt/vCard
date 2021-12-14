@@ -72,13 +72,12 @@ export default {
   methods: {
     login () {
       console.log(this.credentials)
-      console.log('ROUTER', this.$router.getRoutes())
       this.$store.dispatch('login', this.credentials)
         .then(() => {
           console.log('login', this.$store.state)
           this.$toast.success('User ' + this.$store.state.user.name + ' has entered the application.')
           this.$emit('login')
-          this.$router.push({ name: 'Login' })
+          this.$router.push({ name: 'Dashboard' })
         })
         .catch(err => {
           if (err.response.status === 403) {

@@ -34,6 +34,11 @@ export default createStore({
         photo_url: ret
       }
     },
+    setBalance (state, plus) {
+      if (this.state.user.user_type === 'V') {
+        state.user.balance += parseInt(plus)
+      }
+    },
     resetCategories (state) {
       state.categories = []
     },
@@ -181,14 +186,13 @@ export default createStore({
 
       context.dispatch('logout')
     },
-    async SOCKET_insertTransaction (context, transaction) {
-      switch (transaction.payment_type) {
-        case 'VCARD':
-          this.$toast.info(`You just received ${transaction.value}€ from ${transaction.pair_vcard}`)
-          break
-        default:
-          this.$toast.info(`You just received ${transaction.value}€ via ${transaction.payment_type}`)
-      }
+    async SOCKET_newCreditTransaction (context, transaction) {
+      console.log(transaction)
+      if (context.state.user.user_type !== 'V' || transaction.type !== 'C' || transaction.payment_reference !== context.state.user.phone_number.toString()) { return }
+
+      context.commit('setBalance', transaction.value)
+
+      this.$toast.info(`You just received ${transaction.value}€ via ${transaction.payment_type}`)
     }
   }
 })

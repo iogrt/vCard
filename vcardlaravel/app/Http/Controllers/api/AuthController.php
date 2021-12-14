@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Requests\EditProfileRequest;
 use App\Http\Resources\AuthUserResource;
+use App\Http\Resources\VcardViewAdminResource;
 use App\Models\AuthUser;
 use App\Models\User;
 use App\Models\Vcard;
@@ -43,6 +44,12 @@ class AuthController extends Controller
                 $errorCode
                 );
             }
+    }
+
+    public function getAllUsers(){
+        $users = AuthUser::all();
+
+        return VcardViewAdminResource::collection($users);
     }
 
     public function editProfile(EditProfileRequest $request){
