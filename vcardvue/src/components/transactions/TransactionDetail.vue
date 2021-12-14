@@ -5,21 +5,22 @@
     <div class="mb-3">
       <h4>About</h4>
       <br>
-      <label  for="infos" class="form-label">VCard Owner: {{editingTransaction.vcard_owner}}</label>
+      <label  for="infos" class="form-label" v-if="editingTransaction.vcard_owner">VCard Owner: {{editingTransaction.vcard_owner}}</label>
       <br>
-      <label  for="infos" class="form-label">Payment Type: {{editingTransaction.payment_type}}</label>
+      <label  for="infos" class="form-label" v-if="editingTransaction.payment_type">Payment Type: {{editingTransaction.payment_type}}</label>
       <br>
-      <label  for="infos" class="form-label">Type: {{editingTransaction.type}}</label>
+      <label  for="infos" class="form-label" v-if="editingTransaction.type">Type: {{editingTransaction.type}}</label>
       <br>
-      <label  for="infos" class="form-label">Value: {{editingTransaction.value}}</label>
+      <label  for="infos" class="form-label" v-if="editingTransaction.value">Value: {{editingTransaction.value}}</label>
       <br>
-      <label  for="infos" class="form-label">Payment Reference: {{editingTransaction.payment_reference}}</label>
+      <label  for="infos" class="form-label" v-if="editingTransaction.payment_reference">Payment Reference: {{editingTransaction.payment_reference}}</label>
       <br>
-      <label  for="infos" class="form-label">Old Balance: {{editingTransaction.old_balance}}</label>
+      <label  for="infos" class="form-label" v-if="editingTransaction.old_balance">Old Balance: {{editingTransaction.old_balance}}</label>
       <br>
-      <label  for="infos" class="form-label">New Balance: {{editingTransaction.new_balance}}</label>
+      <label  for="infos" class="form-label" v-if="editingTransaction.new_balance">New Balance: {{editingTransaction.new_balance}}</label>
       <br>
       <label  for="infos" class="form-label" v-if="editingTransaction.category_name" >Current Category: {{editingTransaction.category_name}}</label>
+      <label  for="infos" class="form-label" v-else >Current Category: No category or deleted</label>
     </div>
     <div class="mb-3">
       <label
@@ -86,8 +87,8 @@ export default {
     }
   },
   created () {
-    console.log('transaction', this.transaction)
-    console.log('details', this.editingTransaction)
+    // console.log('transaction', this.transaction)
+    // console.log('details', this.editingTransaction)
   },
   watch: {
     transaction (newTransaction) {
@@ -108,7 +109,7 @@ export default {
     console.log('operation:', this.operationType)
     this.$axios.get('/admin/categories/default/').then(response => {
       this.categories = response.data.data
-      console.log('categories', this.categories)
+      // console.log('categories', this.categories)
     })
       .catch((error) => {
         console.log(error)

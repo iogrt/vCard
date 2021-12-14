@@ -44,7 +44,6 @@ class VCardController extends Controller
         });
     }
 
-    //public function store(StoreVCardRequest $request){
     public function store(StoreVCardRequest $request){
 
         try {

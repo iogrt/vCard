@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Requests\TransactionAdminRequest;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Requests\TransactionUserRequest;
+use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Category;
 use App\Models\PaymentType;
@@ -223,6 +224,24 @@ class TransactionController extends Controller
 
             return $th->getMessage();
         }
+    }
+
+    //public function update(Request $request, Transaction $transaction)
+    public function update(UpdateTransactionRequest $request, Transaction $transaction)
+    {
+        //dd(Category::find($request->category_id));
+        return DB::transaction(function() use($request,$transaction) { 
+            //$transaction->$request->validated();
+            $transaction->description = $request->description;
+            $transaction->category_id = $request->category_id;
+            $transaction->save();
+           
+            return new TransactionResource($transaction);
+        });
+        //return DB::transaction;
+        // DB::transaction(fn() => $transaction->update($request->validated()));
+
+       
     }
 
 }

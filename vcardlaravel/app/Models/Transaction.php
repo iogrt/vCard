@@ -20,6 +20,7 @@ class Transaction extends Model
         'payment_reference',
         'payment_type',
         'description',
+        'category_name',
         'custom_options',
         'custom_data',
 
@@ -27,6 +28,7 @@ class Transaction extends Model
 
     protected $nullable = [
         'category_id',
+        'category_name',
         'description',
         'custom_options',
         'custom_data'

@@ -1,5 +1,12 @@
 <template>
 <div>
+  <confirmation-dialog
+    ref="confirmationDialog"
+    confirmationBtn="Discard changes and leave"
+    msg="Do you really want to leave? You have unsaved changes!"
+    @confirmed="leaveConfirmed"
+  >
+  </confirmation-dialog>
     <TransactionDetail v-if="transaction"
       :operationType="operation"
       :transaction="transaction"
@@ -80,6 +87,52 @@ export default {
     },
     save () {
       console.log('save')
+      this.errors = null
+      if (this.operation === 'update') {
+        this.$axios
+          .put('/admin/transactions/' + this.id, this.transaction)
+          .then((response) => {
+            this.$toast.success(
+              'Transaction #' + response.data.data.id + ' was updated successfully.'
+            )
+            this.transaction = response.data.data
+            this.originalValueStr = this.dataAsString()
+            this.$router.back()
+          })
+          .catch((error) => {
+            if (error.response.status === 422) {
+              this.$toast.error(
+                'Transaction #' +
+                this.id +
+                ' was not updated due to validation errors!'
+              )
+              this.errors = error.response.data.errors
+            } else {
+              this.$toast.error(
+                'Transaction #' +
+                this.id +
+                ' was not updated due to unknown server error!'
+              )
+            }
+          })
+      }
+    },
+    leaveConfirmed () {
+      if (this.nextCallBack) {
+        this.nextCallBack()
+      }
+    },
+    beforeRouteLeave (to, from, next) {
+      console.log('entrei')
+      this.nextCallBack = null
+      const newValueStr = this.dataAsString()
+      if (this.originalValueStr !== newValueStr) {
+        this.nextCallBack = next
+        const dlg = this.$refs.confirmationDialog
+        dlg.show()
+      } else {
+        next()
+      }
     }
   }
 }
