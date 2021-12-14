@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 // import Home from '../views/Home.vue'
-import DebitTransactionCreate from '../views/DebitTransactionCreate'
+import DebitTransactionCreate from '../components/transactions/DebitTransactionCreate'
+import CreditTransactionCreate from '../components/transactions/CreditTransactionCreate'
 import About from '../views/About.vue'
 
 import Dashboard from '../components/Dashboard.vue'
@@ -61,12 +62,26 @@ const userRoutes = [
     component: EditCard
   },
   {
-    path: '/card/transaction/debit',
+    path: '/card/transfer',
     name: 'DebitTransactionCreate',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => DebitTransactionCreate
+  },
+  {
+    path: '/categories',
+    name: 'CategoriesManage',
+    component: CategoriesManage
+  },
+  {
+    path: '/categories/:id',
+    name: 'EditCategory',
+    component: Category,
+    props: route => ({ id: parseInt(route.params.id) })
+  },
+  {
+    path: '/categories/new',
+    name: 'NewCategory',
+    component: Category,
+    props: route => ({ id: null })
   }
 ]
 
@@ -87,6 +102,12 @@ const adminRoutes = [
     component: Transaction,
     props: route => ({ id: parseInt(route.params.id) })
   },
+  {
+    path: '/vcards/:id/addcredit',
+    name: 'CreditTransactionCreate',
+    component: () => CreditTransactionCreate,
+    props: route => ({ vcard: parseInt(route.params.id) })
+  },
   /*  {
     path: '/reports',
     name: 'Reports',
@@ -94,25 +115,16 @@ const adminRoutes = [
   },
 */
   {
-    path: '/categories',
-    name: 'CategoriesManage',
-    component: CategoriesManage
-  },
-  {
-    path: '/categories/:id',
-    name: 'EditCategory',
-    component: Category,
+    path: '/users',
+    name: 'ManageUsers',
+    component: Users,
+    // props: true
+    // Replaced with the following line to ensure that id is a number
     props: route => ({ id: parseInt(route.params.id) })
   },
   {
-    path: '/categories/new',
-    name: 'NewCategory',
-    component: Category,
-    props: route => ({ id: null })
-  },
-  {
     path: '/users/:id',
-    name: 'User',
+    name: 'ManageUser',
     component: User,
     // props: true
     // Replaced with the following line to ensure that id is a number
@@ -133,7 +145,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.authLevel === 'anon') {
-    console.log('anon route')
     next()
     return
   }

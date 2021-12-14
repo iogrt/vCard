@@ -10,8 +10,8 @@
     <thead>
     <tr>
       <th>#</th>
-      <th>Type</th>
       <th>Name</th>
+      <th>Type</th>
       <th></th>
     </tr>
     </thead>

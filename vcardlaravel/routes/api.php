@@ -64,6 +64,7 @@ Route::middleware(['auth:api'])->group(function(){
         Route::delete('/categories/default/{category}',[CategoryController::class, 'deleteDefaultCategory']);
         Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
         Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
+        Route::get('/vcard/{vcard}',[VCardController::class,'getVCard']);
         Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
         Route::post('/transactions',[TransactionController::class,'adminTransaction']);
     });

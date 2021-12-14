@@ -200,19 +200,24 @@ const vcardSidebarLinks = [
     routeName: 'DebitTransactionCreate',
     label: 'Send Money',
     icon: 'bi-send'
+  },
+  {
+    routeName: 'CategoriesManage',
+    label: 'Categories',
+    icon: 'bi-pentagon'
   }
 ]
 
 const adminSidebarLinks = [
   {
-    routeName: 'CategoriesManage',
-    label: 'Categories',
-    icon: 'bi-pentagon'
-  },
-  {
     routeName: 'Transactions',
     label: 'Transactions',
     icon: 'bi-list-stars'
+  },
+  {
+    routeName: 'ManageUsers',
+    label: 'Manage Users',
+    icon: 'bi-people'
   }
 ]
 

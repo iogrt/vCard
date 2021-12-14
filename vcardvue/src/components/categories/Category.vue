@@ -126,7 +126,7 @@ export default {
           })
           .catch(err => {
             this.$toast.error(err.data.message)
-            this.errors = err.errors
+            this.errors = Object.entries(err.response.data.errors).map(([a, b]) => a + ': ' + b)
           })
 
         return
@@ -140,7 +140,7 @@ export default {
         })
         .catch(err => {
           this.$toast.error(err.message)
-          this.errors = err.errors
+          this.errors = Object.entries(err.response.data.errors).map(([a, b]) => a + ': ' + b)
         })
     },
     cancel () {
@@ -154,7 +154,7 @@ export default {
           console.log(this.category)
         })
         .catch(response => {
-          this.errors = [response.data.error]
+          this.errors = Object.entries(response.response.data.errors).map(([a, b]) => a + ': ' + b)
         })
     },
     leaveConfirmed () {

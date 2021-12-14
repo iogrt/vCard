@@ -24,11 +24,11 @@ use Illuminate\Validation\Rule;
 
 class VCardController extends Controller
 {
-    public function getVCard(Vcard $vcard){//apenas a nivel de conhecimento de dados
+    public function getVCard(String $id){//apenas a nivel de conhecimento de dados
         //return Vcard::all();
         //return Vcard::find($id);//sem usar o resource
         //return VCardResource::collection($id);//usando resources, pois nao devolve o dado diretamente
-        return new VCardResource($vcard);//se for um user deletado nao funciona.....
+        return new VCardResource(Vcard::findOrFail($id));//se for um user deletado nao funciona.....
     }
 
     public function getVcardTransactions(Vcard $vcard){

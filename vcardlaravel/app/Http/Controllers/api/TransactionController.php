@@ -89,11 +89,11 @@ class TransactionController extends Controller
             $newTransaction->date = Carbon::now();
             $newTransaction->datetime = Carbon::now();
 
-            if($request->description){
+            if(isset($request->description)){
                 $newTransaction->description = $request->description;
             }
 
-            if($request->category && Auth::user()->user_type == 'V'){
+            if(isset($request->category) && Auth::user()->user_type == 'V'){
                 $category = Category::where('name', $request->category)->where('vcard',$request->vcard)->first();
 
                 $newTransaction->category_id = $category->id;
@@ -176,11 +176,11 @@ class TransactionController extends Controller
             $newTransaction->date = Carbon::now();
             $newTransaction->datetime = Carbon::now();
 
-            if($request->description){
+            if(isset($request->description)){
                 $newTransaction->description = $request->description;
             }
 
-            if($request->category){
+            if(isset($request->category)){
                 $newTransaction->category_id = Category::where('name', $request->category)->first()->id;
             }
 
