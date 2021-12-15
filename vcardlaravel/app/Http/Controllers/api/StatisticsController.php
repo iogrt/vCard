@@ -21,7 +21,7 @@ class StatisticsController extends Controller
             ->whereRaw("DATE(date) =  '$date'")
             ->get();
 
-        return $res->map(fn($x) => [
+        return $res->flatMap(fn($x) => [
             $x->payment_type => [
                 'count' => $x->count,
                 'total' => $x->total,
@@ -48,7 +48,7 @@ class StatisticsController extends Controller
         return Transaction::select('date',DB::raw('sum(value) as total'),DB::raw('count(*) as count'))
                     ->groupBy('date')
                     ->get()
-                    ->map(fn($x) => [
+                    ->flatMap(fn($x) => [
                         $x->date => array_merge($this->getAllBalancesDay($x->date),[
                             'totalAmountMoved' => $x->total,
                             'countTransactions' => $x->count,
