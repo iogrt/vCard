@@ -38,7 +38,7 @@
     <div class="mb-3 d-flex justify-content-end">
       <button type="button" class="btn btn-primary px-4" @click.prevent="createTransaction($event)"> Send money </button>
       <button type="reset" class="btn btn-danger  px-4" @click="resetValues">Reset</button>
-      <button type="button" class="btn btn-light px-4" @click="cancel" > Cancel </button>
+      <router-link :to="{ name: 'Users' }" class="btn btn-light px-4" @click="cancel" > Cancel </router-link>
     </div>
   </form>
 </template>

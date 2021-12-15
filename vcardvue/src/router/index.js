@@ -107,13 +107,6 @@ const adminRoutes = [
     component: Users
   },
   {
-    path: '/administration',
-    name: 'Administration',
-    icon: 'bi-people',
-    label: 'Administration',
-    component: null
-  },
-  {
     path: '/transactions',
     name: 'Transactions',
     label: 'Transactions',
