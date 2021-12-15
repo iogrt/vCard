@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\CategoryController;
+use App\Http\Controllers\api\StatisticsController;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\DefaultCategory;
@@ -78,6 +79,16 @@ Route::middleware(['auth:api'])->group(function(){
         Route::get('/users',[AuthController::class,'getAllUsers']);
         Route::get('/vcards',[VCardController::class,'getVcards']);
         Route::delete('/vcards/{vcard}', [VCardController::class, 'deleteVcardHelper']);
+
+        //teste
+        Route::prefix('statistics')->group(function(){
+            Route::get('/currentVcardCount',[StatisticsController::class,'currentCountActiveVcards']);
+            Route::get('/AmountByPaymentType',[StatisticsController::class,'transactionsAmountByPaymentType']);
+            Route::get('/MoneyCountDay',[StatisticsController::class,'moneyMovedCountTransactionsByDay']);
+            Route::get('/balancesDay/{date}',[StatisticsController::class,'getAllBalancesDay']);
+            Route::get('/',[StatisticsController::class,'statisticsResponse']);
+
+        });
     });
 });
 
