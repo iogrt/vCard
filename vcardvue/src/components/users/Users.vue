@@ -50,6 +50,7 @@
       :users="filteredUsers"
       :showPhoneNumber="showPhoneNumber"
       @edit="editUser"
+      @refresh="getUsers"
   ></UserTable>
 </template>
 

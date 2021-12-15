@@ -64,7 +64,7 @@
             <button v-if="user.user_type === 'V'"
                 class="btn btn-xs btn-light"
                 @click="blockClick(user)"
-            ><i class="bi bi-xs bi-shield"></i>
+            ><i :class="{ ['bi-shield' + (user.blocked ? '-fill' : '')]: true }" class="bi bi-xs" ></i>
             </button>
             <router-link v-if="user.user_type === 'V'"
                 class="btn btn-xs btn-light"
@@ -148,6 +148,7 @@ export default {
         .then(response => {
           this.$toast.success(`successfully ${response.data.data.blocked === true ? 'blocked' : 'unblocked'} vcard ${user.phone_number}`)
           this.$emit('block', user)
+          this.updateList()
         })
         .catch(err => {
           if (err.status === 422) {
@@ -156,6 +157,9 @@ export default {
             this.$toast.error(err.message)
           }
         })
+    },
+    updateList () {
+      this.$emit('refresh')
     }
   }
 }
