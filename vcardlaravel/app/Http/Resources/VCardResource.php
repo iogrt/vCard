@@ -20,9 +20,7 @@ class VCardResource extends JsonResource
             'phone_number' => $this->phone_number,
             'name' => $this->name,
             'email' => $this->email,
-            'password' => $this->password,
             'photo_url' => $this->photo_url ? $this->photo_url : '',//pq aceita nulo
-            'confirmation_code' => $this->confirmation_code,
             'balance' => (int) $this->balance,
             'blocked' => $this->blocked,
             'max_debit' => $this->max_debit,

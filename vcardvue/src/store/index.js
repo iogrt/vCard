@@ -269,7 +269,7 @@ export default createStore({
     },
     async SOCKET_newCreditTransaction (context, transaction) {
       console.log(transaction)
-      if (context.state.user.user_type !== 'V' || transaction.type !== 'C' || transaction.payment_reference !== context.state.user.phone_number.toString()) { return }
+      if (transaction.type !== 'C') { return }
 
       context.commit('setBalance', transaction.value)
 

@@ -37,7 +37,11 @@ io.on('connection', ws => {
 
     ws.on('newCreditTransaction', transaction => {
         console.log(transaction)
-        ws.to(transaction.payment_reference.toString()).emit('newCreditTransaction',transaction)
+        let dest = transaction.payment_type === 'VCARD' ? transaction.payment_reference : transaction.vcard_owner
+        console.log(dest)
+
+
+        ws.to(dest.toString()).emit('newCreditTransaction',transaction)
     })
 
     ws.on('blockVcard', vcard => {

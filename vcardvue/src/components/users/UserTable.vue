@@ -5,7 +5,7 @@
         <th
           class="align-middle"
         >Name</th>
-        <th class="align-middle">Name</th>
+        <th class="align-middle">Photo</th>
         <th
           class="align-middle"
         >Email</th>
@@ -56,26 +56,21 @@
               @click="editClick(user)"
             ><i class="bi bi-xs bi-pencil"></i>
             </button>
-        </td>
-
-        <td
-            class="text-end align-middle"
-        >
             <button :disabled="user.user_type === 'V' && user.balance === 0"
                 class="btn btn-xs btn-light"
                 @click="removeClick(user)"
             ><i class="bi bi-xs bi-x-square-fill"></i>
             </button>
-        </td>
-
-        <td
-            class="text-end align-middle"
-        >
             <button v-if="user.user_type === 'V'"
                 class="btn btn-xs btn-light"
                 @click="blockClick(user)"
             ><i class="bi bi-xs bi-shield"></i>
             </button>
+            <router-link v-if="user.user_type === 'V'"
+                class="btn btn-xs btn-light"
+                :to="{ name: 'CreditTransactionCreate', params: {id: user.phone_number}}"
+            ><i class="bi bi-xs bi-cash"></i>
+            </router-link>
         </td>
       </tr>
     </tbody>

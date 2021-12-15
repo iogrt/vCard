@@ -129,7 +129,7 @@ export default {
         .catch(errorResponse => {
           if (errorResponse.response.status === 422) {
             // console.log(errorResponse.response.data.message)
-            this.errors = errorResponse.response.data.errors
+            this.errors = Object.entries(error.response.data.errors).map(([a, b]) => a + ': ' + b)
             console.log(this.errors)
             this.$toast.error(errorResponse.response.data.message)
           }

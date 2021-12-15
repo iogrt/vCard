@@ -1,10 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import DebitTransactionCreate from '../views/DebitTransactionCreate'
+import DebitTransactionCreate from '../components/transactions/DebitTransactionCreate'
+import CreditTransactionCreate from '../components/transactions/CreditTransactionCreate'
 import About from '../views/About.vue'
 
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
-import ChangePassword from '../components/auth/ChangePassword.vue'
 import Users from '../components/users/Users.vue'
 import User from '../components/users/User.vue'
 
@@ -14,8 +14,8 @@ import Transactions from '../components/transactions/Transactions.vue'
 import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
-import CategoriesManage from '../components/categories/CategoriesManage.vue'
-import Category from '../components/categories/Category.vue'
+import CategoriesManage from '../components/categories/CategoriesManage'
+import Category from '../components/categories/Category'
 
 import PaymentTypes from '../components/paymentTypes/PaymentTypes'
 import PaymentType from '../components/paymentTypes/PaymentType'
@@ -35,9 +35,6 @@ const anonymousRoutes = [
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => About
   },
   {
@@ -57,11 +54,6 @@ const anonymousRoutes = [
 ]
 
 const userRoutes = [
-  {
-    path: '/password',
-    name: 'ChangePassword',
-    component: ChangePassword
-  },
   {
     path: '/card',
     name: 'Dashboard',
@@ -124,11 +116,10 @@ const adminRoutes = [
     component: Users
   },
   {
-    path: '/administration',
-    name: 'Administration',
-    icon: 'bi-people',
-    label: 'Administration',
-    component: null
+    path: '/vcards/:id/addcredit',
+    name: 'CreditTransactionCreate',
+    component: () => CreditTransactionCreate,
+    props: route => ({ vcard: parseInt(route.params.id) })
   },
   {
     path: '/users',
@@ -182,7 +173,7 @@ const adminRoutes = [
   },
   {
     path: '/users/:id',
-    name: 'User',
+    name: 'ManageUser',
     component: User,
     // props: true
     // Replaced with the following line to ensure that id is a number
@@ -207,6 +198,7 @@ router.beforeEach((to, from, next) => {
     next()
     return
   }
+
   if (!store.getters.isLoggedIn) {
     next({ name: 'Login' })
     return
