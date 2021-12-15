@@ -113,10 +113,6 @@ export default {
       if (this.formData.payment_reference === null) {
         this.errors.push('Payment reference is required')
       }
-      // test payment reference with regex
-      if (!(new RegExp(this.selectedPaymentType.validation_rules)).test(this.formData.payment_reference)) {
-        this.errors.push('Invalid format for payment reference')
-      }
 
       if (this.errors.length !== 0) {
         return

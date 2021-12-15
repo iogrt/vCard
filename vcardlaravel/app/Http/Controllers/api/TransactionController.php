@@ -226,22 +226,15 @@ class TransactionController extends Controller
         }
     }
 
-    //public function update(Request $request, Transaction $transaction)
     public function update(UpdateTransactionRequest $request, Transaction $transaction)
     {
-        //dd(Category::find($request->category_id));
         return DB::transaction(function() use($request,$transaction) { 
-            //$transaction->$request->validated();
             $transaction->description = $request->description;
             $transaction->category_id = $request->category_id;
             $transaction->save();
            
             return new TransactionResource($transaction);
         });
-        //return DB::transaction;
-        // DB::transaction(fn() => $transaction->update($request->validated()));
-
-       
     }
 
 }

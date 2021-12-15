@@ -21,7 +21,9 @@ export default {
   data () {
     return {
       transaction: null,
-      errors: null
+      errors: null,
+      description: null,
+      categoryid: null
     }
   },
   props: {
@@ -48,17 +50,9 @@ export default {
     dataAsString () {
       return JSON.stringify(this.task)
     },
-    /* newTransaction () {
-      return {
-        id: null,
-        vcard: this.$store.state.user.id,
-        description: '',
-        category_id: null
-      }
-    }, */
     loadTransaction (id) {
       this.errors = null
-      if (!id || id < 0) {
+      if (id === null || id < 0) {
         // this.transaction = this.newTransaction()
         this.originalValueStr = this.dataAsString()
       } else {
@@ -74,21 +68,27 @@ export default {
       }
     },
     cancel () {
-      // Replace this code to navigate back
-      // this.loadTask(this.id)
       this.$router.back()
     },
-    save () {
-      console.log('save')
+    save (description, categoryid) {
       this.errors = null
       if (this.operation === 'update') {
         this.$axios
-          .put('/transactions/' + this.id, this.transaction)
+          .put('/transactions/' + this.id, {
+            description, category_id: categoryid
+          })
           .then((response) => {
             this.$toast.success(
               'Transaction #' + response.data.data.id + ' was updated successfully.'
             )
-            this.transaction = response.data.data
+            this.transaction.description = response.data.data.description
+            this.transaction.category_id = response.data.data.category_id
+            const idCategory = this.$store.state.categories.find(x => x.id === categoryid)
+            if (idCategory) {
+              this.transaction.category_name = idCategory.name
+            } else {
+              this.transaction.category_name = null
+            }
             this.originalValueStr = this.dataAsString()
             this.$router.back()
           })

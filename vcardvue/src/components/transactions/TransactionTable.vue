@@ -9,7 +9,7 @@
         <th v-if="showType">Type</th>
         <th>Payment Type</th>
         <th v-if="showValue">Value</th>
-        <th v-if="showEditButton || showDeleteButton"></th>
+        <th v-if="showEditButton"></th>
       </tr>
     </thead>
     <tbody>
@@ -27,7 +27,7 @@
         <td v-else class="green">{{ transaction.value }}</td>
         <td
           class="text-end"
-          v-if="showEditButton || showDeleteButton"
+          v-if="showEditButton"
         >
           <div class="d-flex justify-content-end">
             <button
@@ -35,13 +35,6 @@
               @click="editClick(transaction)"
               v-if="showEditButton"
             ><i class="bi bi-xs bi-pencil"></i>
-            </button>
-
-            <button
-              class="btn btn-xs btn-light"
-              @click="deleteClick(transaction)"
-              v-if="showDeleteButton"
-            ><i class="bi bi-xs bi-x-square-fill"></i>
             </button>
           </div>
         </td>
@@ -83,10 +76,6 @@ export default {
     showEditButton: {
       type: Boolean,
       default: true
-    },
-    showDeleteButton: {
-      type: Boolean,
-      default: true
     }
   },
   emits: [
@@ -95,8 +84,6 @@ export default {
   methods: {
     editClick (transaction) {
       this.$emit('edit', transaction)
-    },
-    deleteClick () {
     }
   },
   created () {

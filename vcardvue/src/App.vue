@@ -226,6 +226,7 @@ export default {
   },
   created () {
     this.createLinks()
+    console.log(this.sidebarLinks)
   },
   computed: {
     user () {
@@ -237,9 +238,6 @@ export default {
     userName () {
       return this.$store.state.user ? this.$store.state.user.name : ''
     }
-  },
-  created () {
-    console.log('created', this.$store.state)
   }
 }
 </script>

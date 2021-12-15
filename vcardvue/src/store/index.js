@@ -85,15 +85,16 @@ export default createStore({
       try {
         const response = await this.$axios.post('/login', credentials, { 'Content-Type': 'application/json' })
         this.$axios.defaults.headers.common.Authorization = 'Bearer ' + response.data.access_token
-        sessionStorage.setItem('token', response.data.access_token)
+        // sessionStorage.setItem('token', response.data.access_token)
         this.state.token = response.data.access_token
-        await context.dispatch('refresh')
+        // await context.dispatch('refresh')
       } catch (error) {
         delete this.$axios.defaults.headers.common.Authorization
         sessionStorage.removeItem('token')
         context.commit('resetUser', null)
         throw error
       }
+      await context.dispatch('refresh')
     },
     async logout (context) {
       try {

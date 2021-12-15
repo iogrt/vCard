@@ -14,8 +14,8 @@ import Transactions from '../components/transactions/Transactions.vue'
 import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
-import CategoriesManage from '../components/categories/CategoriesManage'
-import Category from '../components/categories/Category'
+import CategoriesManage from '../components/categories/CategoriesManage.vue'
+import Category from '../components/categories/Category.vue'
 
 import PaymentTypes from '../components/paymentTypes/PaymentTypes'
 import PaymentType from '../components/paymentTypes/PaymentType'
@@ -64,8 +64,6 @@ const userRoutes = [
     icon: 'bi-house',
     component: Dashboard
   },
-
-  // ver depois
   {
     path: '/card/edit',
     name: 'EditCard',
@@ -96,6 +94,19 @@ const userRoutes = [
     name: 'NewCategory',
     component: Category,
     props: route => ({ id: null })
+  },
+  {
+    path: '/transactions',
+    name: 'Transactions',
+    label: 'Transactions',
+    icon: 'bi-list-stars',
+    component: Transactions
+  },
+  {
+    path: '/transactions/:id',
+    name: 'Transaction',
+    component: Transaction,
+    props: route => ({ id: parseInt(route.params.id) })
   }
 ]
 
@@ -114,7 +125,7 @@ const adminRoutes = [
     label: 'Administration',
     component: null
   },
-  {
+  /* {
     path: '/transactions',
     name: 'Transactions',
     label: 'Transactions',
@@ -126,34 +137,11 @@ const adminRoutes = [
     name: 'Transaction',
     component: Transaction,
     props: route => ({ id: parseInt(route.params.id) })
-  },
-  {
-    path: '/reports',
-    name: 'Reports',
-    component: Report
-  },
+  }, */
   {
     path: '/users',
     name: 'Users',
     component: Users
-  },
-
-  {
-    path: '/categories',
-    name: 'CategoriesManage',
-    component: CategoriesManage
-  },
-  {
-    path: '/categories/:id',
-    name: 'EditCategory',
-    component: Category,
-    props: route => ({ id: parseInt(route.params.id) })
-  },
-  {
-    path: '/categories/new',
-    name: 'NewCategory',
-    component: Category,
-    props: route => ({ id: null })
   },
   {
     path: '/default_categories',

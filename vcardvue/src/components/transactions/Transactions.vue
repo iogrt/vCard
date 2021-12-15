@@ -31,7 +31,6 @@
     :showId="true"
     :showDates="true"
     @edit="editTransaction"
-    @delete="deleteTransaction"
   ></TransactionTable>
 </div>
 </template>
@@ -64,8 +63,6 @@ export default {
   methods: {
     editTransaction (transaction) {
       this.$router.push({ name: 'Transaction', params: { id: transaction.id } })
-    },
-    deleteTransaction () {
     }
   },
   created () {
@@ -77,7 +74,12 @@ export default {
       .catch(errorResponse => {
         console.log(errorResponse)
       })
-  }
+  } /*,
+  sockets: {
+    newCreditTransaction(transaction){
+      this.transactions.push(transaction)
+    }
+  } */
 }
 </script>
 
