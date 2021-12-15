@@ -58,14 +58,16 @@ class ReferenceRule implements Rule
             return true;
         }
 
-        //é um hack, mas as regras de validaçao supostamente estão contidas em regex
-        //$reg = json_decode($payment_type->validation_rules);
+        $payment_type = PaymentType::find(request()->payment_type);
 
-        //if($reg == '' || !$reg){
-        //    return true;
-        //}
-        //return preg_match($reg,$value) == 1;
-        return true;
+        //é um hack, mas as regras de validaçao supostamente estão contidas em regex
+        $reg = json_decode($payment_type->validation_rules);
+
+        if($reg == '' || !$reg){
+            return true;
+        }
+       
+        return preg_match("/$reg/",$value) != 0;
     }
 
     /**

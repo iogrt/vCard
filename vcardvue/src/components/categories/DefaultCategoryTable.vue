@@ -1,11 +1,11 @@
 <template>
-  <ConfirmationDialog
+  <confirmation-dialog
       ref="confirmationDialog"
-      confirmationBtn="Delete category"
-      :msg="`Do you really want to delete the category ${ categoryToDeleteDescription }?`"
+      confirmationBtn="Delete Default category"
+      :msg="`Do you really want to delete the default category ${ categoryToDeleteDescription }?`"
       @confirmed="deleteConfirmed"
   >
-  </ConfirmationDialog>
+  </confirmation-dialog>
   <table class="table">
     <thead>
     <tr>
@@ -44,10 +44,8 @@
 </template>
 
 <script>
-import ConfirmationDialog from '../global/ConfirmationDialog'
 export default {
-  name: 'CategoriesTable',
-  components: { ConfirmationDialog },
+  name: 'DefaultCategoryTable',
   props: {
     categories: {
       type: Array,
@@ -56,7 +54,7 @@ export default {
   },
   emits: [
     'edit',
-    'delete'
+    'deleted'
   ],
   data () {
     return {
@@ -72,21 +70,31 @@ export default {
     }
   },
   watch: {
-    /* tasks (newTasks) {
-      this.editingTasks = newTasks
-    } */
+    categories (newCategories) {
+      this.editingCategories = [...newCategories]
+    }
   },
   methods: {
     editClick (cat) {
-      this.$emit('edit', cat)
+      this.$router.push({ name: 'EditDefaultCategory', params: { id: cat.id } })
+    },
+    deleteConfirmed () {
+      this.$axios.delete('admin/categories/' + this.categoryToDelete.id)
+        .then((response) => {
+          console.log(response.data.data)
+          this.$toast.success('Successfully deleted')
+
+          this.$emit('deleted', this.categoryToDelete)
+        })
+        .catch(error => {
+          this.$toast.error(error.response.data.message)
+          console.log(error)
+        })
     },
     deleteClick (cat) {
       this.categoryToDelete = cat
       const dlg = this.$refs.confirmationDialog
       dlg.show()
-    },
-    deleteConfirmed () {
-      this.$emit('delete', this.categoryToDelete)
     }
   }
 }

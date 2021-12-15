@@ -80,9 +80,11 @@ export default {
           this.$router.push({ name: 'Dashboard' })
         })
         .catch(err => {
-          console.log(err)
-          this.credentials.password = ''
-          this.$toast.error('User credentials are invalid!')
+          if (err.response.status === 403) {
+            this.$toast.error('You are BLOCKED')
+          } else {
+            this.$toast.error('User credentials are invalid!')
+          }
         })
     }
   }

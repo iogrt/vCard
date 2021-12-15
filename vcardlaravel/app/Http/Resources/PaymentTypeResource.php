@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentTypeResource extends JsonResource
 {
+    public static $timestamps = false;
     /**
      * Transform the resource into an array.
      *
@@ -14,6 +15,10 @@ class PaymentTypeResource extends JsonResource
      */
     public function toArray($request)
     {
+        if(self::$timestamps){
+            return $this->resource;
+        }
+
         return [
             "code" => $this->code,
             "name" => $this->name,

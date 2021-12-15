@@ -94,79 +94,14 @@
         class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse"
       >
         <div class="position-sticky pt-3">
-          <ul class="nav flex-column"
-          >
-            <li class="nav-item">
-              <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'Dashboard'}"
-                :to="{ name: 'Dashboard'}"
-              >
-                <i class="bi bi-house"></i>
-                My vCard
+          <ul class="nav flex-column">
+            <li class="nav-item" v-for="sidebarLink in sidebarLinks" :key="sidebarLink.name">
+              <router-link :to="{name: sidebarLink.name}"
+                           class="nav-link"
+                           :class="{active: $route.name === sidebarLink.name}">
+                <i class="bi" :class="{[sidebarLink.icon]: true}"></i>
+                {{sidebarLink.label}}
               </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                  class="nav-link"
-                  :class="{active: $route.name === 'CategoriesManage'}"
-                  :to="{ name: 'CategoriesManage'}"
-              >
-                <i class="bi bi-pentagon"></i>
-                Categories
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'CardCreate'}"
-                :to="{name: 'CardCreate'}"
-              >
-                <i class="bi bi-list-check"></i>
-                Create Vcard
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <router-link
-                class="nav-link"
-                :class="{active: $route.name === 'Transactions'}"
-                :to="{name: 'Transactions'}"
-              >
-                <i class="bi bi-list-stars"></i>
-                Transactions
-              </router-link>
-            </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-files"></i>
-                Send Money
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-people"></i>
-                Administration
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-              >
-                <i class="bi bi-bar-chart-line"></i>
-                Statistics
-              </a>
             </li>
           </ul>
 
@@ -245,8 +180,25 @@
 </template>
 
 <script>
+import { routes } from './router'
+
 export default {
   name: 'RootComponent',
+  data () {
+    return {
+      sidebarLinks: []
+    }
+  },
+  watch: {
+    '$store.state.user.user_type': {
+      handler () {
+        console.log('created', this.$store.state.user.user_type)
+
+        this.createLinks()
+      },
+      deep: true
+    }
+  },
   methods: {
     refresh () {
       this.$store.dispatch('refresh')
@@ -255,14 +207,25 @@ export default {
       this.$store.dispatch('logout')
       // this.$axios.post('logout')
         .then(() => {
-          this.$toast.success('User has logged out of the application.')
-          this.$router.push({ name: 'Dashboard' })
           delete this.$axios.defaults.headers.common.Authorization
+
+          this.$toast.success('User has logged out of the application.')
+          this.$router.push({ name: 'Login' })
         })
         .catch(() => {
           this.$toast.error('There was a problem logging out of the application!')
         })
+    },
+    createLinks () {
+      const typeAuth = type => type === 'A' ? 'admin' : type === 'V' ? 'user' : 'anon'
+
+      this.sidebarLinks = routes
+        .filter(x => x.meta.authLevel === typeAuth(this.$store.state.user.user_type))
+        .filter(x => !!x.icon)
     }
+  },
+  created () {
+    this.createLinks()
   },
   computed: {
     user () {
