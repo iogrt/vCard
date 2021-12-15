@@ -95,11 +95,10 @@
       >
         <div class="position-sticky pt-3">
           <ul class="nav flex-column">
-
-            <li class="nav-item" v-for="sidebarLink in sidebarLinks" :key="sidebarLink.routeName">
-              <router-link :to="{name: sidebarLink.routeName}"
+            <li class="nav-item" v-for="sidebarLink in sidebarLinks" :key="sidebarLink.name">
+              <router-link :to="{name: sidebarLink.name}"
                            class="nav-link"
-                           :class="{active: $route.name === sidebarLink.routeName}">
+                           :class="{active: $route.name === sidebarLink.name}">
                 <i class="bi" :class="{[sidebarLink.icon]: true}"></i>
                 {{sidebarLink.label}}
               </router-link>
@@ -181,48 +180,25 @@
 </template>
 
 <script>
-
-const anonSidebarLinks = [
-  {
-    routeName: 'CardCreate',
-    label: 'Create Vcard',
-    icon: 'bi-list-check'
-  }
-]
-
-const vcardSidebarLinks = [
-  {
-    routeName: 'Dashboard',
-    label: 'My vCard',
-    icon: 'bi-house'
-  },
-  {
-    routeName: 'DebitTransactionCreate',
-    label: 'Send Money',
-    icon: 'bi-send'
-  },
-  {
-    routeName: 'CategoriesManage',
-    label: 'Categories',
-    icon: 'bi-pentagon'
-  }
-]
-
-const adminSidebarLinks = [
-  {
-    routeName: 'Transactions',
-    label: 'Transactions',
-    icon: 'bi-list-stars'
-  },
-  {
-    routeName: 'ManageUsers',
-    label: 'Manage Users',
-    icon: 'bi-people'
-  }
-]
+import { routes } from './router'
 
 export default {
   name: 'RootComponent',
+  data () {
+    return {
+      sidebarLinks: []
+    }
+  },
+  watch: {
+    '$store.state.user.user_type': {
+      handler () {
+        console.log('created', this.$store.state.user.user_type)
+
+        this.createLinks()
+      },
+      deep: true
+    }
+  },
   methods: {
     refresh () {
       this.$store.dispatch('refresh')
@@ -231,14 +207,25 @@ export default {
       this.$store.dispatch('logout')
       // this.$axios.post('logout')
         .then(() => {
-          this.$toast.success('User has logged out of the application.')
-          this.$router.push({ name: 'Dashboard' })
           delete this.$axios.defaults.headers.common.Authorization
+
+          this.$toast.success('User has logged out of the application.')
+          this.$router.push({ name: 'Login' })
         })
         .catch(() => {
           this.$toast.error('There was a problem logging out of the application!')
         })
+    },
+    createLinks () {
+      const typeAuth = type => type === 'A' ? 'admin' : type === 'V' ? 'user' : 'anon'
+
+      this.sidebarLinks = routes
+        .filter(x => x.meta.authLevel === typeAuth(this.$store.state.user.user_type))
+        .filter(x => !!x.icon)
     }
+  },
+  created () {
+    this.createLinks()
   },
   computed: {
     user () {
@@ -249,19 +236,7 @@ export default {
     },
     userName () {
       return this.$store.state.user ? this.$store.state.user.name : ''
-    },
-    sidebarLinks () {
-      if (!this.$store.getters.isLoggedIn) {
-        return anonSidebarLinks
-      }
-      if (this.user.user_type === 'A') {
-        return adminSidebarLinks
-      }
-      return vcardSidebarLinks
     }
-  },
-  created () {
-    console.log('created', this.$store.state)
   }
 }
 </script>

@@ -6,11 +6,8 @@ import About from '../views/About.vue'
 
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
-// import ChangePassword from '../components/auth/ChangePassword.vue'
 import Users from '../components/users/Users.vue'
 import User from '../components/users/User.vue'
-
-// import Report from '../components/Report.vue'
 
 import CreateCard from '../components/cards/CreateCard.vue'
 import EditCard from '../components/cards/EditCard.vue'
@@ -20,6 +17,12 @@ import Transaction from '../components/transactions/Transaction.vue'
 import store from '../store'
 import CategoriesManage from '../components/categories/CategoriesManage'
 import Category from '../components/categories/Category'
+
+import PaymentTypes from '../components/paymentTypes/PaymentTypes'
+import PaymentType from '../components/paymentTypes/PaymentType'
+import DefaultCategories from '../components/categories/DefaultCategories'
+import DefaultCategory from '../components/categories/DefaultCategory'
+import AdminStatistics from '../components/statistics/AdminStatistics'
 
 const addAuthLevel = (authLevel) => route => ({
   ...route,
@@ -41,11 +44,15 @@ const anonymousRoutes = [
   {
     path: '/card/new',
     name: 'CardCreate',
+    label: 'Create Vcard',
+    icon: 'bi-list-check',
     component: CreateCard
   },
   {
     path: '/login',
     name: 'Login',
+    icon: 'bi-box-arrow-in-right',
+    label: 'Login',
     component: Login
   }
 ]
@@ -54,6 +61,8 @@ const userRoutes = [
   {
     path: '/card',
     name: 'Dashboard',
+    label: 'My vCard',
+    icon: 'bi-house',
     component: Dashboard
   },
   {
@@ -62,13 +71,17 @@ const userRoutes = [
     component: EditCard
   },
   {
-    path: '/card/transfer',
+    path: '/card/transaction/debit',
     name: 'DebitTransactionCreate',
+    label: 'Send Money',
+    icon: 'bi-send',
     component: () => DebitTransactionCreate
   },
   {
     path: '/categories',
     name: 'CategoriesManage',
+    label: 'Categories',
+    icon: 'bi-pentagon',
     component: CategoriesManage
   },
   {
@@ -89,11 +102,22 @@ const adminRoutes = [
   {
     path: '/users',
     name: 'Users',
+    label: 'Users',
+    icon: 'bi-people',
     component: Users
+  },
+  {
+    path: '/administration',
+    name: 'Administration',
+    icon: 'bi-people',
+    label: 'Administration',
+    component: null
   },
   {
     path: '/transactions',
     name: 'Transactions',
+    label: 'Transactions',
+    icon: 'bi-list-stars',
     component: Transactions
   },
   {
@@ -116,11 +140,53 @@ const adminRoutes = [
 */
   {
     path: '/users',
-    name: 'ManageUsers',
-    component: Users,
-    // props: true
-    // Replaced with the following line to ensure that id is a number
+    name: 'Users',
+    component: Users
+  },
+  {
+    path: '/default_categories',
+    name: 'DefaultCategories',
+    icon: 'bi-hexagon',
+    label: 'Default Categories',
+    component: DefaultCategories
+  },
+  {
+    path: '/default_categories/:id',
+    name: 'EditDefaultCategory',
+    component: DefaultCategory,
     props: route => ({ id: parseInt(route.params.id) })
+  },
+  {
+    path: '/default_categories/new',
+    name: 'NewDefaultCategory',
+    component: DefaultCategory,
+    props: route => ({ id: null })
+  },
+  {
+    path: '/paymentTypes/:code',
+    name: 'EditPaymentType',
+    component: PaymentType,
+    props: route => ({ code: route.params.code })
+  },
+  {
+    path: '/paymentTypes/new',
+    name: 'NewPaymentType',
+    component: PaymentType,
+    props: route => ({ code: null })
+  },
+  {
+    path: '/paymentTypes',
+    name: 'PaymentTypes',
+    icon: 'bi-pentagon',
+    label: 'Payment Types',
+    component: PaymentTypes
+  },
+  {
+    path: '/admin/statistics',
+    name: 'AdminStatistics',
+    icon: 'bi-bar-chart',
+    label: 'Admin Statistics',
+    component: AdminStatistics
   },
   {
     path: '/users/:id',
@@ -148,14 +214,21 @@ router.beforeEach((to, from, next) => {
     next()
     return
   }
+
   if (!store.getters.isLoggedIn) {
     next({ name: 'Login' })
     return
   }
-  if (to.meta.authLevel === 'admin' && store.state.user.user_type !== 'A') {
-    next(false)
+  if (to.meta.authLevel === 'admin' && store.state.user.user_type === 'A') {
+    next()
+    return
   }
-  next()
+
+  if (to.meta.authLevel === 'user' && store.state.user.user_type === 'V') {
+    next()
+    return
+  }
+  next(false)
 })
 
-export default router
+export { router, routes }

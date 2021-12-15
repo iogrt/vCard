@@ -101,19 +101,32 @@ export default {
 
       this.$axios.post(url, formDataA)
         .then(response => {
-          console.log(url)
-          console.log(response.data)
           this.$toast.success(`Successfully transfered ${this.formData.value}€ to this vCard!`)
           this.resetValues()
+          this.loadVcard() // reload balance
         })
         .catch(errorResponse => {
-          console.log(errorResponse.response.status)
           if (errorResponse.response.status === 422) {
             // this.msgErrors = errorResponse.response.data.errors
             this.errors = Object.entries(errorResponse.response.data.errors).map(([a, b]) => a + ': ' + b)
             this.$toast.error(errorResponse.response.data.message)
           }
         })
+    },
+    loadVcard () {
+      this.$axios.get(`admin/vcard/${this.vcard}`).then(r => {
+        const photoUrl = r.data.data.photo_url
+        this.vcardData = r.data.data
+        this.vcardData.photo_url = photoUrl
+          ? process.env.VUE_APP_BASE_URL + '/storage/fotos/' + photoUrl
+          : 'img/avatar-none.png'
+      }).catch(error => {
+        if (error.response.status === 404) {
+          this.$toast.error('vcard not found')
+        } else {
+          this.$toast.error('there was a problem getting vcard info')
+        }
+      })
     }
   },
   computed: {
@@ -130,28 +143,11 @@ export default {
     }
   },
   mounted () {
-    const basicError = () => this.$toast.error('problem communicating to server')
-
-    this.$axios.get(`admin/vcard/${this.vcard}`).then(r => {
-      console.log('vcard info: ', r.data.data)
-      const photoUrl = r.data.data.photo_url
-      this.vcardData = r.data.data
-      this.vcardData.photo_url = photoUrl
-        ? process.env.VUE_APP_BASE_URL + '/storage/fotos/' + photoUrl
-        : 'img/avatar-none.png'
-    }).catch(error => {
-      console.log('error', error)
-      if (error.response.status === 404) {
-        this.$toast.error('vcard not found')
-      } else {
-        basicError()
-      }
-    })
+    this.loadVcard()
     this.$axios.get('/payment_types/').then(r => {
-      console.log('payment_types: ', r.data.data)
-      this.paymentTypes = r.data.data
-      console.log(this.paymentTypes)
-    }).catch(basicError)
+      // can't simulate a vcard transaction, only from external entities
+      this.paymentTypes = r.data.data.filter(x => x.code !== 'VCARD')
+    }).catch(() => this.$toast.error('problem communicating to server'))
   }
 }
 </script>

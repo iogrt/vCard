@@ -30,10 +30,8 @@ class TransactionAdminRequest extends FormRequest
         return [
             'payment_type' => 'required|not_in:VCARD|exists:payment_types,code',
             'vcard' => 'required|digits:9',
-            'payment_reference' => new ReferenceRule,
+            'payment_reference' => ['required',new ReferenceRule],
             'value' => ['required','gt:0'],
-            'category' => 'exclude',
-            'description' => 'nullable|max:8192',
         ];
     }
 

@@ -11,7 +11,7 @@
           <label for="name" class="form-label">Payment ref:</label>
           <select class="form-select" name="payment_type" v-model="formData.payment_type">
             <option v-for="paymentType in paymentTypes" :key="paymentType.code" :value="paymentType.code">
-                {{paymentType.code}}
+                {{paymentType.name}}
             </option>
           </select>
         </div>
@@ -32,7 +32,7 @@
       <div class="row gx-0 d-flex">
         <div class=" col col-sm-6">
           <select class="form-select" name="category" v-model="formData.category">
-            <option v-for="category in categories" :key="category.id" :value="category.name">
+            <option v-for="category in $store.getters.filteredCategories(null,'D')" :key="category.id" :value="category.name">
                 {{category.name}}
             </option>
           </select>
@@ -73,7 +73,6 @@ export default {
   data () {
     return {
       paymentTypes: [],
-      categories: [],
       formData: {
         payment_type: null,
         payment_reference: null,
@@ -128,9 +127,19 @@ export default {
 
       this.$axios.post(url, formDataA)
         .then(response => {
-          console.log(url)
-          console.log(response.data)
-          this.$toast.success(`Successfully transfered ${this.formData.value}€ to another vCard!`)
+          const trans = response.data.data
+
+          console.log(JSON.stringify(trans))
+          this.$toast.success(`Successfully transfered ${this.formData.value}€!`)
+          if (this.formData.payment_type === 'VCARD') {
+            this.$socket.emit('newCreditTransaction', {
+              value: trans.value,
+              vcard_owner: trans.vcard_owner,
+              payment_type: trans.payment_type,
+              payment_reference: trans.payment_reference,
+              type: 'C'
+            })
+          }
           this.resetValues()
           this.$store.dispatch('loadLoggedInUser')
         })
@@ -163,12 +172,6 @@ export default {
       console.log('payment_types: ', r.data.data)
       this.paymentTypes = r.data.data
       console.log(this.paymentTypes)
-    })
-    this.$axios.get('/vcards/categories/').then(r => {
-      console.log('categories', r.data.data)
-      // only debit categories available
-      this.categories = r.data.data.filter(x => x.type === 'D')
-      console.log(this.categories)
     })
   }
 }
