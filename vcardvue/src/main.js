@@ -40,7 +40,6 @@ if (sessionStorage.getItem('token')) {
 axios.defaults.baseURL = process.env.VUE_APP_API_URL
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$serverUrl = process.env.VUE_APP_BASE_URL
-axios.defaults.headers.common.Authorization = 'Bearer ' + store.state.token
 
 store.$axios = app.config.globalProperties.$axios
 

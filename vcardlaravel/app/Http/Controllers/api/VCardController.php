@@ -267,9 +267,9 @@ class VCardController extends Controller
 
         $category = Category::where('name',$request->name)
             ->where('type',$request->type)
-            ->where('vcard',Auth::user()->username);
+            ->where('vcard',Auth::user()->username)->first();
 
-        $vcardTransactions = Transaction::where('category_id',$category->id);
+        $vcardTransactions = Transaction::where('category_id',$category->id)->get();
 
         return new CategoryResource($this->removeCategoryHelper($category,$vcardTransactions));
     }

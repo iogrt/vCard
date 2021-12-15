@@ -146,6 +146,7 @@ export default {
 
       this.$axios.patch(`admin/vcard/${user.phone_number}/block`)
         .then(response => {
+          console.log('HEHE', response)
           this.$toast.success(`successfully ${response.data.data.blocked === true ? 'blocked' : 'unblocked'} vcard ${user.phone_number}`)
           this.$emit('block', user)
           this.updateList()
