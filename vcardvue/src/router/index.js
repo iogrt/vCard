@@ -1,10 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-
 import DebitTransactionCreate from '../views/DebitTransactionCreate'
 import About from '../views/About.vue'
 
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
+import ChangePassword from '../components/auth/ChangePassword.vue'
 import Users from '../components/users/Users.vue'
 import User from '../components/users/User.vue'
 
@@ -14,8 +14,8 @@ import Transactions from '../components/transactions/Transactions.vue'
 import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
-import CategoriesManage from '../components/categories/CategoriesManage'
-import Category from '../components/categories/Category'
+import CategoriesManage from '../components/categories/CategoriesManage.vue'
+import Category from '../components/categories/Category.vue'
 
 import PaymentTypes from '../components/paymentTypes/PaymentTypes'
 import PaymentType from '../components/paymentTypes/PaymentType'
@@ -58,6 +58,11 @@ const anonymousRoutes = [
 
 const userRoutes = [
   {
+    path: '/password',
+    name: 'ChangePassword',
+    component: ChangePassword
+  },
+  {
     path: '/card',
     name: 'Dashboard',
     label: 'My vCard',
@@ -94,6 +99,19 @@ const userRoutes = [
     name: 'NewCategory',
     component: Category,
     props: route => ({ id: null })
+  },
+  {
+    path: '/transactions',
+    name: 'Transactions',
+    label: 'Transactions',
+    icon: 'bi-list-stars',
+    component: Transactions
+  },
+  {
+    path: '/transactions/:id',
+    name: 'Transaction',
+    component: Transaction,
+    props: route => ({ id: parseInt(route.params.id) })
   }
 ]
 
@@ -111,19 +129,6 @@ const adminRoutes = [
     icon: 'bi-people',
     label: 'Administration',
     component: null
-  },
-  {
-    path: '/transactions',
-    name: 'Transactions',
-    label: 'Transactions',
-    icon: 'bi-list-stars',
-    component: Transactions
-  },
-  {
-    path: '/transactions/:id',
-    name: 'Transaction',
-    component: Transaction,
-    props: route => ({ id: parseInt(route.params.id) })
   },
   {
     path: '/users',
@@ -202,7 +207,6 @@ router.beforeEach((to, from, next) => {
     next()
     return
   }
-
   if (!store.getters.isLoggedIn) {
     next({ name: 'Login' })
     return

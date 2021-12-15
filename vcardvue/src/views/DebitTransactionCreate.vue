@@ -95,7 +95,6 @@ export default {
     },
     async createTransaction (event) {
       event.preventDefault()
-      const url = '/transactions'
 
       this.errors = []
       if (this.formData.value <= 0) {
@@ -113,10 +112,6 @@ export default {
       if (this.formData.payment_reference === null) {
         this.errors.push('Payment reference is required')
       }
-      // test payment reference with regex
-      if (!(new RegExp(this.selectedPaymentType.validation_rules)).test(this.formData.payment_reference)) {
-        this.errors.push('Invalid format for payment reference')
-      }
 
       if (this.errors.length !== 0) {
         return
@@ -125,18 +120,16 @@ export default {
       const formDataA = new FormData()
       Object.entries(this.formData).map(([key, value]) => formDataA.append(key, value))
 
-      this.$axios.post(url, formDataA)
-        .then(response => {
-          const trans = response.data.data
-
-          console.log(JSON.stringify(trans))
+      this.$store.dispatch('insertTransaction', formDataA)
+        .then(transaction => {
+          console.log(JSON.stringify(transaction))
           this.$toast.success(`Successfully transfered ${this.formData.value}€!`)
           if (this.formData.payment_type === 'VCARD') {
             this.$socket.emit('newCreditTransaction', {
-              value: trans.value,
-              vcard_owner: trans.vcard_owner,
-              payment_type: trans.payment_type,
-              payment_reference: trans.payment_reference,
+              value: transaction.value,
+              vcard_owner: transaction.vcard_owner,
+              payment_type: transaction.payment_type,
+              payment_reference: transaction.payment_reference,
               type: 'C'
             })
           }

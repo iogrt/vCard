@@ -27,6 +27,7 @@ const toastOptions = {
 }
 
 const app = createApp(App).use(router).use(store).use(Toaster, toastOptions).use(socketIO)
+
 store.$toast = app.$toast
 store.$socket = socketIO.io
 
@@ -50,5 +51,3 @@ app.mount('#app')
 
 // to access store inside router
 router.app = app
-
-// store.$socket = socketIO.io

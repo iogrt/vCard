@@ -5,25 +5,26 @@
     <div class="mb-3">
       <h4>About</h4>
       <br>
-      <label  for="infos" class="form-label">VCard Owner: {{editingTransaction.vcard_owner}}</label>
+      <label class="form-label" v-if="editingTransaction.vcard_owner">VCard Owner: {{editingTransaction.vcard_owner}}</label>
       <br>
-      <label  for="infos" class="form-label">Payment Type: {{editingTransaction.payment_type}}</label>
+      <label class="form-label" v-if="editingTransaction.payment_type">Payment Type: {{editingTransaction.payment_type}}</label>
       <br>
-      <label  for="infos" class="form-label">Type: {{editingTransaction.type}}</label>
+      <label class="form-label" v-if="editingTransaction.type">Type: {{editingTransaction.type}}</label>
       <br>
-      <label  for="infos" class="form-label">Value: {{editingTransaction.value}}</label>
+      <label class="form-label" v-if="editingTransaction.value">Value: {{editingTransaction.value}}</label>
       <br>
-      <label  for="infos" class="form-label">Payment Reference: {{editingTransaction.payment_reference}}</label>
+      <label class="form-label" v-if="editingTransaction.payment_reference">Payment Reference: {{editingTransaction.payment_reference}}</label>
       <br>
-      <label  for="infos" class="form-label">Old Balance: {{editingTransaction.old_balance}}</label>
+      <label class="form-label" v-if="editingTransaction.old_balance">Old Balance: {{editingTransaction.old_balance}}</label>
       <br>
-      <label  for="infos" class="form-label">New Balance: {{editingTransaction.new_balance}}</label>
+      <label class="form-label" v-if="editingTransaction.new_balance">New Balance: {{editingTransaction.new_balance}}</label>
       <br>
-      <label  for="infos" class="form-label" v-if="editingTransaction.category_name" >Current Category: {{editingTransaction.category_name}}</label>
+      <label class="form-label" v-if="editingTransaction.category_name" >Current Category: {{editingTransaction.category_name}}</label>
+      <label class="form-label" v-else >Current Category: No category or deleted</label>
     </div>
     <div class="mb-3">
       <label
-          for="Description"
+          for="inputDescription"
           class="form-label"
       >Description</label>
       <input
@@ -34,14 +35,14 @@
           v-model="editingTransaction.description"
       >
     </div>
-    <div class="mb-3" v-if="categories">
+    <div class="mb-3" v-if="$store.getters.filteredCategories(null,this.typeTransaction)">
       <label
           for="inputCategory"
           class="form-label"
       >Change Category:</label>
-      <select class="form-select" v-model="selected" >
+      <select id="inputCategory" class="form-select" v-model="editingTransaction.category_id" >
         <option :value="null"></option>
-        <option v-for="category in categories" :key="category.id">{{category.name}}</option>
+        <option v-for="category in $store.getters.filteredCategories(null,this.typeTransaction)" :key="category.id" :value="category.id">{{category.name}} - {{category.type}}</option>
       </select>
     </div>
     <div class="mb-3 d-flex justify-content-end">
@@ -82,12 +83,13 @@ export default {
     return {
       editingTransaction: this.transaction,
       selected: this.transaction.category_name,
-      categories: null
+      categories: null,
+      typeTransaction: this.transaction.type
     }
   },
   created () {
-    console.log('transaction', this.transaction)
-    console.log('details', this.editingTransaction)
+    // console.log('transaction', this.transaction)
+    // console.log('details', this.editingTransaction)
   },
   watch: {
     transaction (newTransaction) {
@@ -105,18 +107,13 @@ export default {
     }
   },
   mounted () {
-    console.log('operation:', this.operationType)
-    this.$axios.get('/admin/categories/default/').then(response => {
-      this.categories = response.data.data
-      console.log('categories', this.categories)
-    })
-      .catch((error) => {
-        console.log(error)
-      })
+    // console.log('operation:', this.operationType)
+    // console.log('categories:', this.$store.state.categories)
+    // console.log('editing:', this.editingTransaction)
   },
   methods: {
     save () {
-      this.$emit('save', this.editingTransaction)
+      this.$emit('save', this.editingTransaction.description, this.editingTransaction.category_id)
     },
     cancel () {
       this.$emit('cancel', this.editingTransaction)

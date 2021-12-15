@@ -42,38 +42,32 @@ Route::middleware(['auth:api'])->group(function(){
         Route::get('users/me', [AuthController::class, 'myself']);
         Route::put('users/me',[AuthController::class,'editProfile']);
         Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
-        Route::get('/payment_types/{payment_type}',[PaymentTypeController::class,'show']);
 
         // Routes for unblocked users
-        Route::middleware(['isVcardUser'])->group(function() {
+        Route::middleware(['isVcardUser'])->prefix('vcards')->group(function() {
 
-            Route::get('vcards/transactions', [TransactionController::class, 'show_user_transactions']);
-            Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
-            Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
-            Route::put('/vcards/categories/{id}', [VCardController::class, 'alterCategory']);
-            Route::get('/vcards/categories', [VCardController::class, 'getCategories']);
-            Route::get('/vcards/categories/{id}', [VCardController::class, 'getCategory']);
-            Route::delete('/vcards/categories', [VCardController::class, 'removeCategory']);
+            Route::get('/transactions', [TransactionController::class, 'show_user_transactions']);
+            Route::post('/categories/default', [VCardController::class, 'addCategoryFromDefault']);
+            Route::post('/categories', [VCardController::class, 'addNewCategory']);
+            Route::put('/categories/{id}', [VCardController::class, 'alterCategory']);
+            Route::get('/categories', [VCardController::class, 'getCategories']);
+            Route::get('/categories/{id}', [VCardController::class, 'getCategory']);
+            Route::delete('/categories', [VCardController::class, 'removeCategory']);
+            Route::put('/transactions/{transaction}', [TransactionController::class, 'update']);
             Route::post('/transactions',[TransactionController::class,'userTransaction']);
-
-            Route::delete('/vcards', [VCardController::class, 'deleteVcard']);
+            Route::delete('/', [VCardController::class, 'deleteVcard']);
         });
     });
 
     Route::middleware(['isAdmin'])->prefix('admin')->group(function() {
-        Route::get('/categories',[CategoryController::class,'show_all']);
-        Route::get('/categories/{category}', [CategoryController::class, 'show']);
-        Route::post('/categories',[CategoryController::class,'create']);
-        Route::delete('/categories/{category}',[CategoryController::class, 'delete']);
-        Route::put('/categories/{category}', [CategoryController::class, 'update']);
+        Route::get('/categories/default',[CategoryController::class,'listDefaultCategories']);
+        Route::post('/categories/default',[CategoryController::class,'createDefaultCategory']);
+        Route::delete('/categories/default/{category}',[CategoryController::class, 'deleteDefaultCategory']);
         Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
-        Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
-        Route::put('/payment_types/{id}', [PaymentTypeController::class, 'alterPaymentType']);
-        Route::post('/payment_types', [PaymentTypeController::class, 'addPaymentType']);
-        Route::delete('/payment_types/{payment_type}',[PaymentTypeController::class,'deletePaymentType']);
-        Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypesAdmin']);
         Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
-        Route::patch('/vcard/{vcard}/block',[VCardController::class,'blockVcard']);
+        Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
+
+        Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
         Route::post('/transactions',[TransactionController::class,'adminTransaction']);
 
         Route::get('/users',[AuthController::class,'getAllUsers']);

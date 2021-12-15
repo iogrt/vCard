@@ -66,6 +66,7 @@ class ReferenceRule implements Rule
         if($reg == '' || !$reg){
             return true;
         }
+
         return preg_match("/$reg/",$value) != 0;
     }
 

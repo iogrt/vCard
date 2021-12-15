@@ -5,7 +5,7 @@
       <h3 class="mt-4">Transactions</h3>
     </div>
     <div class="mx-2 total-filtro">
-      <h5 class="mt-4">Total: {{ totalTransactions }}</h5>
+      <h5 class="mt-4">Total: {{ this.$store.getters.totalTransactions }}</h5>
     </div>
   </div>
   <hr>
@@ -25,20 +25,10 @@
         <option value="D">Debit</option>
       </select>
     </div>
-    <div class="mx-2 mt-2">
-      <button
-        type="button"
-        class="btn btn-success px-4 btn-addprj"
-        @click="addTransaction"
-      ><i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add Transaction</button>
-    </div>
   </div>
    <TransactionTable
     :transactions="filteredTransactions"
-    :showId="true"
-    :showDates="true"
     @edit="editTransaction"
-    @delete="deleteTransaction"
   ></TransactionTable>
 </div>
 </template>
@@ -51,39 +41,20 @@ export default {
   components: {
     TransactionTable
   },
-  data () {
-    return {
-      transactions: [],
-      filterByType: 'D'
-    }
-  },
   computed: {
     filteredTransactions () {
-      return this.transactions
-    },
-    totalTransactions () { // tirar caso com paginate n de certo
-      return this.transactions.length
-    /*  return this.transactions.reduce((c, t) =>
-        (this.transactions) ? c + 1 : c, 0)
-    } */
+      return this.$store.getters.filteredTransactions(this.filterByType)
+    }
+  },
+  data () {
+    return {
+      filterByType: 'D'
     }
   },
   methods: {
     editTransaction (transaction) {
       this.$router.push({ name: 'Transaction', params: { id: transaction.id } })
-    },
-    deleteTransaction () {
     }
-  },
-  created () {
-    this.$axios.get('admin/transactions')
-      .then(response => {
-        console.log(response.data.data)
-        this.transactions = response.data.data
-      })
-      .catch(errorResponse => {
-        console.log(errorResponse)
-      })
   }
 }
 </script>

@@ -95,7 +95,6 @@
       >
         <div class="position-sticky pt-3">
           <ul class="nav flex-column">
-
             <li class="nav-item" v-for="sidebarLink in sidebarLinks" :key="sidebarLink.name">
               <router-link :to="{name: sidebarLink.name}"
                            class="nav-link"
@@ -181,7 +180,6 @@
 </template>
 
 <script>
-
 import { routes } from './router'
 
 export default {
@@ -209,6 +207,8 @@ export default {
       this.$store.dispatch('logout')
       // this.$axios.post('logout')
         .then(() => {
+          this.$toast.success('User has logged out of the application.')
+          this.$router.push({ name: 'Dashboard' })
           delete this.$axios.defaults.headers.common.Authorization
 
           this.$toast.success('User has logged out of the application.')
@@ -228,6 +228,7 @@ export default {
   },
   created () {
     this.createLinks()
+    console.log(this.sidebarLinks)
   },
   computed: {
     user () {
