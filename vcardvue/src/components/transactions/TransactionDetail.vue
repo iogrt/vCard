@@ -107,7 +107,7 @@ export default {
   },
   mounted () {
     console.log('operation:', this.operationType)
-    this.$axios.get('/admin/categories/default/').then(response => {
+    this.$axios.get('/vcards/categories').then(response => {
       this.categories = response.data.data
       // console.log('categories', this.categories)
     })

@@ -70,7 +70,7 @@ export default {
         this.originalValueStr = this.dataAsString()
       } else {
         this.$axios
-          .get('admin/transactions/' + id)
+          .get('/transactions/' + id)
           .then((response) => {
             this.transaction = response.data.data
             this.originalValueStr = this.dataAsString()
@@ -90,7 +90,7 @@ export default {
       this.errors = null
       if (this.operation === 'update') {
         this.$axios
-          .put('/admin/transactions/' + this.id, this.transaction)
+          .put('/transactions/' + this.id, this.transaction)
           .then((response) => {
             this.$toast.success(
               'Transaction #' + response.data.data.id + ' was updated successfully.'

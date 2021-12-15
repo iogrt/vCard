@@ -44,7 +44,9 @@ Route::middleware(['auth:api'])->group(function(){
         // Routes for unblocked users
         Route::middleware(['isVcardUser'])->group(function() {
 
-            Route::get('vcards/transactions', [TransactionController::class, 'show_user_transactions']);
+            Route::get('/vcards/transactions', [TransactionController::class, 'show_user_transactions']);
+            Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
+            // Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
             Route::post('/vcards/categories/default', [VCardController::class, 'addCategoryFromDefault']);
             Route::post('/vcards/categories', [VCardController::class, 'addNewCategory']);
             Route::put('/vcards/categories/{id}', [VCardController::class, 'alterCategory']);
@@ -62,8 +64,6 @@ Route::middleware(['auth:api'])->group(function(){
         Route::get('/categories/default',[CategoryController::class,'listDefaultCategories']);
         Route::post('/categories/default',[CategoryController::class,'createDefaultCategory']);
         Route::delete('/categories/default/{category}',[CategoryController::class, 'deleteDefaultCategory']);
-        Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
-        Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
         Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
         Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
         Route::post('/transactions',[TransactionController::class,'adminTransaction']);

@@ -25,13 +25,6 @@
         <option value="D">Debit</option>
       </select>
     </div>
-    <div class="mx-2 mt-2">
-      <button
-        type="button"
-        class="btn btn-success px-4 btn-addprj"
-        @click="addTransaction"
-      ><i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add Transaction</button>
-    </div>
   </div>
    <TransactionTable
     :transactions="filteredTransactions"
@@ -76,7 +69,7 @@ export default {
     }
   },
   created () {
-    this.$axios.get('admin/transactions')
+    this.$axios.get('vcards/transactions')
       .then(response => {
         console.log(response.data.data)
         this.transactions = response.data.data
