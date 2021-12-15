@@ -16,13 +16,15 @@ class VCardResource extends JsonResource
     {
         //return parent::toArray($request);
         return [
+            'id' => $this->phone_number,
             'phone_number' => $this->phone_number,
             'name' => $this->name,
             'email' => $this->email,
             'password' => $this->password,
             'photo_url' => $this->photo_url ? $this->photo_url : '',//pq aceita nulo
             'confirmation_code' => $this->confirmation_code,
-            'balance' => $this->balance,
+            'balance' => (int) $this->balance,
+            'blocked' => $this->blocked,
             'max_debit' => $this->max_debit,
             'custom_options' => $this->custom_options,
             'custom_data' => $this->custom_data,

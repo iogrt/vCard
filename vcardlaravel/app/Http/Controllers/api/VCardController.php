@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Requests\DefaultCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\TransactionResource;
+use App\Http\Resources\VcardViewAdminResource;
 use App\Models\AuthUser;
 use App\Models\Category;
 use App\Models\DefaultCategory;
@@ -31,6 +32,14 @@ class VCardController extends Controller
         return new VCardResource($vcard);//se for um user deletado nao funciona.....
     }
 
+    public function getVcards(){
+        //  For  each  vCard  they  can  access  the  phone  number;  name,  e-mail  and
+        //photo of the owner; balance and debit limit (max_debit) of the vCard and whether the vCard is
+        //blocked.  Also,  the  administrator  can  block  or  unblock  any  vCard,  change  the  debit  limit
+        //(max_debit)
+        return VcardViewAdminResource::collection(Vcard::withoutTrashed()->get());
+    }
+
     public function getVcardTransactions(Vcard $vcard){
 
         return TransactionResource::collection($vcard->transactions);
@@ -39,6 +48,7 @@ class VCardController extends Controller
     public function blockVcard(Vcard $vcard){
         return DB::transaction(function() use($vcard){
             $vcard->blocked ^= 1;
+            $vcard->update();
 
             return new VCardResource($vcard);
         });
@@ -97,29 +107,37 @@ class VCardController extends Controller
         return new VCardResource($newCard);
     }
 
-    public function deleteVcard(Request $request){
-        $vcard = Vcard::find(Auth::user()->username);
-
+    public function deleteVcardHelper(Vcard $vcard){
         $vcardCategories = $vcard->categories;
         $vcardTransactions = $vcard->transactions;
 
-        $vcardCategories->each(function($category,$key){
-            $trans = DB::table('transactions')->leftJoin('categories',function($join) use($category){
-                $join->on('category_id','=','categories.id');
-            })
-                ->where('transactions.vcard',Auth::user()->username)
-                ->where('categories.name',$category->name)
-                ->where('categories.type',$category->type)->get();
+        try {
+            DB::beginTransaction();
 
-            $this->removeCategoryHelper($category->name,$category->type,$trans);
-        });
+            $vcardCategories->each(function ($category, $key) use ($vcard){
+                $trans = Transaction::where('category_id', $category->id)->get();
 
-        if(count($vcardTransactions) > 0) {
-            $vcard->delete();
+                $this->removeCategoryHelper($category, $trans);
+            });
+
+            if (count($vcardTransactions) > 0) {
+                $vcard->delete();
+            } else {
+                $vcard->forceDelete();
+            }
+
+            DB::commit();
         }
-        else {
-            $vcard->forceDelete();
+        catch(\Throwable $th){
+            DB::rollBack();
+            return response()->json(['message' => $th->getMessage()]);
         }
+
+        return $vcard;
+    }
+
+    public function deleteVcard(Request $request){
+        $this->deleteVcardHelper(Vcard::find(Auth::user()->username));
 
         return (new AuthController)->logout($request);
     }
@@ -189,7 +207,7 @@ class VCardController extends Controller
 
     public function alterCategory(Request $request,$id){
         $validator = Validator::make($request->all(), [
-            'name' => 'string',
+            'name' => ['string',Rule::unique('categories','name')->where(fn($qry) => $qry->where('type',$request->type)->where('vcard',Auth::user()->username)->whereNull('deleted_at'))],
             'type' => 'in:C,D',
         ],[
             'name.string' => 'Name must be text',
@@ -223,11 +241,7 @@ class VCardController extends Controller
         return new CategoryResource($category);
     }
 
-    private function removeCategoryHelper($name,$type,$transactions){
-        $category = Category::where('name','like',$name)
-            ->where('type',$type)
-            ->where('vcard',Auth::user()->username)->first();
-
+    private function removeCategoryHelper($category,$transactions){
         if(count($transactions) > 0){
             $category->delete();
         }
@@ -240,23 +254,24 @@ class VCardController extends Controller
 
     public function removeCategory(Request $request){
         $validator = Validator::make($request->all(),[
-            'name' => ['required','string',Rule::exists('categories','name')->where(fn($qry) => $qry->where('vcard',Auth::user()->username)->where('type',$request->type))],
+            'name' => ['required','string',Rule::exists('categories','name')->where(fn($qry) => $qry->where('vcard',Auth::user()->username)->where('type',$request->type)->whereNull('deleted_at'))],
             'type' => 'in:C,D'
+        ],
+        [
+            'name.exists' => 'Category doesn\'t exist'
         ]);
 
         if($validator->fails()){
-            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->errors()],422);
         }
 
-        $vcardTransactions = DB::table('transactions')->leftJoin('categories',function($join) use($request){
-            $join->on('category_id','=','categories.id');
-        })
-            ->where('transactions.vcard',Auth::user()->username)
-            ->where('categories.name',$request->name)
-            ->where('categories.type',$request->type)->get();
-        //dd($vcardTransactions);
+        $category = Category::where('name',$request->name)
+            ->where('type',$request->type)
+            ->where('vcard',Auth::user()->username);
 
-        return new CategoryResource($this->removeCategoryHelper($request->name,$request->type,$vcardTransactions));
+        $vcardTransactions = Transaction::where('category_id',$category->id);
+
+        return new CategoryResource($this->removeCategoryHelper($category,$vcardTransactions));
     }
 
 }

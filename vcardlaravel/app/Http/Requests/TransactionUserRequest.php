@@ -28,9 +28,9 @@ class TransactionUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'payment_reference' => new ReferenceRule,
-            'value' => ['required','gt:0',new DebitRule],
             'payment_type' => 'required|exists:payment_types,code',
+            'payment_reference' => ['required',new ReferenceRule],
+            'value' => ['required','gt:0',new DebitRule],
             'category' => [new CategoryRule],
             'description' => 'nullable|max:8192',
         ];

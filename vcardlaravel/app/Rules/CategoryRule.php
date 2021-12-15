@@ -35,7 +35,6 @@ class CategoryRule implements Rule
                     ->where('name','like',$value)
                     ->where('type','like','D')
                     ->whereNull('deleted_at')->get()) > 0;
-
     }
 
     /**

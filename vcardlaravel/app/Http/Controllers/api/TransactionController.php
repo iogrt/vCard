@@ -14,7 +14,6 @@ use App\Rules\CategoryRule;
 use App\Rules\DebitRule;
 use App\Rules\TransactionTypeRule;
 use Carbon\Carbon;
-use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -94,7 +93,10 @@ class TransactionController extends Controller
             }
 
             if($request->category && Auth::user()->user_type == 'V'){
-                $category = Category::where('name', $request->category)->where('vcard',$request->vcard)->first();
+                $category = Category::where('name', $request->category)
+                    ->where('vcard',$request->vcard)
+                    ->where('type','D')
+                    ->first();
 
                 $newTransaction->category_id = $category->id;
             }
@@ -107,7 +109,7 @@ class TransactionController extends Controller
 
             //como é pra outra vcard a reference é sempre o phone number
 
-            $newTransaction->payment_reference = $vcard_owner->phone_number;
+            $newTransaction->payment_reference = $request->payment_reference;
             $balance = $request->value;
 
             //type is always debit here
@@ -176,14 +178,6 @@ class TransactionController extends Controller
             $newTransaction->date = Carbon::now();
             $newTransaction->datetime = Carbon::now();
 
-            if($request->description){
-                $newTransaction->description = $request->description;
-            }
-
-            if($request->category){
-                $newTransaction->category_id = Category::where('name', $request->category)->first()->id;
-            }
-
             $newTransaction->payment_type = $request->payment_type;
 
             $vcard_owner = Vcard::where('phone_number', $request->vcard)->first();
@@ -205,6 +199,12 @@ class TransactionController extends Controller
                     break;
                 case 'D':
                     $vcard_owner->balance = (int)$vcard_owner->balance - $balance;
+                    $newTransaction->description = $request->description;
+                    $newTransaction->category_id = Category::where('name', $request->category)
+                        ->where('vcard',$request->vcard)
+                        ->where('type','D')
+                        ->first()
+                        ->id;
             }
 
             $newTransaction->new_balance = (int)$vcard_owner->balance;
