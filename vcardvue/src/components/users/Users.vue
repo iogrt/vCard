@@ -1,4 +1,5 @@
 <template>
+<div>
   <h3 class="mt-5 mb-3">Vcard users</h3>
   <hr>
 
@@ -17,9 +18,9 @@
       id="selectType"
       v-model="filterByType"
   >
+    <option :value="null"></option>
     <option value="V">Vcard</option>
     <option value="A">Admin</option>
-    <option value="">None</option>
   </select>
   </div>
 
@@ -52,6 +53,7 @@
       @edit="editUser"
       @refresh="getUsers"
   ></UserTable>
+  </div>
 </template>
 
 <script>

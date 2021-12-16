@@ -1,4 +1,5 @@
 <template>
+<div>
   <confirmation-dialog
       ref="confirmationDialog"
       confirmationBtn="Delete category"
@@ -48,6 +49,7 @@
     </tr>
     </tbody>
   </table>
+  </div>
 </template>
 
 <script>

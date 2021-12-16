@@ -1,4 +1,5 @@
 <template>
+<div>
   <ConfirmationDialog
       ref="confirmationDialog"
       confirmationBtn="Discard changes and leave"
@@ -69,6 +70,7 @@
       </button>
     </div>
   </form>
+  </div>
 </template>
 
 <script>

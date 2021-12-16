@@ -109,11 +109,9 @@ export default {
       this.$router.push({ name: 'User', params: { id: user.id } })
     },
     removeClick (user) {
-      if (user.user_type === 'V' || user.balance !== 0) {
+      if (user.user_type === 'V' && user.balance !== '0.00') {
         this.$toast.error('can\'t remove vcard with a positive balance!')
-      }
-
-      if (user.user_type === 'V') {
+      } else if (user.user_type === 'V') {
         this.$axios.delete(`admin/vcards/${user.phone_number}`)
           .then(response => {
             this.$toast.success('successfuly deleted vcard ' + user.phone_number)

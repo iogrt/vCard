@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="d-flex justify-content-between">
     <div class="mx-2">
       <h3 class="mt-4">Default Categories</h3>
@@ -18,6 +19,7 @@
         id="selectType"
         v-model="filterByType"
     >
+      <option :value="null"></option>
       <option value="C">Credit</option>
       <option value="D">Debit</option>
     </select>
@@ -42,6 +44,7 @@
       @edit="editCategory"
       @deleted="deletedCategory">
   </DefaultCategoryTable>
+  </div>
 </template>
 
 <script>

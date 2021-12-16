@@ -119,6 +119,10 @@ class VCardController extends Controller
 
                 $this->removeCategoryHelper($category, $trans);
             });
+            
+            if($vcard->balance != 0){
+                return response()->json(["message" => "Balance is not null"],403);
+            }
 
             if (count($vcardTransactions) > 0) {
                 $vcard->delete();
