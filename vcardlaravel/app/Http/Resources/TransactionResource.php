@@ -28,6 +28,7 @@ class TransactionResource extends JsonResource
             'new_balance' => $this->new_balance,
             'description' => $this->description ?? '',
             'category_name' => $this->category ? $this->category->name : '',//pq aceita nulo, pq é a relacao
+            'category_id' => $this->category ? $this->category->id : '',//pq aceita nulo, pq é a relacao
             'payment_type' => $this->paymentType->name,
             'payment_reference' => $this->payment_reference
         ];

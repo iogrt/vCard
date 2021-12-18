@@ -1,4 +1,5 @@
 <template>
+<div>
   <ConfirmationDialog
       ref="confirmationDialog"
       confirmationBtn="Discard changes and leave"
@@ -68,6 +69,7 @@
       </button>
     </div>
   </form>
+  </div>
 </template>
 
 <script>
@@ -96,8 +98,14 @@ export default {
     }
   },
   watch: {
+    id: {
+      immediate: true,
+      handler (newValue) {
+        this.loadCategory(newValue)
+      }
+    },
     category (newCategory) {
-      this.editingCategory = newCategory
+      this.editingCategory = { ...newCategory }
     }
   },
   computed: {
@@ -125,8 +133,10 @@ export default {
         this.$axios.put(`admin/categories/${this.id}`, this.editingCategory)
           .then(response => {
             this.category = response.data.data
+            console.log(this.category)
             this.$toast.success(`Successfully updated default category ${this.category.id}!`)
             this.$router.back()
+            console.log(this.$router.getRoutes())
           })
           .catch(err => {
             if (err.status === 422) {
@@ -161,8 +171,8 @@ export default {
           this.category = response.data.data
           console.log(this.category)
         })
-        .catch(response => {
-          this.$toast.error(response.message)
+        .catch(err => {
+          this.$toast.error(err.response.data.message)
         })
     },
     leaveConfirmed () {
@@ -175,6 +185,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
+    console.log('henlo')
     this.nextCallBack = null
 
     if (JSON.stringify(this.category) !== this.dataAsString()) {

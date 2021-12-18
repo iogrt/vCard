@@ -77,7 +77,11 @@ export default {
           console.log('login', this.$store.state)
           this.$toast.success('User ' + this.$store.state.user.name + ' has entered the application.')
           this.$emit('login')
-          this.$router.push({ name: 'Dashboard' })
+          if (this.$store.state.user.user_type === 'V') {
+            this.$router.push({ name: 'Dashboard' })
+          } else {
+            this.$router.push({ name: 'Users' })
+          }
         })
         .catch(err => {
           if (err.response.status === 403) {

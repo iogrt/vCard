@@ -46,9 +46,12 @@ class CategoryController extends Controller
             return response()->json(['message' => 'There were validation errors','errors' => $validator->getMessageBag()],422);
         }
 
-        DB::transaction(fn() => $category->update($request->validated()));
+        DB::transaction(fn() => $category->update([
+            'name' => $request->name,
+            'type' => $request->type
+        ]));
 
-        return $category;
+        return new DefaultCategoryResource($category);
     }
 
 }

@@ -5,7 +5,7 @@
         <th
           class="align-middle"
         >Name</th>
-        <th class="align-middle">Name</th>
+        <th class="align-middle">Photo</th>
         <th
           class="align-middle"
         >Email</th>
@@ -56,26 +56,21 @@
               @click="editClick(user)"
             ><i class="bi bi-xs bi-pencil"></i>
             </button>
-        </td>
-
-        <td
-            class="text-end align-middle"
-        >
             <button :disabled="user.user_type === 'V' && user.balance === 0"
                 class="btn btn-xs btn-light"
                 @click="removeClick(user)"
             ><i class="bi bi-xs bi-x-square-fill"></i>
             </button>
-        </td>
-
-        <td
-            class="text-end align-middle"
-        >
             <button v-if="user.user_type === 'V'"
                 class="btn btn-xs btn-light"
                 @click="blockClick(user)"
-            ><i class="bi bi-xs bi-shield"></i>
+            ><i :class="{ ['bi-shield' + (user.blocked ? '-fill' : '')]: true }" class="bi bi-xs" ></i>
             </button>
+            <router-link v-if="user.user_type === 'V'"
+                class="btn btn-xs btn-light"
+                :to="{ name: 'CreditTransactionCreate', params: {id: user.phone_number}}"
+            ><i class="bi bi-xs bi-cash"></i>
+            </router-link>
         </td>
       </tr>
     </tbody>
@@ -114,11 +109,9 @@ export default {
       this.$router.push({ name: 'User', params: { id: user.id } })
     },
     removeClick (user) {
-      if (user.user_type === 'V' || user.balance !== 0) {
+      if (user.user_type === 'V' && user.balance !== '0.00') {
         this.$toast.error('can\'t remove vcard with a positive balance!')
-      }
-
-      if (user.user_type === 'V') {
+      } else if (user.user_type === 'V') {
         this.$axios.delete(`admin/vcards/${user.phone_number}`)
           .then(response => {
             this.$toast.success('successfuly deleted vcard ' + user.phone_number)
@@ -151,8 +144,10 @@ export default {
 
       this.$axios.patch(`admin/vcard/${user.phone_number}/block`)
         .then(response => {
+          console.log('HEHE', response)
           this.$toast.success(`successfully ${response.data.data.blocked === true ? 'blocked' : 'unblocked'} vcard ${user.phone_number}`)
           this.$emit('block', user)
+          this.updateList()
         })
         .catch(err => {
           if (err.status === 422) {
@@ -161,6 +156,9 @@ export default {
             this.$toast.error(err.message)
           }
         })
+    },
+    updateList () {
+      this.$emit('refresh')
     }
   }
 }

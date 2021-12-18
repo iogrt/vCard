@@ -3,6 +3,7 @@
 namespace App\Rules;
 
 use App\Models\Vcard;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
 class DebitRule implements Rule

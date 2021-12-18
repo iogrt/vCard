@@ -27,6 +27,7 @@ const toastOptions = {
 }
 
 const app = createApp(App).use(router).use(store).use(Toaster, toastOptions).use(socketIO)
+
 store.$toast = app.$toast
 store.$socket = socketIO.io
 
@@ -39,7 +40,6 @@ if (sessionStorage.getItem('token')) {
 axios.defaults.baseURL = process.env.VUE_APP_API_URL
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$serverUrl = process.env.VUE_APP_BASE_URL
-axios.defaults.headers.common.Authorization = 'Bearer ' + store.state.token
 
 store.$axios = app.config.globalProperties.$axios
 
@@ -50,5 +50,3 @@ app.mount('#app')
 
 // to access store inside router
 router.app = app
-
-// store.$socket = socketIO.io

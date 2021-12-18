@@ -3,13 +3,13 @@
   <table class="table">
     <thead>
       <tr>
-        <th v-if="showId">#</th>
+        <th>#</th>
         <th>Vcard</th>
-        <th v-if="showDates">Date</th>
-        <th v-if="showType">Type</th>
+        <th>Date</th>
+        <th>Type</th>
         <th>Payment Type</th>
-        <th v-if="showValue">Value</th>
-        <th v-if="showEditButton || showDeleteButton"></th>
+        <th>Value</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -17,31 +17,22 @@
         v-for="transaction in transactions"
         :key="transaction.id"
       >
-        <td v-if="showId">{{ transaction.id }}</td>
+        <td>{{ transaction.id }}</td>
         <td v-if="transaction.vcard_owner">{{ transaction.vcard_owner }}</td>
         <td v-else>{{ 'Admin' }}</td>
         <td>{{ transaction.date }}</td>
-        <td v-if="showType">{{ transaction.type }}</td>
+        <td>{{ transaction.type }}</td>
         <td>{{ transaction.payment_type }}</td>
-        <td v-if="transaction.type === 'D' && showValue" class="red">{{- transaction.value }}</td>
+        <td v-if="transaction.type === 'D'" class="red">{{- transaction.value }}</td>
         <td v-else class="green">{{ transaction.value }}</td>
         <td
           class="text-end"
-          v-if="showEditButton || showDeleteButton"
         >
           <div class="d-flex justify-content-end">
             <button
               class="btn btn-xs btn-light"
               @click="editClick(transaction)"
-              v-if="showEditButton"
             ><i class="bi bi-xs bi-pencil"></i>
-            </button>
-
-            <button
-              class="btn btn-xs btn-light"
-              @click="deleteClick(transaction)"
-              v-if="showDeleteButton"
-            ><i class="bi bi-xs bi-x-square-fill"></i>
             </button>
           </div>
         </td>
@@ -63,30 +54,6 @@ export default {
     transactions: {
       type: Array,
       default: () => []
-    },
-    showId: {
-      type: Boolean,
-      default: true
-    },
-    showDates: {
-      type: Boolean,
-      default: true
-    },
-    showType: {
-      type: Boolean,
-      default: true
-    },
-    showValue: {
-      type: Boolean,
-      default: true
-    },
-    showEditButton: {
-      type: Boolean,
-      default: true
-    },
-    showDeleteButton: {
-      type: Boolean,
-      default: true
     }
   },
   emits: [
@@ -95,8 +62,6 @@ export default {
   methods: {
     editClick (transaction) {
       this.$emit('edit', transaction)
-    },
-    deleteClick () {
     }
   },
   created () {

@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-
-import DebitTransactionCreate from '../views/DebitTransactionCreate'
+import DebitTransactionCreate from '../components/transactions/DebitTransactionCreate'
+import CreditTransactionCreate from '../components/transactions/CreditTransactionCreate'
 import About from '../views/About.vue'
 
 import Dashboard from '../components/Dashboard.vue'
@@ -35,9 +35,6 @@ const anonymousRoutes = [
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => About
   },
   {
@@ -94,23 +91,6 @@ const userRoutes = [
     name: 'NewCategory',
     component: Category,
     props: route => ({ id: null })
-  }
-]
-
-const adminRoutes = [
-  {
-    path: '/users',
-    name: 'Users',
-    label: 'Users',
-    icon: 'bi-people',
-    component: Users
-  },
-  {
-    path: '/administration',
-    name: 'Administration',
-    icon: 'bi-people',
-    label: 'Administration',
-    component: null
   },
   {
     path: '/transactions',
@@ -124,6 +104,22 @@ const adminRoutes = [
     name: 'Transaction',
     component: Transaction,
     props: route => ({ id: parseInt(route.params.id) })
+  }
+]
+
+const adminRoutes = [
+  {
+    path: '/users',
+    name: 'Users',
+    label: 'Users',
+    icon: 'bi-people',
+    component: Users
+  },
+  {
+    path: '/vcards/:id/addcredit',
+    name: 'CreditTransactionCreate',
+    component: () => CreditTransactionCreate,
+    props: route => ({ vcard: parseInt(route.params.id) })
   },
   {
     path: '/users',
@@ -177,7 +173,7 @@ const adminRoutes = [
   },
   {
     path: '/users/:id',
-    name: 'User',
+    name: 'ManageUser',
     component: User,
     // props: true
     // Replaced with the following line to ensure that id is a number

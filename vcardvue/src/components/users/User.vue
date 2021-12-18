@@ -1,4 +1,5 @@
 <template>
+<div>
   <confirmation-dialog
     ref="confirmationDialog"
     confirmationBtn="Discard changes and leave"
@@ -12,6 +13,7 @@
     @save="save"
     @cancel="cancel"
   ></user-detail>
+</div>
 </template>
 
 <script>
@@ -83,10 +85,10 @@ export default {
         })
         .catch((error) => {
           if (error.response.status === 422) {
-            this.$toast.success(`User #${this.user.id} (${this.user.name}) was not updated due to validation errors!`)
-            this.errors = error.response.data.errors
+            this.$toast.error(`User #${this.user.id} (${this.user.name}) was not updated due to validation errors!`)
+            this.errors = Object.entries(error.response.data.errors).map(([a, b]) => a + ': ' + b)
           } else {
-            this.$toast.success(`User #${this.user.id} (${this.user.name}) was not updated due to unknown server error!`)
+            this.$toast.error(`User #${this.user.id} (${this.user.name}) was not updated due to unknown server error!`)
           }
         })
     },

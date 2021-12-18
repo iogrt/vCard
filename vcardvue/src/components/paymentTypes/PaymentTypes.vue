@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="d-flex justify-content-between">
     <div class="mx-2">
       <h3 class="mt-4">Payment Types</h3>
@@ -48,6 +49,7 @@
       @edit="editPaymentType"
       @deleted="deletedPaymentType">
   </PaymentTypesTable>
+  </div>
 </template>
 
 <script>

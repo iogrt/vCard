@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Requests\TransactionAdminRequest;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Requests\TransactionUserRequest;
+use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Category;
 use App\Models\PaymentType;
@@ -88,16 +89,15 @@ class TransactionController extends Controller
             $newTransaction->date = Carbon::now();
             $newTransaction->datetime = Carbon::now();
 
-            if($request->description){
+            if(isset($request->description)){
                 $newTransaction->description = $request->description;
             }
 
-            if($request->category && Auth::user()->user_type == 'V'){
+            if(isset($request->category) && Auth::user()->user_type == 'V'){
                 $category = Category::where('name', $request->category)
                     ->where('vcard',$request->vcard)
                     ->where('type','D')
                     ->first();
-
                 $newTransaction->category_id = $category->id;
             }
 
@@ -178,6 +178,14 @@ class TransactionController extends Controller
             $newTransaction->date = Carbon::now();
             $newTransaction->datetime = Carbon::now();
 
+            if(isset($request->description)){
+                $newTransaction->description = $request->description;
+            }
+
+            if(isset($request->category)){
+                $newTransaction->category_id = Category::where('name', $request->category)->first()->id;
+            }
+
             $newTransaction->payment_type = $request->payment_type;
 
             $vcard_owner = Vcard::where('phone_number', $request->vcard)->first();
@@ -223,6 +231,17 @@ class TransactionController extends Controller
 
             return $th->getMessage();
         }
+    }
+
+    public function update(UpdateTransactionRequest $request, Transaction $transaction)
+    {
+        return DB::transaction(function() use($request,$transaction) { 
+            $transaction->description = $request->description;
+            $transaction->category_id = $request->category_id;
+            $transaction->save();
+           
+            return new TransactionResource($transaction);
+        });
     }
 
 }

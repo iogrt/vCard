@@ -1,4 +1,5 @@
 <template>
+<div>
   <ConfirmationDialog
       ref="confirmationDialog"
       confirmationBtn="Discard changes and leave"
@@ -69,6 +70,7 @@
       </button>
     </div>
   </form>
+  </div>
 </template>
 
 <script>
@@ -131,8 +133,8 @@ export default {
             this.$router.back()
           })
           .catch(err => {
-            this.$toast.error(err.response.data.message)
-            this.errors = err.response.data.errors
+            this.$toast.error(err.data.message)
+            this.errors = Object.entries(err.response.data.errors).map(([a, b]) => a + ': ' + b)
           })
 
         return
@@ -145,8 +147,8 @@ export default {
           this.$router.back()
         })
         .catch(err => {
-          this.$toast.error(err.response.data.message)
-          this.errors = err.response.data.errors
+          this.$toast.error(err.message)
+          this.errors = Object.entries(err.response.data.errors).map(([a, b]) => a + ': ' + b)
         })
     },
     cancel () {
@@ -160,7 +162,8 @@ export default {
           console.log(this.category)
         })
         .catch(response => {
-          this.$toast.error(response.data.error)
+          this.errors = Object.entries(response.response.data.errors).map(([a, b]) => a + ': ' + b)
+          this.$toast.error(response.data.message)
         })
     },
     leaveConfirmed () {

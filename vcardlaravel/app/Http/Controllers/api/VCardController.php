@@ -25,11 +25,11 @@ use Illuminate\Validation\Rule;
 
 class VCardController extends Controller
 {
-    public function getVCard(Vcard $vcard){//apenas a nivel de conhecimento de dados
+    public function getVCard(String $id){//apenas a nivel de conhecimento de dados
         //return Vcard::all();
         //return Vcard::find($id);//sem usar o resource
         //return VCardResource::collection($id);//usando resources, pois nao devolve o dado diretamente
-        return new VCardResource($vcard);//se for um user deletado nao funciona.....
+        return new VCardResource(Vcard::findOrFail($id));//se for um user deletado nao funciona.....
     }
 
     public function getVcards(){
@@ -119,6 +119,10 @@ class VCardController extends Controller
 
                 $this->removeCategoryHelper($category, $trans);
             });
+            
+            if($vcard->balance != 0){
+                return response()->json(["message" => "Balance is not null"],403);
+            }
 
             if (count($vcardTransactions) > 0) {
                 $vcard->delete();
@@ -267,9 +271,9 @@ class VCardController extends Controller
 
         $category = Category::where('name',$request->name)
             ->where('type',$request->type)
-            ->where('vcard',Auth::user()->username);
+            ->where('vcard',Auth::user()->username)->first();
 
-        $vcardTransactions = Transaction::where('category_id',$category->id);
+        $vcardTransactions = Transaction::where('category_id',$category->id)->get();
 
         return new CategoryResource($this->removeCategoryHelper($category,$vcardTransactions));
     }

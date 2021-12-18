@@ -27,9 +27,21 @@ io.on('connection', ws => {
         ws.to(ws.userid).emit('deleteCategory', category)
     })
 
+    ws.on('newTransaction', function (transaction) {
+        ws.to(ws.userid).emit('newTransaction', transaction)
+    })
+    ws.on('updateTransaction', function (transaction) {
+        console.log("updating transaction " + JSON.stringify(transaction))
+        ws.to(ws.userid).emit('updateTransaction', transaction)
+    })
+
     ws.on('newCreditTransaction', transaction => {
         console.log(transaction)
-        ws.to(transaction.payment_reference.toString()).emit('newCreditTransaction',transaction)
+        let dest = transaction.payment_type === 'VCARD' ? transaction.payment_reference : transaction.vcard_owner
+        console.log(dest)
+
+
+        ws.to(dest.toString()).emit('newCreditTransaction',transaction)
     })
 
     ws.on('blockVcard', vcard => {
