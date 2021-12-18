@@ -67,8 +67,27 @@ io.on('connection', ws => {
                 break;
         }
     })
-
+  
     ws.on('logged_out',user => {
+      ws.to(user.id).emit('logged_out')
+        ws.leave(user.id)
+        delete ws.userid
+
+        console.log(`user ${user.id} has logged out`)
+
+        switch(user.user_type){
+        case 'A':
+            ws.leave('administrator')
+            break;
+        case 'V':
+            ws.leave('vcard')
+        default:
+            break;
+        }
+    })
+
+    ws.on('logged_out_admin',id => {
+      ws.to(id).emit('logged_out')
         ws.leave(user.id)
         delete ws.userid
 

@@ -135,8 +135,8 @@ export default createStore({
     async logout (context) {
       try {
         await this.$axios.post('logout')
-
         this.$socket.emit('logged_out', context.state.user)
+        this.$router.push({ name: 'Login' })
       } finally {
         delete this.$axios.defaults.headers.common.Authorization
         context.commit('resetUser')
@@ -263,7 +263,12 @@ export default createStore({
     },
 
     async SOCKET_blockVcard (context) {
-      this.$toast.info('Your vcard has been blocked :)')
+      this.$toast.info('Your vcard has been blocked')
+
+      await context.dispatch('logout')
+    },
+    async SOCKET_logged_out (context) {
+      this.$toast.info('You have been logged out')
 
       await context.dispatch('logout')
     },

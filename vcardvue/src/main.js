@@ -30,6 +30,7 @@ const app = createApp(App).use(router).use(store).use(Toaster, toastOptions).use
 
 store.$toast = app.$toast
 store.$socket = socketIO.io
+store.$router = router
 
 console.log(process.env)
 

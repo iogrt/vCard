@@ -199,12 +199,8 @@ export default {
       this.$store.dispatch('logout')
       // this.$axios.post('logout')
         .then(() => {
-          this.$toast.success('User has logged out of the application.')
-          this.$router.push({ name: 'Dashboard' })
           delete this.$axios.defaults.headers.common.Authorization
-
           this.$toast.success('User has logged out of the application.')
-          this.$router.push({ name: 'Login' })
         })
         .catch(() => {
           this.$toast.error('There was a problem logging out of the application!')

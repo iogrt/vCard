@@ -17,7 +17,7 @@ use \Illuminate\Support\Facades\Hash;
 use \Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
-{
+ {
         public function login(Request $request){
 
             request()->request->add ([
@@ -128,6 +128,14 @@ class AuthController extends Controller
             return response()->json(['message' => 'Internal server Error','error' => $th->getMessage()],500);
         }
         return new AuthUserResource($newAdmin);
+    }
+
+    public function deleteAdmin(User $user) {
+        return DB::transaction(function() use($user) {
+            $user->delete();
+            return new AuthUserResource($user);
+        });
+
     }
 
     public function myself(){

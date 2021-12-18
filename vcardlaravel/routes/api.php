@@ -79,6 +79,7 @@ Route::middleware(['auth:api'])->group(function(){
 
         Route::get('/users',[AuthController::class,'getAllUsers']);
         Route::post('/users',[AuthController::class,'addAdmin']);
+        Route::delete('/users/{user}',[AuthController::class,'deleteAdmin']);
         Route::get('/vcards',[VCardController::class,'getVcards']);
         Route::delete('/vcards/{vcard}', [VCardController::class, 'deleteVcardHelper']);
         Route::patch('/vcards/{vcard}/maxdebit', [VCardController::class, 'editMaxDebitLimit']);

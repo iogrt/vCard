@@ -16,6 +16,7 @@ class VcardViewAdminResource extends JsonResource
     public function toArray($request)
     {
         $arr = [
+            'id' => $this->id,
             'user_type' => $this->user_type,
             'email' => $this->email,
             'name' => $this->name,

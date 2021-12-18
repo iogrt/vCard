@@ -121,6 +121,7 @@ export default {
           .then(response => {
             this.$toast.success('successfuly deleted vcard ' + user.phone_number)
             this.$emit('remove', user)
+            this.$socket.emit('logged_out_admin', user.id)
           })
           .catch(err => {
             if (err.status === 422) {
@@ -130,10 +131,12 @@ export default {
             }
           })
       } else if (user.user_type === 'A') {
-        this.$axios.delete(`admin/${user.phone_number}`)
+        this.$axios.delete(`admin/users/${user.id}`)
           .then(response => {
             this.$toast.success('successfuly deleted admin ' + user.email)
             this.$emit('remove', user)
+            this.$emit('refresh')
+            this.$socket.emit('logged_out_admin', user.id)
           })
           .catch(err => {
             if (err.status === 422) {
