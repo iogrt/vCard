@@ -67,7 +67,8 @@ class ReferenceRule implements Rule
             return true;
         }
 
-        return preg_match("/$reg/",$value) != 0;
+        // use "," since it isnt used inside regex
+        return preg_match(",$reg,",$value) != 0;
     }
 
     /**

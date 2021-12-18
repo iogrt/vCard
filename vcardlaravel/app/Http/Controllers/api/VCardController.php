@@ -278,6 +278,22 @@ class VCardController extends Controller
         return new CategoryResource($this->removeCategoryHelper($category,$vcardTransactions));
     }
 
+    public function editMaxDebitLimit(Vcard $vcard, Request $request) {
+        $validator = Validator::make($request->all(), [
+            'maxdebit' => 'required|gt:0',
+        ], ['maxdebit.gt' => "Max debit must be superior to 0",
+            'maxdebit.required' => "Max debit is required"
+        ]);
+        if($validator->fails()){
+            return response()->json(['message' => 'There were validation errors','errors' => $validator->getMessageBag()],422);
+        }
+        return DB::transaction(function() use($vcard, $request) {
+            $vcard->max_debit = $request->maxdebit;
+            $vcard->update();
+            return new VCardResource($vcard);
+        });
+    }
+
 }
 
 

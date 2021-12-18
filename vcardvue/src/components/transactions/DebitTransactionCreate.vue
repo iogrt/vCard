@@ -128,7 +128,7 @@ export default {
             this.$socket.emit('newCreditTransaction', {
               value: transaction.value,
               vcard_owner: transaction.vcard_owner,
-              payment_type: transaction.payment_type,
+              payment_type: this.formData.payment_type,
               payment_reference: transaction.payment_reference,
               type: 'C'
             })

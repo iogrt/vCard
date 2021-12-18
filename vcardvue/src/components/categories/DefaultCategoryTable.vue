@@ -67,7 +67,7 @@ export default {
   computed: {
     categoryToDeleteDescription () {
       return this.categoryToDelete
-        ? `#${this.categoryToDelete.id} (${this.categoryToDelete.description})`
+        ? `#${this.categoryToDelete.id} (${this.categoryToDelete.name})`
         : ''
     }
   },

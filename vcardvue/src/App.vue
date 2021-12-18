@@ -29,14 +29,6 @@
       <div class="collapse navbar-collapse justify-content-end">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a
-              class="nav-link"
-              href="#"
-            ><i class="bi bi-person-check-fill"></i>
-              Register
-            </a>
-          </li>
-          <li class="nav-item">
             <router-link
               class="nav-link"
               :class="{active: $route.name === 'Login'}"
@@ -171,7 +163,7 @@
         </div>
       </nav>
 
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 h-100">
         <router-view></router-view>
       </main>
     </div>

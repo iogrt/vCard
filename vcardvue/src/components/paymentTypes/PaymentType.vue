@@ -118,7 +118,7 @@ export default {
   components: { ConfirmationDialog, FieldErrorMessage },
   props: {
     code: {
-      type: Number
+      type: String
     }
   },
   data () {
@@ -142,7 +142,7 @@ export default {
   },
   computed: {
     title () {
-      return !this.code
+      return this.code === null
         ? 'New Payment Type'
         : 'Payment Type #' + this.editingPaymentType.code
     }
@@ -188,7 +188,7 @@ export default {
     },
     loadPaymentType () {
       this.errors = null
-      this.$axios.get(`admin/payment_types/${this.code}`)
+      this.$axios.get(`payment_types/${this.code}`)
         .then(response => {
           this.paymentType = response.data.data
           console.log(this.paymentType)

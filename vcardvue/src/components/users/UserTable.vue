@@ -106,7 +106,12 @@ export default {
       return user.user_type === 'A' ? './img/Admin.png' : './img/VCard_V.png'
     },
     editClick (user) {
-      this.$router.push({ name: 'User', params: { id: user.id } })
+      console.log('user.id', user.id)
+      if (user.user_type === 'V') {
+        this.$router.push({ name: 'EditDebitLimit', params: { id: user.phone_number, maxDebit: user.max_debit } })
+      } else {
+        this.$router.push({ name: 'EditAdmin', params: { id: user.id } })
+      }
     },
     removeClick (user) {
       if (user.user_type === 'V' && user.balance !== '0.00') {

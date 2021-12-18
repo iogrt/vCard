@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
-
-    protected $table = view_auth_user;
 
     public function findForPassport($username){
         return $this->where('username', $username)->first();

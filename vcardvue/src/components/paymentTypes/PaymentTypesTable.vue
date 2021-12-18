@@ -22,12 +22,13 @@
     <tr
         v-for="pay in paymentTypes"
         :key="pay.code"
+      :class="{ completed: pay.deleted_at}"
     >
       <td>{{ pay.code }}</td>
       <td>{{ pay.name}} </td>
       <td>{{ pay.description}} </td>
       <td v-if="showRules">{{ pay.validation_rules}} </td>
-      <td v-if="showTimestamps">{{pay.deleted_at ? new Date(pay.deleted_at) : ""}}</td>
+      <td v-if="showTimestamps" >{{pay.deleted_at ? new Date(pay.deleted_at) : ""}}</td>
       <td class="text-end">
         <div class="d-flex justify-content-end">
           <button
@@ -118,7 +119,6 @@ export default {
 .completed {
   text-decoration: line-through;
 }
-
 button {
   margin-left: 3px;
   margin-right: 3px;

@@ -98,12 +98,6 @@ export default {
     }
   },
   watch: {
-    id: {
-      immediate: true,
-      handler (newValue) {
-        this.loadCategory(newValue)
-      }
-    },
     category (newCategory) {
       this.editingCategory = { ...newCategory }
     }

@@ -105,7 +105,7 @@ export default {
   },
   computed: {
     title () {
-      return this.id === -1
+      return this.id === null
         ? 'New Category'
         : 'Category #' + this.editingCategory.id
     }

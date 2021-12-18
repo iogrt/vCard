@@ -3,15 +3,12 @@
 use App\Http\Controllers\api\PaymentTypeController;
 use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\api\StatisticsController;
+use App\Models\AuthUser;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\DefaultCategory;
 use App\Models\PaymentType;
 use App\Models\Transaction;
-use App\Models\Vcard;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\VCardController;
 use App\Http\Controllers\api\AuthController;
@@ -57,6 +54,8 @@ Route::middleware(['auth:api'])->group(function(){
             Route::put('/transactions/{transaction}', [TransactionController::class, 'update']);
             Route::post('/transactions',[TransactionController::class,'userTransaction']);
             Route::delete('/', [VCardController::class, 'deleteVcard']);
+
+            Route::get('/statistics',[StatisticsController::class,'statisticsResponse']);
         });
     });
 
@@ -67,22 +66,22 @@ Route::middleware(['auth:api'])->group(function(){
         Route::post('/categories',[CategoryController::class,'create']);
         Route::delete('/categories/{category}',[CategoryController::class, 'delete']);
         Route::get('/transactions/{transaction}',fn($transaction) => new \App\Http\Resources\TransactionResource(Transaction::find($transaction)));
-        Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
         Route::put('/payment_types/{id}', [PaymentTypeController::class, 'alterPaymentType']);
         Route::post('/payment_types', [PaymentTypeController::class, 'addPaymentType']);
         Route::delete('/payment_types/{payment_type}',[PaymentTypeController::class,'deletePaymentType']);
         Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypesAdmin']);
-        Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
+        // Route::get('/transactions',[TransactionController::class,'show_all_transactions']);
         Route::get('/vcard/{vcard}',[VCardController::class,'getVCard']);
         Route::patch('/vcard/{vcard}/block',[VCardController::class,'blockVcard']);
-        Route::get('/payment_types',[PaymentTypeController::class,'getAllPaymentTypes']);
 
         Route::patch('/vcard/{vcard}',[VCardController::class,'blockVcard']);
         Route::post('/transactions',[TransactionController::class,'adminTransaction']);
 
         Route::get('/users',[AuthController::class,'getAllUsers']);
+        Route::post('/users',[AuthController::class,'addAdmin']);
         Route::get('/vcards',[VCardController::class,'getVcards']);
         Route::delete('/vcards/{vcard}', [VCardController::class, 'deleteVcardHelper']);
+        Route::patch('/vcards/{vcard}/maxdebit', [VCardController::class, 'editMaxDebitLimit']);
 
         //teste
         Route::prefix('statistics')->group(function(){
@@ -90,8 +89,8 @@ Route::middleware(['auth:api'])->group(function(){
             Route::get('/AmountByPaymentType',[StatisticsController::class,'transactionsAmountByPaymentType']);
             Route::get('/MoneyCountDay',[StatisticsController::class,'moneyMovedCountTransactionsByDay']);
             Route::get('/balancesDay/{date}',[StatisticsController::class,'getAllBalancesDay']);
-            Route::get('/',[StatisticsController::class,'statisticsResponse']);
-
+            Route::get('/',[StatisticsController::class,'adminStatisticsResponse']);
         });
     });
 });
+

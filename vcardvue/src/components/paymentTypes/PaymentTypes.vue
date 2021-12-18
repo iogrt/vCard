@@ -97,15 +97,11 @@ export default {
     editPaymentType (cat) {
       this.$router.push({ name: 'EditPaymentType', params: { id: cat.id } })
     },
-    deletedPaymentType (cat) {
-      const idx = this.paymentTypes.findIndex(t => t.id === cat.id)
-
-      if (idx >= 0) {
-        this.paymentTypes.splice(idx, 1)
-      }
+    deletedPaymentType () {
+      this.loadPaymentTypes()
     }
   },
-  created () {
+  mounted () {
     this.loadPaymentTypes()
   }
 }

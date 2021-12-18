@@ -40,6 +40,20 @@ class PaymentTypeController extends Controller
     }
 
     public function addPaymentType(PaymentTypeRequest $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'nullable|string',
+            'description' => 'nullable|string|max:8192',
+            'validation_rules' => 'nullable'
+        ],[
+            'name.string' => 'Name must be text',
+            'description.string' => 'Description must be text',
+            'description.max' => 'Description maximum size of 8192 exceeded',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(["message" => "Validation Errors!","errors" => $validator->getMessageBag()],422);
+        }
+
         $arr = [
             'code' => $request->code,
             'name' => $request->name,
@@ -63,6 +77,9 @@ class PaymentTypeController extends Controller
 
 
     public function alterPaymentType(Request $request,$id){
+        // escape regex
+        $request->validation_rules = '"' . str_replace("\\","\\\\",$request->validation_rules) . '"';
+
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string',
             'description' => 'nullable|string|max:8192',

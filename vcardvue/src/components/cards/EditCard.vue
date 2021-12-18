@@ -6,7 +6,7 @@
     <p>Phone number: {{this.$store.state.user.phone_number}}</p>
     <div class="mb-3">
       <label for="name" class="form-label">Password:</label>
-        <input class="textbox  form-control" name="passw-ord" type="password" placeholder="<unchanged>" v-model="formData.password">
+        <input class="textbox  form-control" name="password" type="password" placeholder="<unchanged>" v-model="formData.password">
     </div>
 
     <div class="mb-3">
@@ -26,7 +26,7 @@
 
     <div class="mb-3" v-if="needPassword">
       <label for="name" class="form-label">Confirm with current password:</label>
-        <input class="textbox  form-control" name="conf_code" type="number" max="9999" placeholder="Current password" v-model="currentPassword" data-rule="required">
+        <input class="textbox  form-control" name="conf_code" type="password" placeholder="Current password" v-model="currentPassword" data-rule="required">
     </div>
 
     <div>Current photo: <img class="rounded-circle" width="100" :src="this.$store.state.user.photo_url" /> </div>
@@ -145,7 +145,7 @@ export default {
             console.log(errorResponse.message)
             console.log(errorResponse.response.status)
             console.log(errorResponse.response.data.message)
-            this.errors.push(errorResponse.response.data.message)
+            this.errors = Object.entries(errorResponse.response.data.errors).map(([a, b]) => a + ': ' + b)
           }
           if (errorResponse.response.status === 500) {
             console.log(errorResponse)

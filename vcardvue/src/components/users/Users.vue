@@ -41,11 +41,10 @@
     <input id="selectEmail" class="textbox  form-control" type="email" placeholder="Email" v-model="filterByEmail">
   </div>
   <div class="mx-2 mt-2">
-    <button
-        type="button"
-        class="btn btn-success px-4 btn-addCategory"
-        @click="addAdmin"
-    ><i class="bi bi-xs bi-plus-circle"></i>Add New Administrator</button>
+    <router-link
+      :to="{ name: 'AddAdmin' }"
+      class="btn btn-success px-4 btn-addCategory"
+    ><i class="bi bi-xs bi-plus-circle"></i>Add New Administrator</router-link>
   </div>
   <UserTable
       :users="filteredUsers"

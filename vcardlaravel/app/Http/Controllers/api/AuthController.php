@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use \Illuminate\Support\Facades\Hash;
-
+use \Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -51,24 +51,36 @@ class AuthController extends Controller
 
         return VcardViewAdminResource::collection($users);
     }
-
+    
     public function editProfile(EditProfileRequest $request){
-        return DB::transaction(function() use($request){
-            switch(Auth::user()->user_type){
-                case 'A':
-                    $user = User::find(Auth::user()->username);
-                    break;
-                case 'V':
-                    $user = Vcard::find(Auth::user()->username);
-                    break;
-            }
 
+        switch (Auth::user()->user_type) {
+            case 'A':
+                $loggedId = Auth::user()->id;
+                $user = User::find($loggedId);
+                break;
+            case 'V':
+                $loggedId = Auth::user()->username;
+                $user = Vcard::find($loggedId);
+                break;
+        }
+
+        $transactionStatus = DB::transaction(function() use($request,$user){
+            if($request->password || $request->confirmation_code) {
+                if(!Hash::check($request->current_password, $user->password)) {
+                    return response()->json(
+                        ['message' => 'current password is incorrect'],
+                        400
+                    );
+                }
+            }
             if($request->name){
                 $user->name = $request->name;
             }
 
+
             if($request->password){
-                $user->name = bcrypt($request->password);
+                $user->password = bcrypt($request->password);
             }
 
             if($request->email){
@@ -80,10 +92,42 @@ class AuthController extends Controller
                 $user->photo_url = basename($path);
             }
 
-            $user->update();
+            if($request->confirmation_code){
+                $user->confirmation_code = bcrypt($request->confirmation_code);
+            }
 
-            return new AuthUserResource($user);
+            $user->update();
+            return null;
+
         });
+
+        // outside because transaction needs to commit
+        return $transactionStatus ? $transactionStatus : new AuthUserResource(AuthUser::find($loggedId));
+    }
+
+    public function addAdmin(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|unique:users|email',
+            'password' => 'required|min:6',
+        ]);
+        if($validator->fails()){
+            return response()->json(['message' => 'There were validation errors','errors' => $validator->getMessageBag()],422);
+        }
+        try {
+            DB::beginTransaction();
+            $newAdmin = new User;
+            $newAdmin->name = $request->name;
+            $newAdmin->email = $request->email;
+            $newAdmin->password = bcrypt($request->password);
+            $newAdmin->save();
+            DB::commit();
+        }
+        catch(\Throwable $th){
+            DB::rollBack();
+            return response()->json(['message' => 'Internal server Error','error' => $th->getMessage()],500);
+        }
+        return new AuthUserResource($newAdmin);
     }
 
     public function myself(){

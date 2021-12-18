@@ -1,7 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import DebitTransactionCreate from '../components/transactions/DebitTransactionCreate'
 import CreditTransactionCreate from '../components/transactions/CreditTransactionCreate'
-import About from '../views/About.vue'
 
 import Dashboard from '../components/Dashboard.vue'
 import Login from '../components/auth/Login.vue'
@@ -10,8 +9,6 @@ import User from '../components/users/User.vue'
 
 import CreateCard from '../components/cards/CreateCard.vue'
 import EditCard from '../components/cards/EditCard.vue'
-import Transactions from '../components/transactions/Transactions.vue'
-import Transaction from '../components/transactions/Transaction.vue'
 
 import store from '../store'
 import CategoriesManage from '../components/categories/CategoriesManage'
@@ -22,6 +19,13 @@ import PaymentType from '../components/paymentTypes/PaymentType'
 import DefaultCategories from '../components/categories/DefaultCategories'
 import DefaultCategory from '../components/categories/DefaultCategory'
 import AdminStatistics from '../components/statistics/AdminStatistics'
+import UserStatistics from '../components/statistics/UserStatistics'
+
+import Transactions from '../components/transactions/Transactions'
+
+import AddAdmin from '../components/users/AddAdmin'
+import EditAdmin from '../components/users/EditAdmin'
+import EditDebitLimit from '../components/cards/EditDebitLimit'
 
 const addAuthLevel = (authLevel) => route => ({
   ...route,
@@ -32,11 +36,6 @@ const addAuthLevel = (authLevel) => route => ({
 })
 
 const anonymousRoutes = [
-  {
-    path: '/about',
-    name: 'About',
-    component: () => About
-  },
   {
     path: '/card/new',
     name: 'CardCreate',
@@ -71,7 +70,7 @@ const userRoutes = [
     name: 'DebitTransactionCreate',
     label: 'Send Money',
     icon: 'bi-send',
-    component: () => DebitTransactionCreate
+    component: DebitTransactionCreate
   },
   {
     path: '/categories',
@@ -100,10 +99,11 @@ const userRoutes = [
     component: Transactions
   },
   {
-    path: '/transactions/:id',
-    name: 'Transaction',
-    component: Transaction,
-    props: route => ({ id: parseInt(route.params.id) })
+    path: '/statistics',
+    name: 'UserStatistics',
+    icon: 'bi-bar-chart',
+    label: 'Statistics',
+    component: UserStatistics
   }
 ]
 
@@ -116,9 +116,20 @@ const adminRoutes = [
     component: Users
   },
   {
+    path: '/users/new',
+    name: 'AddAdmin',
+    component: AddAdmin
+  },
+  {
+    path: '/cards/:id/editLimit',
+    name: 'EditDebitLimit',
+    component: EditDebitLimit,
+    props: route => ({ vcardId: parseInt(route.params.id), maxDebit: parseInt(route.params.maxDebit) })
+  },
+  {
     path: '/vcards/:id/addcredit',
     name: 'CreditTransactionCreate',
-    component: () => CreditTransactionCreate,
+    component: CreditTransactionCreate,
     props: route => ({ vcard: parseInt(route.params.id) })
   },
   {
@@ -170,6 +181,13 @@ const adminRoutes = [
     icon: 'bi-bar-chart',
     label: 'Admin Statistics',
     component: AdminStatistics
+  },
+  {
+    path: '/users/edit',
+    name: 'EditAdmin',
+    component: EditAdmin,
+    icon: 'bi-gear',
+    label: 'Edit Account'
   },
   {
     path: '/users/:id',

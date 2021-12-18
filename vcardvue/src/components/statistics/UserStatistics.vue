@@ -1,22 +1,20 @@
 <template>
-  <div class="container p-5" v-if="loaded">
-    <div class="card p-4 mb-5 d-inline-block">
-      <h4 class="mb-3">Active vCards: </h4>
-      <h2 class="text-primary">{{statsData.activeCards}}</h2>
+  <div v-if="!loadError">
+    <div class="container p-5" v-if="loaded">
+        <LineChart
+            :chartData="totalBalanceByDayChart" class="mb-5"/>
+        <LineChart
+            :chartData="avgBalanceByDayChart"  class="mb-5"/>
+        <LineChart
+            :chartData="totalAmountMovedByDayChart"  class="mb-5"/>
+        <LineChart
+            :chartData="transactionCountByDayChart"  class="mb-5"/>
     </div>
-    <LineChart
-        :chartData="totalBalanceByDayChart" class="mb-5"/>
-    <LineChart
-        :chartData="avgBalanceByDayChart"  class="mb-5"/>
-    <LineChart
-        :chartData="totalAmountMovedByDayChart"  class="mb-5"/>
-    <LineChart
-        :chartData="transactionCountByDayChart"  class="mb-5"/>
-  </div>
-  <div v-else class="d-flex h-100 mx-auto align-items-stretch">
-    <div class="center mx-auto">
-      <PulseLoader size="50px" />
-      Loading... please wait
+    <div v-else class="d-flex h-100 mx-auto align-items-stretch">
+        <div class="center mx-auto">
+          <PulseLoader size="50px" />
+          Loading... please wait
+        </div>
     </div>
   </div>
 </template>
@@ -29,18 +27,22 @@ import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 Chart.register(...registerables)
 
 export default {
-  name: 'AdminStatistics',
+  name: 'UserStatistics',
   components: { LineChart, PulseLoader },
   data: () => ({
     loaded: false,
     chartdata: null,
-    statsData: null
+    statsData: null,
+    loadError: false
   }),
   mounted () {
     this.loaded = false
-    this.$axios.get('/admin/statistics').then(r => {
+    this.$axios.get('/vcards/statistics').then(r => {
       this.statsData = r.data
       this.loaded = true
+    }).catch(() => {
+      this.$toast.error('Error loading statistics')
+      this.loadError = true
     })
   },
   computed: {
