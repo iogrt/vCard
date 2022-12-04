@@ -29,6 +29,7 @@ class AuthController extends Controller
                 'scope'    => '',
             ]);
 
+
             $url = env('PASSPORT_SERVER_URL') . '/oauth/token';
 
             $request = Request::create($url, 'POST');
