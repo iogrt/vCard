@@ -1,11 +1,21 @@
 # vCard
-This website allows users to create virtual banking accounts for sending money to others. You can create a vCard and send info simulated.
+This website allows users to create virtual banking accounts for sending money to others.
+
+## Main features
 * Creating virtual cards (vCards) associated to phone numbers;
 * Transfer "money" (simulated) between vCards or to other payment services (simulated);
+
+
+
+![vCard Homepage](./doc/vCard_homepage.png)
+
 * Create categories and assign transactions to categories;
 * Access statistics like balance and number of transactions throughout time;
 
-# How to run
+![vCard Homepage](./doc/vCard_graph.png)
+
+
+## How to run
 
 - Backend server: run sail
 (requires docker and sudo if docker requires sudo)
